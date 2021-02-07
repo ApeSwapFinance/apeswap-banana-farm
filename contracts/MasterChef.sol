@@ -55,7 +55,11 @@ contract MasterChef is Ownable {
     // CAKE tokens created per block.
     uint256 public cakePerBlock;
     // Bonus muliplier for early cake makers.
-    uint256 public BONUS_MULTIPLIER = 1;
+    uint256 public BONUS_MULTIPLIER;
+    // Bonus muliplier for early cake makers.
+    uint256 public BONUS_MULTIPLIER;
+
+    uint256 public bonusEndBlock;
 
     // Info of each pool.
     PoolInfo[] public poolInfo;
@@ -75,13 +79,17 @@ contract MasterChef is Ownable {
         SyrupBar _syrup,
         address _devaddr,
         uint256 _cakePerBlock,
-        uint256 _startBlock
+        uint256 _startBlock,
+        uint256 _multiplier,
+        uint256 _bonusEndBlock
     ) public {
         cake = _cake;
         syrup = _syrup;
         devaddr = _devaddr;
         cakePerBlock = _cakePerBlock;
         startBlock = _startBlock;
+        BONUS_MULTIPLIER = _multiplier;
+        bonusEndBlock = _bonusEndBlock;
 
         // staking pool
         poolInfo.push(PoolInfo({
@@ -95,6 +103,11 @@ contract MasterChef is Ownable {
 
     }
 
+    modifier validatePool(uint256 _pid) {
+        require(_pid < poolInfo.length, "validatePool: pool exists?");
+        _;
+    }
+
     function updateMultiplier(uint256 multiplierNumber) public onlyOwner {
         BONUS_MULTIPLIER = multiplierNumber;
     }
@@ -103,12 +116,21 @@ contract MasterChef is Ownable {
         return poolInfo.length;
     }
 
+    // Detects whether the given pool already exists
+    function checkPoolDuplicate(IBEP20 _lpToken) public {
+        uint256 length = poolInfo.length;
+        for (uint256 _pid = 0; _pid < length; _pid++) {
+            require(poolInfo[_pid].lpToken != _lpToken, "add: existing pool");
+        }
+    }
+
     // Add a new lp to the pool. Can only be called by the owner.
     // XXX DO NOT add the same LP token more than once. Rewards will be messed up if you do.
     function add(uint256 _allocPoint, IBEP20 _lpToken, bool _withUpdate) public onlyOwner {
         if (_withUpdate) {
             massUpdatePools();
         }
+        checkPoolDuplicate(_lpToken);
         uint256 lastRewardBlock = block.number > startBlock ? block.number : startBlock;
         totalAllocPoint = totalAllocPoint.add(_allocPoint);
         poolInfo.push(PoolInfo({
@@ -148,7 +170,15 @@ contract MasterChef is Ownable {
 
     // Return reward multiplier over the given _from to _to block.
     function getMultiplier(uint256 _from, uint256 _to) public view returns (uint256) {
-        return _to.sub(_from).mul(BONUS_MULTIPLIER);
+        if (_to <= bonusEndBlock) {
+            return _to.sub(_from).mul(BONUS_MULTIPLIER);
+        } else if (_from >= bonusEndBlock) {
+            return _to.sub(_from);
+        } else {
+            return bonusEndBlock.sub(_from).mul(BONUS_MULTIPLIER).add(
+                _to.sub(bonusEndBlock)
+            );
+        }
     }
 
     // View function to see pending CAKEs on frontend.
@@ -175,7 +205,7 @@ contract MasterChef is Ownable {
 
 
     // Update reward variables of the given pool to be up-to-date.
-    function updatePool(uint256 _pid) public {
+    function updatePool(uint256 _pid) public validatePool(_pid) {
         PoolInfo storage pool = poolInfo[_pid];
         if (block.number <= pool.lastRewardBlock) {
             return;
@@ -194,7 +224,7 @@ contract MasterChef is Ownable {
     }
 
     // Deposit LP tokens to MasterChef for CAKE allocation.
-    function deposit(uint256 _pid, uint256 _amount) public {
+    function deposit(uint256 _pid, uint256 _amount) public validatePool(_pid) {
 
         require (_pid != 0, 'deposit CAKE by staking');
 
@@ -216,8 +246,7 @@ contract MasterChef is Ownable {
     }
 
     // Withdraw LP tokens from MasterChef.
-    function withdraw(uint256 _pid, uint256 _amount) public {
-
+    function withdraw(uint256 _pid, uint256 _amount) public validatePool(_pid) {
         require (_pid != 0, 'withdraw CAKE by unstaking');
         PoolInfo storage pool = poolInfo[_pid];
         UserInfo storage user = userInfo[_pid][msg.sender];
@@ -285,6 +314,24 @@ contract MasterChef is Ownable {
         emit EmergencyWithdraw(msg.sender, _pid, user.amount);
         user.amount = 0;
         user.rewardDebt = 0;
+    }
+
+        // Withdraw without caring about rewards. EMERGENCY ONLY.
+    function emergencyWithdraw(uint256 _pid) public {
+        PoolInfo storage pool = poolInfo[_pid];
+        UserInfo storage user = userInfo[_pid][msg.sender];
+        pool.lpToken.safeTransfer(address(msg.sender), user.amount);
+        emit EmergencyWithdraw(msg.sender, _pid, user.amount);
+        user.amount = 0;
+        user.rewardDebt = 0;
+    }
+
+    function getPoolInfo(uint256 _pid) public view
+    returns(address lpToken, uint256 allocPoint, uint256 lastRewardBlock, uint256 accCakePerShare) {
+        return (address(poolInfo[_pid].lpToken),
+            poolInfo[_pid].allocPoint,
+            poolInfo[_pid].lastRewardBlock,
+            poolInfo[_pid].accCakePerShare);
     }
 
     // Safe cake transfer function, just in case if rounding error causes pool to not have enough CAKEs.
