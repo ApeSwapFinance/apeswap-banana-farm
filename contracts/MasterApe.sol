@@ -16,7 +16,8 @@ import "./BananaSplitBar.sol";
 
 // import "@nomiclabs/buidler/console.sol";
 
-// MasterApe is the master of Banana. He can make Banana and he is a fair guy.
+// MasterApe is the master of BANANA AND BANANASPLIT. 
+// He can make Banana and he is a fair guy.
 //
 // Note that it's ownable and the owner wields tremendous power. The ownership
 // will be transferred to a governance smart contract once BANANA is sufficiently
