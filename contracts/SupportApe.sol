@@ -6,8 +6,8 @@ import '@pancakeswap/pancake-swap-lib/contracts/token/BEP20/SafeBEP20.sol';
 
 // import "@nomiclabs/buidler/console.sol";
 
-// SousChef is the chef of new tokens. He can make yummy food and he is a fair guy as well as MasterChef.
-contract SousChef {
+// SupportApe is the chef of new tokens. He can make yummy food and he is a fair guy as well as MasterApe.
+contract SupportApe {
     using SafeMath for uint256;
     using SafeBEP20 for IBEP20;
 
@@ -43,7 +43,7 @@ contract SousChef {
 
     // Info.
     PoolInfo public poolInfo;
-    // Info of each user that stakes Syrup tokens.
+    // Info of each user that stakes BananaSplit tokens.
     mapping (address => UserInfo) public userInfo;
 
     // addresses list
@@ -59,12 +59,12 @@ contract SousChef {
     event EmergencyWithdraw(address indexed user, uint256 amount);
 
     constructor(
-        IBEP20 _syrup,
+        IBEP20 _bananaSplit,
         uint256 _rewardPerBlock,
         uint256 _startBlock,
         uint256 _endBlock
     ) public {
-        syrup = _syrup;
+        syrup = _bananaSplit;
         rewardPerBlock = _rewardPerBlock;
         startBlock = _startBlock;
         bonusEndBlock = _endBlock;
@@ -123,7 +123,7 @@ contract SousChef {
     }
 
 
-    // Deposit Syrup tokens to SousChef for Reward allocation.
+    // Deposit BananaSplit tokens to SupportApe for Reward allocation.
     function deposit(uint256 _amount) public {
         require (_amount > 0, 'amount 0');
         UserInfo storage user = userInfo[msg.sender];
@@ -140,7 +140,7 @@ contract SousChef {
         emit Deposit(msg.sender, _amount);
     }
 
-    // Withdraw Syrup tokens from SousChef.
+    // Withdraw BananaSplit tokens from SupportApe.
     function withdraw(uint256 _amount) public {
         require (_amount > 0, 'amount 0');
         UserInfo storage user = userInfo[msg.sender];

@@ -1,18 +1,46 @@
 pragma solidity 0.6.12;
 
+/*
+ * ApeSwapFinance 
+ * Twitter:  https://twitter.com/ape_swap 
+ * Telegram: https://t.me/ape_swap
+ */
+
 import "@pancakeswap/pancake-swap-lib/contracts/token/BEP20/BEP20.sol";
 
-// BananaToken with Governance.
-contract BananaToken is BEP20('ApeSwapFinance Banana', 'BANANA') {
-    /// @notice Creates `_amount` token to `_to`. Must only be called by the owner (MasterChef).
+import "./BananaToken.sol";
+
+// BananaSplitBar with Governance.
+contract BananaSplitBar is BEP20('BananaSplitBar Token', 'BANANASPLIT') {
+    /// @notice Creates `_amount` token to `_to`. Must only be called by the owner (MasterApe).
     function mint(address _to, uint256 _amount) public onlyOwner {
         _mint(_to, _amount);
         _moveDelegates(address(0), _delegates[_to], _amount);
     }
-    /// @notice Burns `_amount` token to `_to`. Must only be called by the owner (MasterChef).
+
     function burn(address _from ,uint256 _amount) public onlyOwner {
         _burn(_from, _amount);
         _moveDelegates(_delegates[_from], address(0), _amount);
+    }
+
+    // The BANANA TOKEN!
+    BananaToken public cake;
+
+
+    constructor(
+        BananaToken _cake
+    ) public {
+        cake = _cake;
+    }
+
+    // Safe cake transfer function, just in case if rounding error causes pool to not have enough BANANAs.
+    function safeCakeTransfer(address _to, uint256 _amount) public onlyOwner {
+        uint256 cakeBal = cake.balanceOf(address(this));
+        if (_amount > cakeBal) {
+            cake.transfer(_to, cakeBal);
+        } else {
+            cake.transfer(_to, _amount);
+        }
     }
 
     // Copied and modified from YAM code:

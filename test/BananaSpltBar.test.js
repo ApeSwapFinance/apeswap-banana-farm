@@ -1,12 +1,12 @@
 const { advanceBlockTo } = require('@openzeppelin/test-helpers/src/time');
 const { assert } = require('chai');
-const CakeToken = artifacts.require('CakeToken');
-const SyrupBar = artifacts.require('SyrupBar');
+const BananaToken = artifacts.require('BananaToken');
+const BananaSplitBar = artifacts.require('BananaSplitBar');
 
-contract('SyrupBar', ([alice, bob, carol, dev, minter]) => {
+contract('BananaSplitBar', ([alice, bob, carol, dev, minter]) => {
   beforeEach(async () => {
-    this.cake = await CakeToken.new({ from: minter });
-    this.syrup = await SyrupBar.new(this.cake.address, { from: minter });
+    this.cake = await BananaToken.new({ from: minter });
+    this.syrup = await BananaSplitBar.new(this.cake.address, { from: minter });
   });
 
   it('mint', async () => {

@@ -1,23 +1,29 @@
 pragma solidity 0.6.12;
 
+/*
+ * ApeSwapFinance 
+ * Twitter:  https://twitter.com/ape_swap 
+ * Telegram: https://t.me/ape_swap
+ */
+
 import '@pancakeswap/pancake-swap-lib/contracts/math/SafeMath.sol';
 import '@pancakeswap/pancake-swap-lib/contracts/token/BEP20/IBEP20.sol';
 import '@pancakeswap/pancake-swap-lib/contracts/token/BEP20/SafeBEP20.sol';
 import '@pancakeswap/pancake-swap-lib/contracts/access/Ownable.sol';
 
-import "./CakeToken.sol";
-import "./SyrupBar.sol";
+import "./BananaToken.sol";
+import "./BananaSplitBar.sol";
 
 // import "@nomiclabs/buidler/console.sol";
 
-// MasterChef is the master of Cake. He can make Cake and he is a fair guy.
+// MasterApe is the master of Banana. He can make Banana and he is a fair guy.
 //
 // Note that it's ownable and the owner wields tremendous power. The ownership
 // will be transferred to a governance smart contract once BANANA is sufficiently
 // distributed and the community can show to govern itself.
 //
 // Have fun reading it. Hopefully it's bug-free. God bless.
-contract MasterChef is Ownable {
+contract MasterApe is Ownable {
     using SafeMath for uint256;
     using SafeBEP20 for IBEP20;
 
@@ -29,7 +35,7 @@ contract MasterChef is Ownable {
         // We do some fancy math here. Basically, any point in time, the amount of BANANAs
         // entitled to a user but is pending to be distributed is:
         //
-        //   pending reward = (user.amount * pool.accCakePerShare) - user.rewardDebt
+        //   pending reward = (user.amount * pool.accBananaPerShare) - user.rewardDebt
         //
         // Whenever a user deposits or withdraws LP tokens to a pool. Here's what happens:
         //   1. The pool's `accCakePerShare` (and `lastRewardBlock`) gets updated.
@@ -47,9 +53,9 @@ contract MasterChef is Ownable {
     }
 
     // The BANANA TOKEN!
-    CakeToken public cake;
+    BananaToken public cake;
     // The BANANA SPLIT TOKEN!
-    SyrupBar public syrup;
+    BananaSplitBar public syrup;
     // Dev address.
     address public devaddr;
     // BANANA tokens created per block.
@@ -75,18 +81,18 @@ contract MasterChef is Ownable {
     event EmergencyWithdraw(address indexed user, uint256 indexed pid, uint256 amount);
 
     constructor(
-        CakeToken _cake,
-        SyrupBar _syrup,
+        BananaToken _banana,
+        BananaSplitBar _bananaSplit,
         address _devaddr,
-        uint256 _cakePerBlock,
+        uint256 _bananaPerBlock,
         uint256 _startBlock,
         uint256 _multiplier,
         uint256 _bonusEndBlock
     ) public {
-        cake = _cake;
-        syrup = _syrup;
+        cake = _banana;
+        syrup = _bananaSplit;
         devaddr = _devaddr;
-        cakePerBlock = _cakePerBlock;
+        cakePerBlock = _bananaPerBlock;
         startBlock = _startBlock;
         BONUS_MULTIPLIER = _multiplier;
         bonusEndBlock = _bonusEndBlock;
@@ -223,7 +229,7 @@ contract MasterChef is Ownable {
         pool.lastRewardBlock = block.number;
     }
 
-    // Deposit LP tokens to MasterChef for BANANA allocation.
+    // Deposit LP tokens to MasterApe for BANANA allocation.
     function deposit(uint256 _pid, uint256 _amount) public validatePool(_pid) {
 
         require (_pid != 0, 'deposit BANANA by staking');
@@ -245,7 +251,7 @@ contract MasterChef is Ownable {
         emit Deposit(msg.sender, _pid, _amount);
     }
 
-    // Withdraw LP tokens from MasterChef.
+    // Withdraw LP tokens from MasterApe.
     function withdraw(uint256 _pid, uint256 _amount) public validatePool(_pid) {
         require (_pid != 0, 'withdraw BANANA by unstaking');
         PoolInfo storage pool = poolInfo[_pid];
@@ -265,7 +271,7 @@ contract MasterChef is Ownable {
         emit Withdraw(msg.sender, _pid, _amount);
     }
 
-    // Stake BANANA tokens to MasterChef
+    // Stake BANANA tokens to MasterApe
     function enterStaking(uint256 _amount) public {
         PoolInfo storage pool = poolInfo[0];
         UserInfo storage user = userInfo[0][msg.sender];
