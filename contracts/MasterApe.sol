@@ -60,9 +60,7 @@ contract MasterApe is Ownable {
     address public devaddr;
     // BANANA tokens created per block.
     uint256 public cakePerBlock;
-    // Bonus muliplier for early cake makers.
-    uint256 public BONUS_MULTIPLIER;
-    // Bonus muliplier for early cake makers.
+    // Bonus muliplier for early banana makers.
     uint256 public BONUS_MULTIPLIER;
 
     uint256 public bonusEndBlock;
@@ -99,7 +97,7 @@ contract MasterApe is Ownable {
 
         // staking pool
         poolInfo.push(PoolInfo({
-            lpToken: _cake,
+            lpToken: _banana,
             allocPoint: 1000,
             lastRewardBlock: startBlock,
             accCakePerShare: 0
@@ -123,7 +121,7 @@ contract MasterApe is Ownable {
     }
 
     // Detects whether the given pool already exists
-    function checkPoolDuplicate(IBEP20 _lpToken) public {
+    function checkPoolDuplicate(IBEP20 _lpToken) public view {
         uint256 length = poolInfo.length;
         for (uint256 _pid = 0; _pid < length; _pid++) {
             require(poolInfo[_pid].lpToken != _lpToken, "add: existing pool");
@@ -313,16 +311,6 @@ contract MasterApe is Ownable {
     }
 
     // Withdraw without caring about rewards. EMERGENCY ONLY.
-    function emergencyWithdraw(uint256 _pid) public {
-        PoolInfo storage pool = poolInfo[_pid];
-        UserInfo storage user = userInfo[_pid][msg.sender];
-        pool.lpToken.safeTransfer(address(msg.sender), user.amount);
-        emit EmergencyWithdraw(msg.sender, _pid, user.amount);
-        user.amount = 0;
-        user.rewardDebt = 0;
-    }
-
-        // Withdraw without caring about rewards. EMERGENCY ONLY.
     function emergencyWithdraw(uint256 _pid) public {
         PoolInfo storage pool = poolInfo[_pid];
         UserInfo storage user = userInfo[_pid][msg.sender];
