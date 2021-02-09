@@ -97,7 +97,7 @@ interface IBEP20 {
 
 
 contract PancakeVoterProxy {
-    // SYRUP
+    // BANANASPLIT
     address public constant votes = 0x009cF7bC57584b7998236eff51b98A168DceA9B0;
 
     function decimals() external pure returns (uint8) {
@@ -105,11 +105,11 @@ contract PancakeVoterProxy {
     }
 
     function name() external pure returns (string memory) {
-        return 'SYRUPVOTE';
+        return 'BANANASPLITVOTE';
     }
 
     function symbol() external pure returns (string memory) {
-        return 'SYRUP';
+        return 'BANANASPLIT';
     }
 
     function totalSupply() external view returns (uint256) {

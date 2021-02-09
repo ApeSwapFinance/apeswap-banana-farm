@@ -13,7 +13,7 @@ contract SousChef {
 
     // Info of each user.
     struct UserInfo {
-        uint256 amount;   // How many SYRUP tokens the user has provided.
+        uint256 amount;   // How many BANANASPLIT tokens the user has provided.
         uint256 rewardDebt;  // Reward debt. See explanation below.
         uint256 rewardPending;
         //
@@ -22,7 +22,7 @@ contract SousChef {
         //
         //   pending reward = (user.amount * pool.accRewardPerShare) - user.rewardDebt + user.rewardPending
         //
-        // Whenever a user deposits or withdraws SYRUP tokens to a pool. Here's what happens:
+        // Whenever a user deposits or withdraws BANANASPLIT tokens to a pool. Here's what happens:
         //   1. The pool's `accRewardPerShare` (and `lastRewardBlock`) gets updated.
         //   2. User receives the pending reward sent to his/her address.
         //   3. User's `amount` gets updated.
@@ -36,7 +36,7 @@ contract SousChef {
         uint256 accRewardPerShare; // Accumulated reward per share, times 1e12. See below.
     }
 
-    // The SYRUP TOKEN!
+    // The BANANASPLIT TOKEN!
     IBEP20 public syrup;
     // rewards created per block.
     uint256 public rewardPerBlock;
