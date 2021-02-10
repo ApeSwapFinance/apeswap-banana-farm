@@ -175,14 +175,14 @@ contract MasterApe is Ownable {
 
     // Return reward multiplier over the given _from to _to block.
     function getMultiplier(uint256 _from, uint256 _to) public view returns (uint256) {
+        require(_from <= _to, '_from must be lower than _to');
         if (_to <= bonusEndBlock) {
             return _to.sub(_from).mul(BONUS_MULTIPLIER);
         } else if (_from >= bonusEndBlock) {
             return _to.sub(_from);
         } else {
-            return bonusEndBlock.sub(_from).mul(BONUS_MULTIPLIER).add(
-                _to.sub(bonusEndBlock)
-            );
+             uint256 bonusReward = bonusEndBlock.sub(_from).mul(BONUS_MULTIPLIER);
+             return bonusReward.add(_to.sub(bonusEndBlock));
         }
     }
 
