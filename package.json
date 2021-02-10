@@ -4,12 +4,14 @@
   "main": "index.js",
   "scripts": {
     "migrate:dev": "truffle migrate --network development --reset",
-    "migrate": "truffle migrate --network testnet --reset",
+    "migrate:testnet": "truffle migrate --network testnet --reset",
+    "gen:standard":"~/.local/bin/solt write contracts --npm",
     "compile": "truffle compile --network bscTestnet",
     "test": "npx builder test",
     "coverage": "npx builder coverage"
   },
   "dependencies": {
+    "@ethersproject/bignumber": "^5.0.14",
     "@openzeppelin/test-helpers": "^0.5.6",
     "@pancakeswap/pancake-swap-lib": "^0.0.1",
     "truffle": "^5.1.58",
