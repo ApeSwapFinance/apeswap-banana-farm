@@ -1,11 +1,19 @@
 pragma solidity 0.6.12;
 
+/*
+ * ApeSwapFinance 
+ * App:             https://apeswap.finance
+ * Medium:          https://medium/@ape_swap    
+ * Twitter:         https://twitter.com/ape_swap 
+ * Telegram:        https://t.me/ape_swap
+ * Announcements:   https://t.me/ape_swap_news
+ * GitHub:          https://github.com/ApeSwapFinance
+ */
+
 import '@pancakeswap/pancake-swap-lib/contracts/math/SafeMath.sol';
 import '@pancakeswap/pancake-swap-lib/contracts/token/BEP20/IBEP20.sol';
 import '@pancakeswap/pancake-swap-lib/contracts/token/BEP20/SafeBEP20.sol';
 import '@pancakeswap/pancake-swap-lib/contracts/access/Ownable.sol';
-
-// import "@nomiclabs/buidler/console.sol";
 
 interface IWBNB {
     function deposit() external payable;

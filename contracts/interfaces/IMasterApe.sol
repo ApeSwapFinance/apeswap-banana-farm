@@ -1,5 +1,13 @@
 pragma solidity 0.6.12;
 
+/*
+ * ApeSwapFinance 
+ * App:      https://apeswap.finance
+ * Medium:   https://medium/@ape_swap    
+ * Twitter:  https://twitter.com/ape_swap 
+ * Telegram: https://t.me/ape_swap
+ * GitHub:   https://github.com/ApeSwapFinance
+ */
 
 interface IMasterApe {
     function updateMultiplier(uint256 multiplierNumber) external; // onlyOwner

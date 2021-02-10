@@ -8,6 +8,15 @@
 //
 // Ctrl+f for XXX to see all the modifications.
 
+/*
+ * ApeSwapFinance 
+ * App:      https://apeswap.finance
+ * Medium:   https://medium/@ape_swap    
+ * Twitter:  https://twitter.com/ape_swap 
+ * Telegram: https://t.me/ape_swap
+ * GitHub:   https://github.com/ApeSwapFinance
+ */
+
 // XXX: pragma solidity ^0.5.16;
 pragma solidity 0.6.12;
 
