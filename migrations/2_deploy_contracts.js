@@ -1,12 +1,17 @@
+const { BigNumber } = require("@ethersproject/bignumber");
 const MasterApe = artifacts.require("MasterApe");
 const SupportApe = artifacts.require("SupportApe");
 const BananaToken = artifacts.require("BananaToken");
 const BananaSplitBar = artifacts.require("BananaSplitBar");
+const Timelock = artifacts.require("Timelock");
 const BnbStaking = artifacts.require("BnbStaking");
-
+// TODO: Import UniswapInterface and create liquidity pool from the start
+ 
 const logTx = (tx) => {
     console.dir(tx, {depth: 3});
 }
+
+const INITIAL_MINT = '10000';
 
 module.exports = async function(deployer, network, accounts) {
     let currentAccount = accounts[0];
@@ -21,7 +26,7 @@ module.exports = async function(deployer, network, accounts) {
     // No constructor
     deployer.deploy(BananaToken).then((instance) => {
         bananaTokenInstance = instance;
-        return bananaTokenInstance.mint(999999);
+        return bananaTokenInstance.mint(BigNumber.from(INITIAL_MINT).mul(BigNumber.from(String(10**18))));
     }).then((tx)=> {
         logTx(tx);
         return deployer.deploy(BananaSplitBar, BananaToken.address)
@@ -88,6 +93,7 @@ module.exports = async function(deployer, network, accounts) {
             BananaToken:BananaToken.address,
             BananaSplitBar:BananaSplitBar.address,
             // BnbStaking:BnbStaking.address,
+            // Timelock:Timelock.address
         })
     });
 };
