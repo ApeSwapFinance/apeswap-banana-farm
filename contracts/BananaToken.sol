@@ -15,11 +15,6 @@ contract BananaToken is BEP20('ApeSwapFinance Banana', 'BANANA') {
         _mint(_to, _amount);
         _moveDelegates(address(0), _delegates[_to], _amount);
     }
-    /// @notice Burns `_amount` token to `_to`. Must only be called by the owner (MasterApe).
-    function burn(address _from ,uint256 _amount) public onlyOwner {
-        _burn(_from, _amount);
-        _moveDelegates(_delegates[_from], address(0), _amount);
-    }
 
     // Copied and modified from YAM code:
     // https://github.com/yam-finance/yam-protocol/blob/master/contracts/token/YAMGovernanceStorage.sol
