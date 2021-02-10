@@ -1,9 +1,10 @@
 {
-  "name": "PancakeSwap",
+  "name": "ApeSwap-Banana-Farm",
   "version": "1.0.0",
   "main": "index.js",
   "scripts": {
-    "migrate": "truffle migrate --network bscTestnet --reset",
+    "migrate:dev": "truffle migrate --network development --reset",
+    "migrate": "truffle migrate --network testnet --reset",
     "compile": "truffle compile --network bscTestnet",
     "test": "npx builder test",
     "coverage": "npx builder coverage"

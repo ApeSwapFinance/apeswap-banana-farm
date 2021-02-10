@@ -7,8 +7,8 @@ module.exports = {
     "libs",
     "libs",
     "libs",
-    "SyrupBar.sol",
-    "CakeToken.sol",
+    "BananaSplitBar.sol",
+    "BananaToken.sol",
     "Timelock.sol"
   ],
   measureStatementCoverage: false,

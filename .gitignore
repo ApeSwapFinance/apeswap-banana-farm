@@ -8,3 +8,6 @@ cache
 artifacts
 coverage
 coverage.json
+
+.secret
+.secret-testnet

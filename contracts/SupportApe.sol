@@ -6,14 +6,14 @@ import '@pancakeswap/pancake-swap-lib/contracts/token/BEP20/SafeBEP20.sol';
 
 // import "@nomiclabs/buidler/console.sol";
 
-// SousChef is the chef of new tokens. He can make yummy food and he is a fair guy as well as MasterChef.
-contract SousChef {
+// SupportApe is the chef of new tokens. He can make yummy food and he is a fair guy as well as MasterApe.
+contract SupportApe {
     using SafeMath for uint256;
     using SafeBEP20 for IBEP20;
 
     // Info of each user.
     struct UserInfo {
-        uint256 amount;   // How many SYRUP tokens the user has provided.
+        uint256 amount;   // How many BANANASPLIT tokens the user has provided.
         uint256 rewardDebt;  // Reward debt. See explanation below.
         uint256 rewardPending;
         //
@@ -22,7 +22,7 @@ contract SousChef {
         //
         //   pending reward = (user.amount * pool.accRewardPerShare) - user.rewardDebt + user.rewardPending
         //
-        // Whenever a user deposits or withdraws SYRUP tokens to a pool. Here's what happens:
+        // Whenever a user deposits or withdraws BANANASPLIT tokens to a pool. Here's what happens:
         //   1. The pool's `accRewardPerShare` (and `lastRewardBlock`) gets updated.
         //   2. User receives the pending reward sent to his/her address.
         //   3. User's `amount` gets updated.
@@ -36,14 +36,14 @@ contract SousChef {
         uint256 accRewardPerShare; // Accumulated reward per share, times 1e12. See below.
     }
 
-    // The SYRUP TOKEN!
+    // The BANANASPLIT TOKEN!
     IBEP20 public syrup;
     // rewards created per block.
     uint256 public rewardPerBlock;
 
     // Info.
     PoolInfo public poolInfo;
-    // Info of each user that stakes Syrup tokens.
+    // Info of each user that stakes BananaSplit tokens.
     mapping (address => UserInfo) public userInfo;
 
     // addresses list
@@ -59,12 +59,12 @@ contract SousChef {
     event EmergencyWithdraw(address indexed user, uint256 amount);
 
     constructor(
-        IBEP20 _syrup,
+        IBEP20 _bananaSplit,
         uint256 _rewardPerBlock,
         uint256 _startBlock,
         uint256 _endBlock
     ) public {
-        syrup = _syrup;
+        syrup = _bananaSplit;
         rewardPerBlock = _rewardPerBlock;
         startBlock = _startBlock;
         bonusEndBlock = _endBlock;
@@ -123,7 +123,7 @@ contract SousChef {
     }
 
 
-    // Deposit Syrup tokens to SousChef for Reward allocation.
+    // Deposit BananaSplit tokens to SupportApe for Reward allocation.
     function deposit(uint256 _amount) public {
         require (_amount > 0, 'amount 0');
         UserInfo storage user = userInfo[msg.sender];
@@ -140,7 +140,7 @@ contract SousChef {
         emit Deposit(msg.sender, _amount);
     }
 
-    // Withdraw Syrup tokens from SousChef.
+    // Withdraw BananaSplit tokens from SupportApe.
     function withdraw(uint256 _amount) public {
         require (_amount > 0, 'amount 0');
         UserInfo storage user = userInfo[msg.sender];

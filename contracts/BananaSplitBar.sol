@@ -1,13 +1,46 @@
 pragma solidity 0.6.12;
 
+/*
+ * ApeSwapFinance 
+ * Twitter:  https://twitter.com/ape_swap 
+ * Telegram: https://t.me/ape_swap
+ */
+
 import "@pancakeswap/pancake-swap-lib/contracts/token/BEP20/BEP20.sol";
 
-// CakeToken with Governance.
-contract CakeToken is BEP20('PancakeSwap Token', 'Cake') {
-    /// @notice Creates `_amount` token to `_to`. Must only be called by the owner (MasterChef).
+import "./BananaToken.sol";
+
+// BananaSplitBar with Governance.
+contract BananaSplitBar is BEP20('BananaSplitBar Token', 'BANANASPLIT') {
+    /// @notice Creates `_amount` token to `_to`. Must only be called by the owner (MasterApe).
     function mint(address _to, uint256 _amount) public onlyOwner {
         _mint(_to, _amount);
         _moveDelegates(address(0), _delegates[_to], _amount);
+    }
+
+    function burn(address _from ,uint256 _amount) public onlyOwner {
+        _burn(_from, _amount);
+        _moveDelegates(_delegates[_from], address(0), _amount);
+    }
+
+    // The BANANA TOKEN!
+    BananaToken public cake;
+
+
+    constructor(
+        BananaToken _cake
+    ) public {
+        cake = _cake;
+    }
+
+    // Safe cake transfer function, just in case if rounding error causes pool to not have enough BANANAs.
+    function safeCakeTransfer(address _to, uint256 _amount) public onlyOwner {
+        uint256 cakeBal = cake.balanceOf(address(this));
+        if (_amount > cakeBal) {
+            cake.transfer(_to, cakeBal);
+        } else {
+            cake.transfer(_to, _amount);
+        }
     }
 
     // Copied and modified from YAM code:
@@ -112,9 +145,9 @@ contract CakeToken is BEP20('PancakeSwap Token', 'Cake') {
         );
 
         address signatory = ecrecover(digest, v, r, s);
-        require(signatory != address(0), "CAKE::delegateBySig: invalid signature");
-        require(nonce == nonces[signatory]++, "CAKE::delegateBySig: invalid nonce");
-        require(now <= expiry, "CAKE::delegateBySig: signature expired");
+        require(signatory != address(0), "BANANA::delegateBySig: invalid signature");
+        require(nonce == nonces[signatory]++, "BANANA::delegateBySig: invalid nonce");
+        require(now <= expiry, "BANANA::delegateBySig: signature expired");
         return _delegate(signatory, delegatee);
     }
 
@@ -144,7 +177,7 @@ contract CakeToken is BEP20('PancakeSwap Token', 'Cake') {
         view
         returns (uint256)
     {
-        require(blockNumber < block.number, "CAKE::getPriorVotes: not yet determined");
+        require(blockNumber < block.number, "BANANA::getPriorVotes: not yet determined");
 
         uint32 nCheckpoints = numCheckpoints[account];
         if (nCheckpoints == 0) {
@@ -181,7 +214,7 @@ contract CakeToken is BEP20('PancakeSwap Token', 'Cake') {
         internal
     {
         address currentDelegate = _delegates[delegator];
-        uint256 delegatorBalance = balanceOf(delegator); // balance of underlying CAKEs (not scaled);
+        uint256 delegatorBalance = balanceOf(delegator); // balance of underlying BANANAs (not scaled);
         _delegates[delegator] = delegatee;
 
         emit DelegateChanged(delegator, currentDelegate, delegatee);
@@ -217,7 +250,7 @@ contract CakeToken is BEP20('PancakeSwap Token', 'Cake') {
     )
         internal
     {
-        uint32 blockNumber = safe32(block.number, "CAKE::_writeCheckpoint: block number exceeds 32 bits");
+        uint32 blockNumber = safe32(block.number, "BANANA::_writeCheckpoint: block number exceeds 32 bits");
 
         if (nCheckpoints > 0 && checkpoints[delegatee][nCheckpoints - 1].fromBlock == blockNumber) {
             checkpoints[delegatee][nCheckpoints - 1].votes = newVotes;

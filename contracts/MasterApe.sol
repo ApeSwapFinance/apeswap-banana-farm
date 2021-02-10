@@ -1,36 +1,30 @@
 pragma solidity 0.6.12;
 
+/*
+ * ApeSwapFinance 
+ * Twitter:  https://twitter.com/ape_swap 
+ * Telegram: https://t.me/ape_swap
+ */
+
 import '@pancakeswap/pancake-swap-lib/contracts/math/SafeMath.sol';
 import '@pancakeswap/pancake-swap-lib/contracts/token/BEP20/IBEP20.sol';
 import '@pancakeswap/pancake-swap-lib/contracts/token/BEP20/SafeBEP20.sol';
 import '@pancakeswap/pancake-swap-lib/contracts/access/Ownable.sol';
 
-import "./CakeToken.sol";
-import "./SyrupBar.sol";
+import "./BananaToken.sol";
+import "./BananaSplitBar.sol";
 
 // import "@nomiclabs/buidler/console.sol";
 
-interface IMigratorChef {
-    // Perform LP token migration from legacy PancakeSwap to CakeSwap.
-    // Take the current LP token address and return the new LP token address.
-    // Migrator should have full access to the caller's LP token.
-    // Return the new LP token address.
-    //
-    // XXX Migrator must have allowance access to PancakeSwap LP tokens.
-    // CakeSwap must mint EXACTLY the same amount of CakeSwap LP tokens or
-    // else something bad will happen. Traditional PancakeSwap does not
-    // do that so be careful!
-    function migrate(IBEP20 token) external returns (IBEP20);
-}
-
-// MasterChef is the master of Cake. He can make Cake and he is a fair guy.
+// MasterApe is the master of BANANA AND BANANASPLIT. 
+// He can make Banana and he is a fair guy.
 //
 // Note that it's ownable and the owner wields tremendous power. The ownership
-// will be transferred to a governance smart contract once CAKE is sufficiently
+// will be transferred to a governance smart contract once BANANA is sufficiently
 // distributed and the community can show to govern itself.
 //
 // Have fun reading it. Hopefully it's bug-free. God bless.
-contract MasterChef is Ownable {
+contract MasterApe is Ownable {
     using SafeMath for uint256;
     using SafeBEP20 for IBEP20;
 
@@ -39,10 +33,10 @@ contract MasterChef is Ownable {
         uint256 amount;     // How many LP tokens the user has provided.
         uint256 rewardDebt; // Reward debt. See explanation below.
         //
-        // We do some fancy math here. Basically, any point in time, the amount of CAKEs
+        // We do some fancy math here. Basically, any point in time, the amount of BANANAs
         // entitled to a user but is pending to be distributed is:
         //
-        //   pending reward = (user.amount * pool.accCakePerShare) - user.rewardDebt
+        //   pending reward = (user.amount * pool.accBananaPerShare) - user.rewardDebt
         //
         // Whenever a user deposits or withdraws LP tokens to a pool. Here's what happens:
         //   1. The pool's `accCakePerShare` (and `lastRewardBlock`) gets updated.
@@ -54,23 +48,23 @@ contract MasterChef is Ownable {
     // Info of each pool.
     struct PoolInfo {
         IBEP20 lpToken;           // Address of LP token contract.
-        uint256 allocPoint;       // How many allocation points assigned to this pool. CAKEs to distribute per block.
-        uint256 lastRewardBlock;  // Last block number that CAKEs distribution occurs.
-        uint256 accCakePerShare; // Accumulated CAKEs per share, times 1e12. See below.
+        uint256 allocPoint;       // How many allocation points assigned to this pool. BANANAs to distribute per block.
+        uint256 lastRewardBlock;  // Last block number that BANANAs distribution occurs.
+        uint256 accCakePerShare; // Accumulated BANANAs per share, times 1e12. See below.
     }
 
-    // The CAKE TOKEN!
-    CakeToken public cake;
-    // The SYRUP TOKEN!
-    SyrupBar public syrup;
+    // The BANANA TOKEN!
+    BananaToken public cake;
+    // The BANANA SPLIT TOKEN!
+    BananaSplitBar public syrup;
     // Dev address.
     address public devaddr;
-    // CAKE tokens created per block.
+    // BANANA tokens created per block.
     uint256 public cakePerBlock;
-    // Bonus muliplier for early cake makers.
-    uint256 public BONUS_MULTIPLIER = 1;
-    // The migrator contract. It has a lot of power. Can only be set through governance (owner).
-    IMigratorChef public migrator;
+    // Bonus muliplier for early banana makers.
+    uint256 public BONUS_MULTIPLIER;
+
+    uint256 public bonusEndBlock;
 
     // Info of each pool.
     PoolInfo[] public poolInfo;
@@ -78,7 +72,7 @@ contract MasterChef is Ownable {
     mapping (uint256 => mapping (address => UserInfo)) public userInfo;
     // Total allocation points. Must be the sum of all allocation points in all pools.
     uint256 public totalAllocPoint = 0;
-    // The block number when CAKE mining starts.
+    // The block number when BANANA mining starts.
     uint256 public startBlock;
 
     event Deposit(address indexed user, uint256 indexed pid, uint256 amount);
@@ -86,21 +80,25 @@ contract MasterChef is Ownable {
     event EmergencyWithdraw(address indexed user, uint256 indexed pid, uint256 amount);
 
     constructor(
-        CakeToken _cake,
-        SyrupBar _syrup,
+        BananaToken _banana,
+        BananaSplitBar _bananaSplit,
         address _devaddr,
-        uint256 _cakePerBlock,
-        uint256 _startBlock
+        uint256 _bananaPerBlock,
+        uint256 _startBlock,
+        uint256 _multiplier,
+        uint256 _bonusEndBlock
     ) public {
-        cake = _cake;
-        syrup = _syrup;
+        cake = _banana;
+        syrup = _bananaSplit;
         devaddr = _devaddr;
-        cakePerBlock = _cakePerBlock;
+        cakePerBlock = _bananaPerBlock;
         startBlock = _startBlock;
+        BONUS_MULTIPLIER = _multiplier;
+        bonusEndBlock = _bonusEndBlock;
 
         // staking pool
         poolInfo.push(PoolInfo({
-            lpToken: _cake,
+            lpToken: _banana,
             allocPoint: 1000,
             lastRewardBlock: startBlock,
             accCakePerShare: 0
@@ -108,6 +106,11 @@ contract MasterChef is Ownable {
 
         totalAllocPoint = 1000;
 
+    }
+
+    modifier validatePool(uint256 _pid) {
+        require(_pid < poolInfo.length, "validatePool: pool exists?");
+        _;
     }
 
     function updateMultiplier(uint256 multiplierNumber) public onlyOwner {
@@ -118,12 +121,21 @@ contract MasterChef is Ownable {
         return poolInfo.length;
     }
 
+    // Detects whether the given pool already exists
+    function checkPoolDuplicate(IBEP20 _lpToken) public view {
+        uint256 length = poolInfo.length;
+        for (uint256 _pid = 0; _pid < length; _pid++) {
+            require(poolInfo[_pid].lpToken != _lpToken, "add: existing pool");
+        }
+    }
+
     // Add a new lp to the pool. Can only be called by the owner.
     // XXX DO NOT add the same LP token more than once. Rewards will be messed up if you do.
     function add(uint256 _allocPoint, IBEP20 _lpToken, bool _withUpdate) public onlyOwner {
         if (_withUpdate) {
             massUpdatePools();
         }
+        checkPoolDuplicate(_lpToken);
         uint256 lastRewardBlock = block.number > startBlock ? block.number : startBlock;
         totalAllocPoint = totalAllocPoint.add(_allocPoint);
         poolInfo.push(PoolInfo({
@@ -135,7 +147,7 @@ contract MasterChef is Ownable {
         updateStakingPool();
     }
 
-    // Update the given pool's CAKE allocation point. Can only be called by the owner.
+    // Update the given pool's BANANA allocation point. Can only be called by the owner.
     function set(uint256 _pid, uint256 _allocPoint, bool _withUpdate) public onlyOwner {
         if (_withUpdate) {
             massUpdatePools();
@@ -161,29 +173,20 @@ contract MasterChef is Ownable {
         }
     }
 
-    // Set the migrator contract. Can only be called by the owner.
-    function setMigrator(IMigratorChef _migrator) public onlyOwner {
-        migrator = _migrator;
-    }
-
-    // Migrate lp token to another lp contract. Can be called by anyone. We trust that migrator contract is good.
-    function migrate(uint256 _pid) public {
-        require(address(migrator) != address(0), "migrate: no migrator");
-        PoolInfo storage pool = poolInfo[_pid];
-        IBEP20 lpToken = pool.lpToken;
-        uint256 bal = lpToken.balanceOf(address(this));
-        lpToken.safeApprove(address(migrator), bal);
-        IBEP20 newLpToken = migrator.migrate(lpToken);
-        require(bal == newLpToken.balanceOf(address(this)), "migrate: bad");
-        pool.lpToken = newLpToken;
-    }
-
     // Return reward multiplier over the given _from to _to block.
     function getMultiplier(uint256 _from, uint256 _to) public view returns (uint256) {
-        return _to.sub(_from).mul(BONUS_MULTIPLIER);
+        if (_to <= bonusEndBlock) {
+            return _to.sub(_from).mul(BONUS_MULTIPLIER);
+        } else if (_from >= bonusEndBlock) {
+            return _to.sub(_from);
+        } else {
+            return bonusEndBlock.sub(_from).mul(BONUS_MULTIPLIER).add(
+                _to.sub(bonusEndBlock)
+            );
+        }
     }
 
-    // View function to see pending CAKEs on frontend.
+    // View function to see pending BANANAs on frontend.
     function pendingCake(uint256 _pid, address _user) external view returns (uint256) {
         PoolInfo storage pool = poolInfo[_pid];
         UserInfo storage user = userInfo[_pid][_user];
@@ -207,7 +210,7 @@ contract MasterChef is Ownable {
 
 
     // Update reward variables of the given pool to be up-to-date.
-    function updatePool(uint256 _pid) public {
+    function updatePool(uint256 _pid) public validatePool(_pid) {
         PoolInfo storage pool = poolInfo[_pid];
         if (block.number <= pool.lastRewardBlock) {
             return;
@@ -225,10 +228,10 @@ contract MasterChef is Ownable {
         pool.lastRewardBlock = block.number;
     }
 
-    // Deposit LP tokens to MasterChef for CAKE allocation.
-    function deposit(uint256 _pid, uint256 _amount) public {
+    // Deposit LP tokens to MasterApe for BANANA allocation.
+    function deposit(uint256 _pid, uint256 _amount) public validatePool(_pid) {
 
-        require (_pid != 0, 'deposit CAKE by staking');
+        require (_pid != 0, 'deposit BANANA by staking');
 
         PoolInfo storage pool = poolInfo[_pid];
         UserInfo storage user = userInfo[_pid][msg.sender];
@@ -247,10 +250,9 @@ contract MasterChef is Ownable {
         emit Deposit(msg.sender, _pid, _amount);
     }
 
-    // Withdraw LP tokens from MasterChef.
-    function withdraw(uint256 _pid, uint256 _amount) public {
-
-        require (_pid != 0, 'withdraw CAKE by unstaking');
+    // Withdraw LP tokens from MasterApe.
+    function withdraw(uint256 _pid, uint256 _amount) public validatePool(_pid) {
+        require (_pid != 0, 'withdraw BANANA by unstaking');
         PoolInfo storage pool = poolInfo[_pid];
         UserInfo storage user = userInfo[_pid][msg.sender];
         require(user.amount >= _amount, "withdraw: not good");
@@ -268,7 +270,7 @@ contract MasterChef is Ownable {
         emit Withdraw(msg.sender, _pid, _amount);
     }
 
-    // Stake CAKE tokens to MasterChef
+    // Stake BANANA tokens to MasterApe
     function enterStaking(uint256 _amount) public {
         PoolInfo storage pool = poolInfo[0];
         UserInfo storage user = userInfo[0][msg.sender];
@@ -289,7 +291,7 @@ contract MasterChef is Ownable {
         emit Deposit(msg.sender, 0, _amount);
     }
 
-    // Withdraw CAKE tokens from STAKING.
+    // Withdraw BANANA tokens from STAKING.
     function leaveStaking(uint256 _amount) public {
         PoolInfo storage pool = poolInfo[0];
         UserInfo storage user = userInfo[0][msg.sender];
@@ -319,7 +321,15 @@ contract MasterChef is Ownable {
         user.rewardDebt = 0;
     }
 
-    // Safe cake transfer function, just in case if rounding error causes pool to not have enough CAKEs.
+    function getPoolInfo(uint256 _pid) public view
+    returns(address lpToken, uint256 allocPoint, uint256 lastRewardBlock, uint256 accCakePerShare) {
+        return (address(poolInfo[_pid].lpToken),
+            poolInfo[_pid].allocPoint,
+            poolInfo[_pid].lastRewardBlock,
+            poolInfo[_pid].accCakePerShare);
+    }
+
+    // Safe cake transfer function, just in case if rounding error causes pool to not have enough BANANAs.
     function safeCakeTransfer(address _to, uint256 _amount) internal {
         syrup.safeCakeTransfer(_to, _amount);
     }
