@@ -15,6 +15,10 @@ As MasterApe is fork of Pancake's MasterChef, we want to be transparent about th
 - Helper view functions. View functions can only read data from the contract, but not alter anything which means these can not be used for attacks. 
 - Only one admin. A recent project was exploited that used multiple forms of admins to control the project. An admin function that was not timelocked was used to make the exploit. We want the timelock to have full control over the contract so there are no surprises
 
+## Architecture
+For a general overview of the architecture check out this diagram: 
+![banana-farm-architecture](./images/ApeSwap-Architecture.png)
+
 ## Deployed Contracts / Hash
 
 ### BSCMAINNET
