@@ -5,6 +5,7 @@ const BananaToken = artifacts.require("BananaToken");
 const BananaSplitBar = artifacts.require("BananaSplitBar");
 const MultiCall = artifacts.require("MultiCall");
 const Timelock = artifacts.require("Timelock");
+const ApeSwapBurn = artifacts.require("ApeSwapBurn");
 const BnbStaking = artifacts.require("BnbStaking");
 // TODO: Import UniswapInterface and create liquidity pool from the start
 // let specificInstance = await MetaCoin.at("0x1234...");
@@ -12,7 +13,7 @@ const BnbStaking = artifacts.require("BnbStaking");
 // TODO: Use web3 to obtain current block
 // https://bscscan.com/
 const CURRENT_BLOCK = 4777556
-const INITIAL_MINT = '50000';
+const INITIAL_MINT = '25000';
 const TOKENS_PER_BLOCK = '10';
 const BLOCKS_PER_HOUR = (3600 / 3) // 3sec Block Time
 const BLOCKS_PER_DAY = 24 * BLOCKS_PER_HOUR
@@ -136,6 +137,11 @@ module.exports = async function(deployer, network, accounts) {
          */
         return deployer.deploy(Timelock, currentAccount, TIMELOCK_DELAY_SECS);
     }).then(()=> {
+        /**
+         * Deploy ApeSwapBurn
+         */
+        return deployer.deploy(ApeSwapBurn);
+    }).then(()=> {
         console.table({
             MasterApe:MasterApe.address,
             SupportApe:SupportApe.address,
@@ -143,6 +149,7 @@ module.exports = async function(deployer, network, accounts) {
             BananaSplitBar:BananaSplitBar.address,
             MultiCall:MultiCall.address,
             Timelock:Timelock.address,
+            ApeSwapBurn:ApeSwapBurn.address
             // BnbStaking:BnbStaking.address,
         })
     });
