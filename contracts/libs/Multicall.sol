@@ -1,6 +1,16 @@
 pragma solidity >=0.5.0;
 pragma experimental ABIEncoderV2;
 
+/*
+ * ApeSwapFinance 
+ * App:             https://apeswap.finance
+ * Medium:          https://medium/@ape_swap    
+ * Twitter:         https://twitter.com/ape_swap 
+ * Telegram:        https://t.me/ape_swap
+ * Announcements:   https://t.me/ape_swap_news
+ * GitHub:          https://github.com/ApeSwapFinance
+ */
+
 /// @title Multicall - Aggregate results from multiple read-only function calls
 /// @author Michael Elliot <mike@makerdao.com>
 /// @author Joshua Levine <joshua@makerdao.com>

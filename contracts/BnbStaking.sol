@@ -192,8 +192,10 @@ contract BnbStaking is Ownable {
             }
         }
         if(msg.value > 0) {
+            // Deposits the BNB value of tx into WBNB
             IWBNB(WBNB).deposit{value: msg.value}();
             assert(IWBNB(WBNB).transfer(address(this), msg.value));
+            // Add the amount deposited to the user's balance
             user.amount = user.amount.add(msg.value);
         }
         user.rewardDebt = user.amount.mul(pool.accCakePerShare).div(1e12);
@@ -219,6 +221,7 @@ contract BnbStaking is Ownable {
         }
         if(_amount > 0) {
             user.amount = user.amount.sub(_amount);
+            // Withdraw the user's amont of BNB value from WBNB
             IWBNB(WBNB).withdraw(_amount);
             safeTransferBNB(address(msg.sender), _amount);
         }
