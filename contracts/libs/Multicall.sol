@@ -4,7 +4,7 @@ pragma experimental ABIEncoderV2;
 /*
  * ApeSwapFinance 
  * App:             https://apeswap.finance
- * Medium:          https://medium/@ape_swap    
+ * Medium:          https://medium.com/@ape_swap    
  * Twitter:         https://twitter.com/ape_swap 
  * Telegram:        https://t.me/ape_swap
  * Announcements:   https://t.me/ape_swap_news
