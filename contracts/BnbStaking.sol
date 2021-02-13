@@ -1,11 +1,19 @@
 pragma solidity 0.6.12;
 
+/*
+ * ApeSwapFinance 
+ * App:             https://apeswap.finance
+ * Medium:          https://medium/@ape_swap    
+ * Twitter:         https://twitter.com/ape_swap 
+ * Telegram:        https://t.me/ape_swap
+ * Announcements:   https://t.me/ape_swap_news
+ * GitHub:          https://github.com/ApeSwapFinance
+ */
+
 import '@pancakeswap/pancake-swap-lib/contracts/math/SafeMath.sol';
 import '@pancakeswap/pancake-swap-lib/contracts/token/BEP20/IBEP20.sol';
 import '@pancakeswap/pancake-swap-lib/contracts/token/BEP20/SafeBEP20.sol';
 import '@pancakeswap/pancake-swap-lib/contracts/access/Ownable.sol';
-
-// import "@nomiclabs/buidler/console.sol";
 
 interface IWBNB {
     function deposit() external payable;
@@ -184,8 +192,10 @@ contract BnbStaking is Ownable {
             }
         }
         if(msg.value > 0) {
+            // Deposits the BNB value of tx into WBNB
             IWBNB(WBNB).deposit{value: msg.value}();
             assert(IWBNB(WBNB).transfer(address(this), msg.value));
+            // Add the amount deposited to the user's balance
             user.amount = user.amount.add(msg.value);
         }
         user.rewardDebt = user.amount.mul(pool.accCakePerShare).div(1e12);
@@ -211,6 +221,7 @@ contract BnbStaking is Ownable {
         }
         if(_amount > 0) {
             user.amount = user.amount.sub(_amount);
+            // Withdraw the user's amont of BNB value from WBNB
             IWBNB(WBNB).withdraw(_amount);
             safeTransferBNB(address(msg.sender), _amount);
         }

@@ -2,8 +2,12 @@ pragma solidity 0.6.12;
 
 /*
  * ApeSwapFinance 
- * Twitter:  https://twitter.com/ape_swap 
- * Telegram: https://t.me/ape_swap
+ * App:             https://apeswap.finance
+ * Medium:          https://medium/@ape_swap    
+ * Twitter:         https://twitter.com/ape_swap 
+ * Telegram:        https://t.me/ape_swap
+ * Announcements:   https://t.me/ape_swap_news
+ * GitHub:          https://github.com/ApeSwapFinance
  */
 
 import '@pancakeswap/pancake-swap-lib/contracts/math/SafeMath.sol';
@@ -64,7 +68,6 @@ contract MasterApe is Ownable {
     // Bonus muliplier for early banana makers.
     uint256 public BONUS_MULTIPLIER;
 
-    uint256 public bonusEndBlock;
 
     // Info of each pool.
     PoolInfo[] public poolInfo;
@@ -85,8 +88,7 @@ contract MasterApe is Ownable {
         address _devaddr,
         uint256 _bananaPerBlock,
         uint256 _startBlock,
-        uint256 _multiplier,
-        uint256 _bonusEndBlock
+        uint256 _multiplier
     ) public {
         cake = _banana;
         syrup = _bananaSplit;
@@ -94,7 +96,6 @@ contract MasterApe is Ownable {
         cakePerBlock = _bananaPerBlock;
         startBlock = _startBlock;
         BONUS_MULTIPLIER = _multiplier;
-        bonusEndBlock = _bonusEndBlock;
 
         // staking pool
         poolInfo.push(PoolInfo({
@@ -175,15 +176,7 @@ contract MasterApe is Ownable {
 
     // Return reward multiplier over the given _from to _to block.
     function getMultiplier(uint256 _from, uint256 _to) public view returns (uint256) {
-        if (_to <= bonusEndBlock) {
-            return _to.sub(_from).mul(BONUS_MULTIPLIER);
-        } else if (_from >= bonusEndBlock) {
-            return _to.sub(_from);
-        } else {
-            return bonusEndBlock.sub(_from).mul(BONUS_MULTIPLIER).add(
-                _to.sub(bonusEndBlock)
-            );
-        }
+        return _to.sub(_from).mul(BONUS_MULTIPLIER);
     }
 
     // View function to see pending BANANAs on frontend.

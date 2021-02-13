@@ -1,3 +1,14 @@
+/*
+ * ApeSwapFinance 
+ * App:             https://apeswap.finance
+ * Medium:          https://medium/@ape_swap    
+ * Twitter:         https://twitter.com/ape_swap 
+ * Telegram:        https://t.me/ape_swap
+ * Announcements:   https://t.me/ape_swap_news
+ * GitHub:          https://github.com/ApeSwapFinance
+ */
+
+
 // COPIED FROM https://github.com/compound-finance/compound-protocol/blob/master/contracts/Governance/GovernorAlpha.sol
 // Copyright 2020 Compound Labs, Inc.
 // Redistribution and use in source and binary forms, with or without modification, are permitted provided that the following conditions are met:
