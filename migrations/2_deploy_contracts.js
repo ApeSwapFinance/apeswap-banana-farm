@@ -7,26 +7,34 @@ const MultiCall = artifacts.require("MultiCall");
 const Timelock = artifacts.require("Timelock");
 const ApeSwapBurn = artifacts.require("ApeSwapBurn");
 const BnbStaking = artifacts.require("BnbStaking");
-// TODO: Import UniswapInterface and create liquidity pool from the start
-// let specificInstance = await MetaCoin.at("0x1234...");
 
-// TODO: Use web3 to obtain current block
-// https://bscscan.com/
-const CURRENT_BLOCK = 4777556
 const INITIAL_MINT = '25000';
-const TOKENS_PER_BLOCK = '10';
 const BLOCKS_PER_HOUR = (3600 / 3) // 3sec Block Time
+const TOKENS_PER_BLOCK = '10';
 const BLOCKS_PER_DAY = 24 * BLOCKS_PER_HOUR
-const TIMELOCK_DELAY_SECS = (3600 * 6);
+const TIMELOCK_DELAY_SECS = (3600 * 24); 
+const STARTING_BLOCK = 4853714;
+const REWARDS_START = String(STARTING_BLOCK + (BLOCKS_PER_HOUR * 6))
+const FARM_FEE_ACCOUNT = '0xCEf34e4db130c8A64493517985b23af5B13E8cc6'
  
 const logTx = (tx) => {
     console.dir(tx, {depth: 3});
 }
 
+// let block = await web3.eth.getBlock("latest")
 module.exports = async function(deployer, network, accounts) {
+    console.log({network});
+
     let currentAccount = accounts[0];
-    if(network=='testnet') {
+    let feeAccount = FARM_FEE_ACCOUNT;
+    if (network == 'testnet') {
+        console.log(`WARNING: Updating current account for testnet`)
         currentAccount = accounts[1];
+    }
+
+    if (network == 'development' || network == 'testnet') {
+        console.log(`WARNING: Updating feeAcount for testnet/development`)
+        feeAccount = accounts[3];
     }
 
     let bananaTokenInstance;
@@ -53,14 +61,14 @@ module.exports = async function(deployer, network, accounts) {
         /**
          * Deploy MasterApe
          */
-        if(network == "bsc") {
+        if(network == "bsc" || network == "bsc-fork") {
             console.log(`Deploying MasterApe with BSC MAINNET settings.`)
             return deployer.deploy(MasterApe, 
                 BananaToken.address,                                         // _banana
                 BananaSplitBar.address,                                      // _bananaSplit
-                currentAccount,                                              // _devaddr
+                feeAccount,                                                   // _devaddr
                 BigNumber.from(TOKENS_PER_BLOCK).mul(BigNumber.from(String(10**18))),  // _bananaPerBlock
-                CURRENT_BLOCK + (BLOCKS_PER_HOUR * 6),                       // _startBlock
+                REWARDS_START,                                                // _startBlock
                 4                                                            // _multiplier
             )
         }
@@ -68,7 +76,7 @@ module.exports = async function(deployer, network, accounts) {
         return deployer.deploy(MasterApe, 
             BananaToken.address, 
             BananaSplitBar.address, 
-            currentAccount,
+            feeAccount,
             BigNumber.from(TOKENS_PER_BLOCK).mul(BigNumber.from(String(10**18))), 
             0, 
             4
@@ -91,20 +99,20 @@ module.exports = async function(deployer, network, accounts) {
         /**
          * Deploy SupportApe
          */
-        if(network == "bsc") {
+        if(network == "bsc" || network == "bsc-fork") {
             console.log(`Deploying SupportApe with BSC MAINNET settings.`)
             return deployer.deploy(SupportApe, 
                 BananaSplitBar.address,                  //_bananaSplit
                 BigNumber.from(TOKENS_PER_BLOCK).mul(BigNumber.from(String(10**18))),                                      // _rewardPerBlock
-                CURRENT_BLOCK + (BLOCKS_PER_HOUR * 6),   // _startBlock
-                CURRENT_BLOCK + (BLOCKS_PER_DAY * 365),  // _endBlock
+                REWARDS_START,                            // _startBlock
+                STARTING_BLOCK + (BLOCKS_PER_DAY * 365),  // _endBlock
             )
         }
         console.log(`Deploying SupportApe with DEV/TEST settings`)
         return deployer.deploy(SupportApe, 
             BananaSplitBar.address,                  //_bananaSplit
             BigNumber.from(TOKENS_PER_BLOCK).mul(BigNumber.from(String(10**18))),                                      // _rewardPerBlock
-            CURRENT_BLOCK + (BLOCKS_PER_HOUR * 6),   // _startBlock
+            STARTING_BLOCK + (BLOCKS_PER_HOUR * 6),   // _startBlock
             '99999999999999999',                      // _endBlock
         )
     }).then(()=> {
@@ -121,7 +129,7 @@ module.exports = async function(deployer, network, accounts) {
         //     address _adminAddress,
         //     address _wbnb
         // ) 
-        if(network == "bsc") {
+        if(network == "bsc" || network == "bsc-fork") {
 
         }
 
@@ -142,6 +150,7 @@ module.exports = async function(deployer, network, accounts) {
          */
         return deployer.deploy(ApeSwapBurn);
     }).then(()=> {
+        console.log('Rewards Start at block: ', REWARDS_START)
         console.table({
             MasterApe:MasterApe.address,
             SupportApe:SupportApe.address,

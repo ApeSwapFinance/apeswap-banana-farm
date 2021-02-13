@@ -5,6 +5,7 @@
   "scripts": {
     "migrate:dev": "truffle migrate --network development --reset",
     "migrate:testnet": "truffle migrate --network testnet --reset",
+    "migrate:bsc": "truffle migrate --network bsc --dry-run",
     "gen:standard":"~/.local/bin/solt write contracts --npm",
     "compile": "truffle compile --network bscTestnet",
     "test": "npx builder test",
