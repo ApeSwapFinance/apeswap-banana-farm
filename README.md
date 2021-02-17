@@ -17,12 +17,6 @@ As MasterApe is fork of Pancake's MasterChef, we want to be transparent about th
 
 ### BSCMAINNET
 
-- BananaToken - [contract-address](https://bscscan.com/token/)
-- MasterApe - https://bscscan.com/address/
-- (Uni|Cake)swapV2Factory - https://bscscan.com/address/
-- (Uni|Cake)swapV2Router02 - https://bscscan.com/address/
-- UniswapV2Pair init code hash - ``
-- MultiCall - 
 
 #### Dex Contracts
 - ApeFactory: [0x0841BD0B734E4F5853f0dD8d7Ea041c241fb0Da6](https://bscscan.com/address/0x0841BD0B734E4F5853f0dD8d7Ea041c241fb0Da6)
