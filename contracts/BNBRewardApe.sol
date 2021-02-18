@@ -15,13 +15,6 @@ import '@pancakeswap/pancake-swap-lib/contracts/token/BEP20/IBEP20.sol';
 import '@pancakeswap/pancake-swap-lib/contracts/token/BEP20/SafeBEP20.sol';
 import '@pancakeswap/pancake-swap-lib/contracts/access/Ownable.sol';
 
-// import "@nomiclabs/buidler/console.sol";
-
-interface IWBNB {
-    function deposit() external payable;
-    function transfer(address to, uint256 value) external returns (bool);
-    function withdraw(uint256) external;
-}
 
 contract BNBRewardApe is Ownable {
     using SafeMath for uint256;
@@ -43,8 +36,6 @@ contract BNBRewardApe is Ownable {
 
     // The Reward TOKEN!
     IBEP20 public stakeToken;
-    // WBNB
-    IWBNB public wbnb;
 
     // Reward tokens created per block.
     uint256 public rewardPerBlock;
@@ -65,12 +56,10 @@ contract BNBRewardApe is Ownable {
 
     constructor(
         IBEP20 _stakeToken,
-        IWBNB _wbnb,
         uint256 _rewardPerBlock,
         uint256 _startBlock
     ) public {
         stakeToken = _stakeToken;
-        wbnb = _wbnb;
         rewardPerBlock = _rewardPerBlock;
         startBlock = _startBlock;
 
@@ -112,7 +101,7 @@ contract BNBRewardApe is Ownable {
             return;
         }
         uint256 lpSupply = pool.lpToken.balanceOf(address(this));
-        if (lpSupply == 0) {
+        if (lpSupply == 0 || rewardBalance() == 0) {
             pool.lastRewardBlock = block.number;
             return;
         }
@@ -131,7 +120,10 @@ contract BNBRewardApe is Ownable {
     }
 
 
-    // Stake stake tokens to SmartApe
+    /// Deposit staking token into the contract to earn rewards. 
+    /// @dev Since this contract needs to be supplied with rewards we are 
+    ///  sending the balance of the contract if the pending rewards are higher
+    /// @param _amount The amount of staking tokens to deposit
     function deposit(uint256 _amount) public {
         PoolInfo storage pool = poolInfo[0];
         UserInfo storage user = userInfo[msg.sender];
@@ -139,9 +131,12 @@ contract BNBRewardApe is Ownable {
         if (user.amount > 0) {
             uint256 pending = user.amount.mul(pool.accRewardTokenPerShare).div(1e12).sub(user.rewardDebt);
             if(pending > 0) {
-                // Withdraw pending BNB rewards value from wbnb
-                IWBNB(wbnb).withdraw(pending);
-                safeTransferBNB(address(msg.sender), pending);
+                uint256 currentRewardBalance = rewardBalance();
+                if(pending > currentRewardBalance) {
+                    safeTransferBNB(address(msg.sender), currentRewardBalance);
+                } else {
+                    safeTransferBNB(address(msg.sender), pending);
+                }
             }
         }
         if(_amount > 0) {
@@ -153,7 +148,8 @@ contract BNBRewardApe is Ownable {
         emit Deposit(msg.sender, _amount);
     }
 
-    // Withdraw stake tokens
+    /// Withdraw rewards and/or staked tokens. Pass a 0 amount to withdraw only rewards 
+    /// @param _amount The amount of staking tokens to withdraw
     function withdraw(uint256 _amount) public {
         PoolInfo storage pool = poolInfo[0];
         UserInfo storage user = userInfo[msg.sender];
@@ -161,9 +157,12 @@ contract BNBRewardApe is Ownable {
         updatePool(0);
         uint256 pending = user.amount.mul(pool.accRewardTokenPerShare).div(1e12).sub(user.rewardDebt);
         if(pending > 0) {
-            // Withdraw the BNB rewards value from WBNB
-            IWBNB(wbnb).withdraw(pending);
-            safeTransferBNB(address(msg.sender), pending);
+            uint256 currentRewardBalance = rewardBalance();
+            if(pending > currentRewardBalance) {
+                safeTransferBNB(address(msg.sender), currentRewardBalance);
+            } else {
+                safeTransferBNB(address(msg.sender), pending);
+            }
         }
         if(_amount > 0) {
             user.amount = user.amount.sub(_amount);
@@ -175,21 +174,27 @@ contract BNBRewardApe is Ownable {
         emit Withdraw(msg.sender, _amount);
     }
 
+    /// Obtain the reward balance of this contract
+    /// @return wei balace of conract
+    function rewardBalance() public view returns (uint256) {
+        return payable(address(this)).balance;
+    }
+
     // Deposit Rewards into contract
-    function depositBNBRewards(uint256 _amount) external payable{
+    function depositBNBRewards() external payable{
         require(msg.value > 0, 'Message has no BNB value to deposit into contract.');
-        // Deposits the BNB value of tx into WBNB
-        IWBNB(wbnb).deposit{value: msg.value}();
-        assert(IWBNB(wbnb).transfer(address(this), msg.value));
-        
         emit DepositBNBRewards(msg.value);
     }
 
+    /// @param to address to send BNB to
+    /// @param value wei value of BNB to transfer
     function safeTransferBNB(address to, uint256 value) internal {
+        // Transfer BNB to address
         (bool success, ) = to.call{gas: 23000, value: value}("");
-        // (bool success,) = to.call{value:value}(new bytes(0));
         require(success, 'TransferHelper: BNB_TRANSFER_FAILED');
     }
+
+    /* Emergency Functions */ 
 
     // Withdraw without caring about rewards. EMERGENCY ONLY.
     function emergencyWithdraw() public {
@@ -204,7 +209,6 @@ contract BNBRewardApe is Ownable {
     // Withdraw reward. EMERGENCY ONLY.
     function emergencyRewardWithdraw(uint256 _amount) public onlyOwner {
         // Withdraw the BNB rewards value from WBNB
-        IWBNB(wbnb).withdraw(_amount);
         safeTransferBNB(address(msg.sender), _amount);
     }
 
