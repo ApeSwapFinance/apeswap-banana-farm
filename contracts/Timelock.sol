@@ -1,11 +1,11 @@
 /*
- * ApeSwapFinance 
- * App:             https://apeswap.finance
- * Medium:          https://medium.com/@ape_swap    
- * Twitter:         https://twitter.com/ape_swap 
- * Telegram:        https://t.me/ape_swap
- * Announcements:   https://t.me/ape_swap_news
- * GitHub:          https://github.com/ApeSwapFinance
+ * CookiesSwapFinance 
+ * App:             https://cookiesswap.finance
+ * Medium:          https://medium.com/@cookies_swap    
+ * Twitter:         https://twitter.com/cookies_swap 
+ * Telegram:        https://t.me/cookies_swap
+ * Announcements:   https://t.me/cookies_swap_news
+ * GitHub:          https://github.com/CookiesSwapFinance
  */
 
 
