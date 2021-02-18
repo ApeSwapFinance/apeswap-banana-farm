@@ -34,7 +34,7 @@ contract BNBRewardApe is Ownable {
         uint256 accRewardTokenPerShare; // Accumulated Rewards per share, times 1e12. See below.
     }
 
-    // The Reward TOKEN!
+    // The stake TOKEN!
     IBEP20 public stakeToken;
 
     // Reward tokens created per block.
