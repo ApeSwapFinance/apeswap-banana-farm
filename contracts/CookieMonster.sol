@@ -1,13 +1,13 @@
 pragma solidity 0.6.12;
 
 /*
- * ApeSwapFinance 
- * App:             https://apeswap.finance
- * Medium:          https://medium.com/@ape_swap    
- * Twitter:         https://twitter.com/ape_swap 
- * Telegram:        https://t.me/ape_swap
- * Announcements:   https://t.me/ape_swap_news
- * GitHub:          https://github.com/ApeSwapFinance
+ * CookiesSwapFinance 
+ * App:             https://cookiesswap.finance
+ * Medium:          https://medium.com/@cookies_swap    
+ * Twitter:         https://twitter.com/cookies_swap 
+ * Telegram:        https://t.me/cookies_swap
+ * Announcements:   https://t.me/cookies_swap_news
+ * GitHub:          https://github.com/CookiesSwapFinance
  */
 
 import '@pancakeswap/pancake-swap-lib/contracts/math/SafeMath.sol';
@@ -15,20 +15,20 @@ import '@pancakeswap/pancake-swap-lib/contracts/token/BEP20/IBEP20.sol';
 import '@pancakeswap/pancake-swap-lib/contracts/token/BEP20/SafeBEP20.sol';
 import '@pancakeswap/pancake-swap-lib/contracts/access/Ownable.sol';
 
-import "./BananaToken.sol";
-import "./BananaSplitBar.sol";
+import "./BTS.sol";
+import "./BTSSplitBar.sol";
 
 // import "@nomiclabs/buidler/console.sol";
 
-// MasterApe is the master of BANANA AND BANANASPLIT. 
-// He can make Banana and he is a fair guy.
+// CookieMonster is the master of BTS AND BTSSPLIT. 
+// He can make BTS and he is a fair guy.
 //
 // Note that it's ownable and the owner wields tremendous power. The ownership
-// will be transferred to a governance smart contract once BANANA is sufficiently
+// will be transferred to a governance smart contract once BTS is sufficiently
 // distributed and the community can show to govern itself.
 //
 // Have fun reading it. Hopefully it's bug-free. God bless.
-contract MasterApe is Ownable {
+contract CookieMonster is Ownable {
     using SafeMath for uint256;
     using SafeBEP20 for IBEP20;
 
@@ -37,10 +37,10 @@ contract MasterApe is Ownable {
         uint256 amount;     // How many LP tokens the user has provided.
         uint256 rewardDebt; // Reward debt. See explanation below.
         //
-        // We do some fancy math here. Basically, any point in time, the amount of BANANAs
+        // We do some fancy math here. Basically, any point in time, the amount of BTSs
         // entitled to a user but is pending to be distributed is:
         //
-        //   pending reward = (user.amount * pool.accBananaPerShare) - user.rewardDebt
+        //   pending reward = (user.amount * pool.accBTSPerShare) - user.rewardDebt
         //
         // Whenever a user deposits or withdraws LP tokens to a pool. Here's what happens:
         //   1. The pool's `accCakePerShare` (and `lastRewardBlock`) gets updated.
@@ -52,20 +52,20 @@ contract MasterApe is Ownable {
     // Info of each pool.
     struct PoolInfo {
         IBEP20 lpToken;           // Address of LP token contract.
-        uint256 allocPoint;       // How many allocation points assigned to this pool. BANANAs to distribute per block.
-        uint256 lastRewardBlock;  // Last block number that BANANAs distribution occurs.
-        uint256 accCakePerShare; // Accumulated BANANAs per share, times 1e12. See below.
+        uint256 allocPoint;       // How many allocation points assigned to this pool. BTSs to distribute per block.
+        uint256 lastRewardBlock;  // Last block number that BTSs distribution occurs.
+        uint256 accCakePerShare; // Accumulated BTSs per share, times 1e12. See below.
     }
 
-    // The BANANA TOKEN!
-    BananaToken public cake;
-    // The BANANA SPLIT TOKEN!
-    BananaSplitBar public syrup;
+    // The BTS TOKEN!
+    BTSToken public cake;
+    // The BTS SPLIT TOKEN!
+    BTSSplitBar public syrup;
     // Dev address.
     address public devaddr;
-    // BANANA tokens created per block.
+    // BTS tokens created per block.
     uint256 public cakePerBlock;
-    // Bonus muliplier for early banana makers.
+    // Bonus muliplier for early bisquits makers.
     uint256 public BONUS_MULTIPLIER;
 
 
@@ -75,7 +75,7 @@ contract MasterApe is Ownable {
     mapping (uint256 => mapping (address => UserInfo)) public userInfo;
     // Total allocation points. Must be the sum of all allocation points in all pools.
     uint256 public totalAllocPoint = 0;
-    // The block number when BANANA mining starts.
+    // The block number when BTS mining starts.
     uint256 public startBlock;
 
     event Deposit(address indexed user, uint256 indexed pid, uint256 amount);
@@ -83,23 +83,23 @@ contract MasterApe is Ownable {
     event EmergencyWithdraw(address indexed user, uint256 indexed pid, uint256 amount);
 
     constructor(
-        BananaToken _banana,
-        BananaSplitBar _bananaSplit,
+        BTSToken _BTS,
+        BTSSplitBar _bananaSplit,
         address _devaddr,
-        uint256 _bananaPerBlock,
+        uint256 _bisquitPerBlock,
         uint256 _startBlock,
         uint256 _multiplier
     ) public {
-        cake = _banana;
-        syrup = _bananaSplit;
+        cake = _bisquit;
+        syrup = _bisquitSplit;
         devaddr = _devaddr;
-        cakePerBlock = _bananaPerBlock;
+        cakePerBlock = _bisquitPerBlock;
         startBlock = _startBlock;
         BONUS_MULTIPLIER = _multiplier;
 
         // staking pool
         poolInfo.push(PoolInfo({
-            lpToken: _banana,
+            lpToken: _bisquit,
             allocPoint: 1000,
             lastRewardBlock: startBlock,
             accCakePerShare: 0
@@ -148,7 +148,7 @@ contract MasterApe is Ownable {
         updateStakingPool();
     }
 
-    // Update the given pool's BANANA allocation point. Can only be called by the owner.
+    // Update the given pool's BTS allocation point. Can only be called by the owner.
     function set(uint256 _pid, uint256 _allocPoint, bool _withUpdate) public onlyOwner {
         if (_withUpdate) {
             massUpdatePools();
@@ -179,7 +179,7 @@ contract MasterApe is Ownable {
         return _to.sub(_from).mul(BONUS_MULTIPLIER);
     }
 
-    // View function to see pending BANANAs on frontend.
+    // View function to see pending BTSs on frontend.
     function pendingCake(uint256 _pid, address _user) external view returns (uint256) {
         PoolInfo storage pool = poolInfo[_pid];
         UserInfo storage user = userInfo[_pid][_user];
@@ -221,10 +221,10 @@ contract MasterApe is Ownable {
         pool.lastRewardBlock = block.number;
     }
 
-    // Deposit LP tokens to MasterApe for BANANA allocation.
+    // Deposit LP tokens to CookieMonster for BTS allocation.
     function deposit(uint256 _pid, uint256 _amount) public validatePool(_pid) {
 
-        require (_pid != 0, 'deposit BANANA by staking');
+        require (_pid != 0, 'deposit BTS by staking');
 
         PoolInfo storage pool = poolInfo[_pid];
         UserInfo storage user = userInfo[_pid][msg.sender];
@@ -243,9 +243,9 @@ contract MasterApe is Ownable {
         emit Deposit(msg.sender, _pid, _amount);
     }
 
-    // Withdraw LP tokens from MasterApe.
+    // Withdraw LP tokens from CookieMonster.
     function withdraw(uint256 _pid, uint256 _amount) public validatePool(_pid) {
-        require (_pid != 0, 'withdraw BANANA by unstaking');
+        require (_pid != 0, 'withdraw BTS by unstaking');
         PoolInfo storage pool = poolInfo[_pid];
         UserInfo storage user = userInfo[_pid][msg.sender];
         require(user.amount >= _amount, "withdraw: not good");
@@ -263,7 +263,7 @@ contract MasterApe is Ownable {
         emit Withdraw(msg.sender, _pid, _amount);
     }
 
-    // Stake BANANA tokens to MasterApe
+    // Stake BTS tokens to CookieMonster
     function enterStaking(uint256 _amount) public {
         PoolInfo storage pool = poolInfo[0];
         UserInfo storage user = userInfo[0][msg.sender];
@@ -284,7 +284,7 @@ contract MasterApe is Ownable {
         emit Deposit(msg.sender, 0, _amount);
     }
 
-    // Withdraw BANANA tokens from STAKING.
+    // Withdraw BTS tokens from STAKING.
     function leaveStaking(uint256 _amount) public {
         PoolInfo storage pool = poolInfo[0];
         UserInfo storage user = userInfo[0][msg.sender];
@@ -322,7 +322,7 @@ contract MasterApe is Ownable {
             poolInfo[_pid].accCakePerShare);
     }
 
-    // Safe cake transfer function, just in case if rounding error causes pool to not have enough BANANAs.
+    // Safe cake transfer function, just in case if rounding error causes pool to not have enough BTSs.
     function safeCakeTransfer(address _to, uint256 _amount) internal {
         syrup.safeCakeTransfer(_to, _amount);
     }
