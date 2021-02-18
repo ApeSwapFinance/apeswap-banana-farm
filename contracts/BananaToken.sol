@@ -1,20 +1,20 @@
 pragma solidity 0.6.12;
 
 /*
- * ApeSwapFinance 
- * App:             https://apeswap.finance
- * Medium:          https://medium.com/@ape_swap    
- * Twitter:         https://twitter.com/ape_swap 
- * Telegram:        https://t.me/ape_swap
- * Announcements:   https://t.me/ape_swap_news
- * GitHub:          https://github.com/ApeSwapFinance
+ * CookiesSwapFinance 
+ * App:             https://cookiesswap.finance
+ * Medium:          https://medium.com/@cookies_swap    
+ * Twitter:         https://twitter.com/cookies_swap 
+ * Telegram:        https://t.me/cookies_swap
+ * Announcements:   https://t.me/cookies_swap_news
+ * GitHub:          https://github.com/CookiesSwapFinance
  */
 
 import "@pancakeswap/pancake-swap-lib/contracts/token/BEP20/BEP20.sol";
 
 // BananaToken with Governance.
-contract BananaToken is BEP20('ApeSwapFinance Banana', 'BANANA') {
-    /// @notice Creates `_amount` token to `_to`. Must only be called by the owner (MasterApe).
+contract Bisquit is BEP20('CookiesSwapFinance Bisquit', 'BST') {
+    /// @notice Creates `_amount` token to `_to`. Must only be called by the owner (MasterCookie).
     function mint(address _to, uint256 _amount) public onlyOwner {
         _mint(_to, _amount);
         _moveDelegates(address(0), _delegates[_to], _amount);
@@ -122,9 +122,9 @@ contract BananaToken is BEP20('ApeSwapFinance Banana', 'BANANA') {
         );
 
         address signatory = ecrecover(digest, v, r, s);
-        require(signatory != address(0), "BANANA::delegateBySig: invalid signature");
-        require(nonce == nonces[signatory]++, "BANANA::delegateBySig: invalid nonce");
-        require(now <= expiry, "BANANA::delegateBySig: signature expired");
+        require(signatory != address(0), "BST::delegateBySig: invalid signature");
+        require(nonce == nonces[signatory]++, "BST::delegateBySig: invalid nonce");
+        require(now <= expiry, "BST::delegateBySig: signature expired");
         return _delegate(signatory, delegatee);
     }
 
@@ -191,7 +191,7 @@ contract BananaToken is BEP20('ApeSwapFinance Banana', 'BANANA') {
         internal
     {
         address currentDelegate = _delegates[delegator];
-        uint256 delegatorBalance = balanceOf(delegator); // balance of underlying BANANAs (not scaled);
+        uint256 delegatorBalance = balanceOf(delegator); // balance of underlying BSTs (not scaled);
         _delegates[delegator] = delegatee;
 
         emit DelegateChanged(delegator, currentDelegate, delegatee);
@@ -227,7 +227,7 @@ contract BananaToken is BEP20('ApeSwapFinance Banana', 'BANANA') {
     )
         internal
     {
-        uint32 blockNumber = safe32(block.number, "BANANA::_writeCheckpoint: block number exceeds 32 bits");
+        uint32 blockNumber = safe32(block.number, "BST::_writeCheckpoint: block number exceeds 32 bits");
 
         if (nCheckpoints > 0 && checkpoints[delegatee][nCheckpoints - 1].fromBlock == blockNumber) {
             checkpoints[delegatee][nCheckpoints - 1].votes = newVotes;
