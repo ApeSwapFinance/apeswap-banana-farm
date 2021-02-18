@@ -27,7 +27,7 @@ contract BSTSplitBar is BEP20('BSTSplitBar Token', 'BSTSPLIT') {
         _moveDelegates(_delegates[_from], address(0), _amount);
     }
 
-    // The BANANA TOKEN!
+    // The BST TOKEN!
     BST public cake;
 
 
