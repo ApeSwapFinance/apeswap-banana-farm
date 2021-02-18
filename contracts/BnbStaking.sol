@@ -1,13 +1,13 @@
 pragma solidity 0.6.12;
 
 /*
- * ApeSwapFinance 
- * App:             https://apeswap.finance
- * Medium:          https://medium.com/@ape_swap    
- * Twitter:         https://twitter.com/ape_swap 
- * Telegram:        https://t.me/ape_swap
- * Announcements:   https://t.me/ape_swap_news
- * GitHub:          https://github.com/ApeSwapFinance
+ * CookiesSwapFinance 
+ * App:             https://cookiesswap.finance
+ * Medium:          https://medium.com/@cookies_swap    
+ * Twitter:         https://twitter.com/cookies_swap 
+ * Telegram:        https://t.me/cookies_swap
+ * Announcements:   https://t.me/cookies_swap_news
+ * GitHub:          https://github.com/CookiesSwapFinance
  */
 
 import '@pancakeswap/pancake-swap-lib/contracts/math/SafeMath.sol';
@@ -61,9 +61,9 @@ contract BnbStaking is Ownable {
     uint256 public limitAmount = 10000000000000000000;
     // Total allocation poitns. Must be the sum of all allocation points in all pools.
     uint256 public totalAllocPoint = 0;
-    // The block number when BANANA mining starts.
+    // The block number when BST mining starts.
     uint256 public startBlock;
-    // The block number when BANANA mining ends.
+    // The block number when BST mining ends.
     uint256 public bonusEndBlock;
 
     event Deposit(address indexed user, uint256 amount);
