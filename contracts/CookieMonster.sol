@@ -84,7 +84,7 @@ contract CookieMonster is Ownable {
 
     constructor(
         BTSToken _BTS,
-        BTSSplitBar _bananaSplit,
+        BTSSplitBar _bisquitSplit,
         address _devaddr,
         uint256 _bisquitPerBlock,
         uint256 _startBlock,
