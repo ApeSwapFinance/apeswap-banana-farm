@@ -16,7 +16,7 @@ As MasterApe is fork of Pancake's MasterChef, we want to be transparent about th
 - Only one admin. A recent project was exploited that used multiple forms of admins to control the project. An admin function that was not timelocked was used to make the exploit. We want the timelock to have full control over the contract so there are no surprises
 
 ## Updates BNBRewardApe 
-BNBRewardApe contract is a spin off of Pankcake's SmartChef contract, but will provide a means to distribute BNB for staking tokens in place of a BEP20 token. The updates may be found here: https://www.diffchecker.com/GmoOFFmR
+BNBRewardApe contract is a spin off of Pankcake's SmartChef contract, but will provide a means to distribute BNB for staking tokens in place of a BEP20 token. The updates may be found here: https://www.diffchecker.com/BWzELIHw
 
 ## Architecture
 For a general overview of the architecture check out this diagram: 

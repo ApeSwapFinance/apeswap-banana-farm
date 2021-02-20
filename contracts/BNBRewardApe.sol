@@ -40,6 +40,7 @@ contract BNBRewardApe is Ownable {
     // Reward tokens created per block.
     uint256 public rewardPerBlock;
 
+
     // Info of each pool.
     PoolInfo[] public poolInfo;
     // Info of each user that stakes LP tokens.
@@ -48,20 +49,25 @@ contract BNBRewardApe is Ownable {
     uint256 private totalAllocPoint = 0;
     // The block number when Reward mining starts.
     uint256 public startBlock;
+	// The block number when mining ends.	
+    uint256 public bonusEndBlock;
 
     event Deposit(address indexed user, uint256 amount);
     event DepositBNBRewards(uint256 amount);
     event Withdraw(address indexed user, uint256 amount);
     event EmergencyWithdraw(address indexed user, uint256 amount);
+    event EmergencyRewardWithdraw(address indexed user, uint256 amount);
 
     constructor(
         IBEP20 _stakeToken,
         uint256 _rewardPerBlock,
-        uint256 _startBlock
+        uint256 _startBlock,
+        uint256 _bonusEndBlock
     ) public {
         stakeToken = _stakeToken;
         rewardPerBlock = _rewardPerBlock;
         startBlock = _startBlock;
+        bonusEndBlock = _bonusEndBlock;
 
         // staking pool
         poolInfo.push(PoolInfo({
@@ -77,7 +83,13 @@ contract BNBRewardApe is Ownable {
 
     // Return reward multiplier over the given _from to _to block.
     function getMultiplier(uint256 _from, uint256 _to) public view returns (uint256) {
-        return _to.sub(_from);
+        if (_to <= bonusEndBlock) {
+            return _to.sub(_from);
+        } else if (_from >= bonusEndBlock) {
+            return 0;
+        } else {
+            return bonusEndBlock.sub(_from);
+        }
     }
 
     // View function to see pending Reward on frontend.
@@ -101,7 +113,7 @@ contract BNBRewardApe is Ownable {
             return;
         }
         uint256 lpSupply = pool.lpToken.balanceOf(address(this));
-        if (lpSupply == 0 || rewardBalance() == 0) {
+        if (lpSupply == 0) {
             pool.lastRewardBlock = block.number;
             return;
         }
@@ -132,10 +144,12 @@ contract BNBRewardApe is Ownable {
             uint256 pending = user.amount.mul(pool.accRewardTokenPerShare).div(1e12).sub(user.rewardDebt);
             if(pending > 0) {
                 uint256 currentRewardBalance = rewardBalance();
-                if(pending > currentRewardBalance) {
-                    safeTransferBNB(address(msg.sender), currentRewardBalance);
-                } else {
-                    safeTransferBNB(address(msg.sender), pending);
+                if(currentRewardBalance > 0) {
+                    if(pending > currentRewardBalance) {
+                        safeTransferBNB(address(msg.sender), currentRewardBalance);
+                    } else {
+                        safeTransferBNB(address(msg.sender), pending);
+                    }
                 }
             }
         }
@@ -158,10 +172,12 @@ contract BNBRewardApe is Ownable {
         uint256 pending = user.amount.mul(pool.accRewardTokenPerShare).div(1e12).sub(user.rewardDebt);
         if(pending > 0) {
             uint256 currentRewardBalance = rewardBalance();
-            if(pending > currentRewardBalance) {
-                safeTransferBNB(address(msg.sender), currentRewardBalance);
-            } else {
-                safeTransferBNB(address(msg.sender), pending);
+            if(currentRewardBalance > 0) {
+                if(pending > currentRewardBalance) {
+                    safeTransferBNB(address(msg.sender), currentRewardBalance);
+                } else {
+                    safeTransferBNB(address(msg.sender), pending);
+                }
             }
         }
         if(_amount > 0) {
@@ -181,7 +197,7 @@ contract BNBRewardApe is Ownable {
     }
 
     // Deposit Rewards into contract
-    function depositBNBRewards() external payable{
+    function depositBNBRewards() external payable {
         require(msg.value > 0, 'Message has no BNB value to deposit into contract.');
         emit DepositBNBRewards(msg.value);
     }
@@ -197,7 +213,7 @@ contract BNBRewardApe is Ownable {
     /* Emergency Functions */ 
 
     // Withdraw without caring about rewards. EMERGENCY ONLY.
-    function emergencyWithdraw() public {
+    function emergencyWithdraw() external {
         PoolInfo storage pool = poolInfo[0];
         UserInfo storage user = userInfo[msg.sender];
         pool.lpToken.safeTransfer(address(msg.sender), user.amount);
@@ -207,9 +223,11 @@ contract BNBRewardApe is Ownable {
     }
 
     // Withdraw reward. EMERGENCY ONLY.
-    function emergencyRewardWithdraw(uint256 _amount) public onlyOwner {
-        // Withdraw the BNB rewards value from WBNB
+    function emergencyRewardWithdraw(uint256 _amount) external onlyOwner {
+        require(_amount <= rewardBalance(), 'not enough rewards');
+        // Withdraw the BNB rewards
         safeTransferBNB(address(msg.sender), _amount);
+        emit EmergencyRewardWithdraw(msg.sender, _amount);
     }
 
 }
