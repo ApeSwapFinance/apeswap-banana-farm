@@ -1,0 +1,11 @@
+[
+    {
+        "name": "BNB Reward Pool",
+        "address": "0x0245c697a96045183048cdf18e9abae5b2237ff6",
+        "stakeToken": "0x603c7f932ED1fc6575303D8Fb018fDCBb0f39a95",
+        "rewardToken": "BNB",
+        "rewardPerBlock": 694444400000000,
+        "startBlock": 5034880,
+        "endBlock": 5178877
+    }
+]
