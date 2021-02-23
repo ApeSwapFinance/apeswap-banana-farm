@@ -37,7 +37,3 @@ For a general overview of the architecture check out this diagram:
 - SupportApe: [0x54aff400858Dcac39797a81894D9920f16972D1D](https://bscscan.com/address/0x54aff400858Dcac39797a81894D9920f16972D1D)
 - BananaSplitBar: [0x86Ef5e73EDB2Fea111909Fe35aFcC564572AcC06](https://bscscan.com/address/0x86Ef5e73EDB2Fea111909Fe35aFcC564572AcC06)
 - MultiCall: [0xc7Ad54Ff5C04A6E39D8C874A021aB0E42C45dE81](https://bscscan.com/address/0xc7Ad54Ff5C04A6E39D8C874A021aB0E42C45dE81)
-
-## Architecture
-For a general overview of the architecture check out this diagram: 
-![banana-farm-architecture](./images/ApeSwap-Architecture.png)
