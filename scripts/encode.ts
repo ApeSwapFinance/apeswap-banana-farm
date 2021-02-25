@@ -4,14 +4,14 @@ import { Contract } from '@ethersproject/contracts'
 import MasterApe from '../build/contracts/MasterApe.json'
 import Timelock from '../build/contracts/Timelock.json'
 
-// https://www.unixtimestamp.com/
 const currentTimestamp = Math.floor(Date.now() / 1000);
 const OFFSET = 100;
 /*
- * Set ETA of tx (secs) based on currentTimestamp or an absolute value
+ * Set unix ETA of tx (secs) based on currentTimestamp or an absolute value
+ * https://www.unixtimestamp.com/
  */ 
 // const ETA = currentTimestamp + OFFSET;
-const ETA = 1613966400
+const ETA = 1614207600
 
 /*
  * TESTNET or MAINNET? 
@@ -35,7 +35,7 @@ const encode = async () => {
     // set(uint256 _pid, uint256 _allocPoint, bool _withUpdate)
     // const masterApeTXEncoded = await masterApeContract.populateTransaction.set(1, 3555, false)
     // add(uint256 _allocPoint, IBEP20 _lpToken, bool _withUpdate)
-    const masterApeTXEncoded = await masterApeContract.populateTransaction.add(1000, "0x9949E1DB416a8a05A0cAC0bA6Ea152ba8729e893", false)
+    const masterApeTXEncoded = await masterApeContract.populateTransaction.add(800, "0x51bB531A5253837A23cE8de478a4941A71A4202C", false)
 
     // queueTransaction(address target, uint value, string memory signature, bytes memory data, uint eta)
     const timelockQueueEncoded = await timelockContract.populateTransaction
