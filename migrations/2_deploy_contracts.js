@@ -5,8 +5,6 @@ const BananaToken = artifacts.require("BananaToken");
 const BananaSplitBar = artifacts.require("BananaSplitBar");
 const MultiCall = artifacts.require("MultiCall");
 const Timelock = artifacts.require("Timelock");
-const ApeSwapBurn = artifacts.require("ApeSwapBurn");
-const BnbStaking = artifacts.require("BnbStaking");
 
 const INITIAL_MINT = '25000';
 const BLOCKS_PER_HOUR = (3600 / 3) // 3sec Block Time
@@ -117,25 +115,6 @@ module.exports = async function(deployer, network, accounts) {
         )
     }).then(()=> {
         /**
-         * Deploy BnbStakingContract
-         */
-                // TODO:
-        // constructor(
-        //     IBEP20 _lp,
-        //     IBEP20 _rewardToken,
-        //     uint256 _rewardPerBlock,
-        //     uint256 _startBlock,
-        //     uint256 _bonusEndBlock,
-        //     address _adminAddress,
-        //     address _wbnb
-        // ) 
-        if(network == "bsc" || network == "bsc-fork") {
-
-        }
-
-        // return deployer.deploy(BnbStaking, BananaToken.address)
-    }).then(()=> {
-        /**
          * Deploy MultiCall
          */
         return deployer.deploy(MultiCall);
@@ -145,11 +124,6 @@ module.exports = async function(deployer, network, accounts) {
          */
         return deployer.deploy(Timelock, currentAccount, TIMELOCK_DELAY_SECS);
     }).then(()=> {
-        /**
-         * Deploy ApeSwapBurn
-         */
-        return deployer.deploy(ApeSwapBurn);
-    }).then(()=> {
         console.log('Rewards Start at block: ', REWARDS_START)
         console.table({
             MasterApe:MasterApe.address,
@@ -157,9 +131,7 @@ module.exports = async function(deployer, network, accounts) {
             BananaToken:BananaToken.address,
             BananaSplitBar:BananaSplitBar.address,
             MultiCall:MultiCall.address,
-            Timelock:Timelock.address,
-            ApeSwapBurn:ApeSwapBurn.address
-            // BnbStaking:BnbStaking.address,
+            Timelock:Timelock.address
         })
     });
 };

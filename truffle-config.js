@@ -1,4 +1,5 @@
 const HDWalletProvider = require('truffle-hdwallet-provider');
+require('dotenv').config();
 const fs = require('fs');
 const mnemonic = fs.readFileSync(".secret").toString().trim();
 const mnemonicTestnet = fs.readFileSync(".secret-testnet").toString().trim();
@@ -26,7 +27,13 @@ module.exports = {
       skipDryRun: true
     },
   },
-
+  plugins: [
+    'truffle-plugin-verify'
+  ],
+  api_keys: {
+    // Add ETHERSCAN_API_KEY in .env file to verify contracts deployed through truffle
+    etherscan: process.env.ETHERSCAN_API_KEY
+  },
   // Set default mocha options here, use special reporters etc.
   mocha: {
     // timeout: 100000
