@@ -38,4 +38,4 @@ For a general overview of the architecture check out this diagram:
 - Timelock: [0x2F07969090a2E9247C761747EA2358E5bB033460](https://bscscan.com/address/0x2F07969090a2E9247C761747EA2358E5bB033460)
 - SupportApe: [0x54aff400858Dcac39797a81894D9920f16972D1D](https://bscscan.com/address/0x54aff400858Dcac39797a81894D9920f16972D1D)
 - BananaSplitBar: [0x86Ef5e73EDB2Fea111909Fe35aFcC564572AcC06](https://bscscan.com/address/0x86Ef5e73EDB2Fea111909Fe35aFcC564572AcC06)
-- MultiCall: [0xc7Ad54Ff5C04A6E39D8C874A021aB0E42C45dE81](https://bscscan.com/address/0xc7Ad54Ff5C04A6E39D8C874A021aB0E42C45dE81)
+- MultiCall: [0x38ce767d81de3940CFa5020B55af1A400ED4F657](https://bscscan.com/address/0x38ce767d81de3940CFa5020B55af1A400ED4F657)
