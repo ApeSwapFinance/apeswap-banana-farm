@@ -7,9 +7,9 @@ import Timelock from '../build/contracts/Timelock.json'
 
 const currentTimestamp = Math.floor(Date.now() / 1000);
 const OFFSET = 3600 * 24.5;
-const ETA = currentTimestamp + OFFSET;
-const dateTimestamp = Math.floor(+new Date('March 9, 2021 19:30:00') / 1000)
-// const ETA = dateTimestamp
+// const ETA = currentTimestamp + OFFSET;
+const dateTimestamp = Math.floor(+new Date('March 12, 2021 19:00:00') / 1000)
+const ETA = dateTimestamp
 
 /*
  * TESTNET or MAINNET? 
@@ -28,13 +28,31 @@ const encode = async () => {
    /*
     * General use MasterApe functions
     */ 
-    // updateMultiplier(uint256 multiplierNumber)
-    // const masterApeTXEncoded = await masterApeContract.populateTransaction.updateMultiplier(1)
-    // set(uint256 _pid, uint256 _allocPoint, bool _withUpdate)
-    // const masterApeTXEncoded = await masterApeContract.populateTransaction.set(1, 3555, false)
-    // add(uint256 _allocPoint, IBEP20 _lpToken, bool _withUpdate)
-    const masterApeTXEncodeFunction = masterApeContract.populateTransaction.add;
-    const masterApeArgs = [400, "0xdbcdA7B58c2078fcc790dD7C2c7272EdB7EAa2b0", false];
+
+    /**
+     * Update the multiplier of BANANA minted per block 
+     * updateMultiplier(uint256 multiplierNumber)
+     */
+    // const masterApeTXEncodeFunction = masterApeContract.populateTransaction.updateMultiplier;
+    // const masterApeArgs = [1];
+
+    /**
+     * Update a farm multiplier by the pid (pool id) 
+     * set(uint256 _pid, uint256 _allocPoint, bool _withUpdate)
+     */
+    const masterApeTXEncodeFunction = masterApeContract.populateTransaction.set;
+    const masterApeArgs = [14, 100, false];
+    
+    /**
+     * Add a new farm to MasterApe 
+     * add(uint256 _allocPoint, IBEP20 _lpToken, bool _withUpdate)
+     */
+    // const masterApeTXEncodeFunction = masterApeContract.populateTransaction.add;
+    // const masterApeArgs = [200, "0x044F2b275A344D4edfc3d98e1cb7c02B30e6484e", false];
+
+    /**
+     * Encode child tx
+     */
     const masterApeTXEncoded = await masterApeTXEncodeFunction(...masterApeArgs);
 
     // TODO: Update encode to use signature
@@ -71,6 +89,7 @@ const encode = async () => {
     const output = {
         'ETA-Timestamp': ETA, 
         'Date': new Date(ETA * 1000),
+        tx: "",
         masterApeTXEncodeFunction: masterApeTXEncodeFunction.toString(),
         masterApeArgs,
         MASTER_APE_ADDRESS,
