@@ -7,5 +7,14 @@
         "rewardPerBlock": 694444400000000,
         "startBlock": 5034880,
         "endBlock": 5178877
+    },
+    {
+        "name": "SOUL Reward Pool",
+        "address": "0xf5Cb9F954D3Ea26Bb503A6996a4b2B0aAdC8c969",
+        "stakeToken": "0xa48271fF51900007D3b21Cecf30FDc8CCb63fEe6",
+        "rewardToken": "0x67d012F731c23F0313CEA1186d0121779c77fcFE",
+        "rewardPerBlock": 135800000000,
+        "startBlock": 5511250,
+        "endBlock": 5604850
     }
 ]

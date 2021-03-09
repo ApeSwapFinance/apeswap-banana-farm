@@ -20,6 +20,9 @@ As MasterApe is fork of Pancake's MasterChef, we want to be transparent about th
 ## Updates BNBRewardApe 
 BNBRewardApe contract is a spin off of Pankcake's SmartChef contract, but will provide a means to distribute BNB for staking tokens in place of a BEP20 token. The updates may be found here: https://www.diffchecker.com/BWzELIHw
 
+## BEP20RewardApe
+BEP20RewardApe contract is similar to the BNBRewardApe contract, but it gives out a BEP20 token as the reward in place of BNB. Find the updates from the BNBRewardApe here: https://www.diffchecker.com/IYZFKbNf
+
 ## Architecture
 For a general overview of the architecture check out this diagram: 
 ![banana-farm-architecture](./images/ApeSwap-Architecture.png)

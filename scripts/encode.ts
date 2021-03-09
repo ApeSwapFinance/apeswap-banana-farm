@@ -1,3 +1,4 @@
+import { writeJSONToFile } from './helpers/files'
 import { Contract } from '@ethersproject/contracts'
 
 // Encode Timelock Transactions
@@ -36,6 +37,7 @@ const encode = async () => {
     const masterApeArgs = [400, "0xdbcdA7B58c2078fcc790dD7C2c7272EdB7EAa2b0", false];
     const masterApeTXEncoded = await masterApeTXEncodeFunction(...masterApeArgs);
 
+    // TODO: Update encode to use signature
     // queueTransaction(address target, uint value, string memory signature, bytes memory data, uint eta)
     const timelockQueueEncoded = await timelockContract.populateTransaction
         .queueTransaction(
@@ -69,14 +71,17 @@ const encode = async () => {
     const output = {
         'ETA-Timestamp': ETA, 
         'Date': new Date(ETA * 1000),
+        masterApeTXEncodeFunction: masterApeTXEncodeFunction.toString(),
+        masterApeArgs,
         MASTER_APE_ADDRESS,
         masterApeTXEncoded,
         timelockQueueEncoded, 
         timelockExecuteEncoded, 
         timelockCancelEncoded 
     }
-    console.log(output);
-    console.log(JSON.stringify(output));
+
+    console.dir(output);
+    await writeJSONToFile('./scripts/encode-output.json', output);
 }
 
 encode().then(()=> {
