@@ -9,6 +9,10 @@ artifacts
 coverage
 coverage.json
 
+#Envs
 .secret
 .secret-testnet
 .env
+
+#Scripts
+/scripts/encode-output.json

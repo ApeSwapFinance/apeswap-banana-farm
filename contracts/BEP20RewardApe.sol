@@ -16,7 +16,7 @@ import '@pancakeswap/pancake-swap-lib/contracts/token/BEP20/SafeBEP20.sol';
 import '@pancakeswap/pancake-swap-lib/contracts/access/Ownable.sol';
 
 
-contract BNBRewardApe is Ownable {
+contract BEP20RewardApe is Ownable {
     using SafeMath for uint256;
     using SafeBEP20 for IBEP20;
 
@@ -34,8 +34,10 @@ contract BNBRewardApe is Ownable {
         uint256 accRewardTokenPerShare; // Accumulated Rewards per share, times 1e12. See below.
     }
 
-    // The stake TOKEN!
+    // The stake token
     IBEP20 public stakeToken;
+    // The reward token
+    IBEP20 public rewardToken;
 
     // Reward tokens created per block.
     uint256 public rewardPerBlock;
@@ -53,18 +55,20 @@ contract BNBRewardApe is Ownable {
     uint256 public bonusEndBlock;
 
     event Deposit(address indexed user, uint256 amount);
-    event DepositBNBRewards(uint256 amount);
+    event DepositRewards(uint256 amount);
     event Withdraw(address indexed user, uint256 amount);
     event EmergencyWithdraw(address indexed user, uint256 amount);
     event EmergencyRewardWithdraw(address indexed user, uint256 amount);
 
     constructor(
         IBEP20 _stakeToken,
+        IBEP20 _rewardToken,
         uint256 _rewardPerBlock,
         uint256 _startBlock,
         uint256 _bonusEndBlock
     ) public {
         stakeToken = _stakeToken;
+        rewardToken = _rewardToken;
         rewardPerBlock = _rewardPerBlock;
         startBlock = _startBlock;
         bonusEndBlock = _bonusEndBlock;
@@ -146,9 +150,9 @@ contract BNBRewardApe is Ownable {
                 uint256 currentRewardBalance = rewardBalance();
                 if(currentRewardBalance > 0) {
                     if(pending > currentRewardBalance) {
-                        safeTransferBNB(address(msg.sender), currentRewardBalance);
+                        safeTransferReward(address(msg.sender), currentRewardBalance);
                     } else {
-                        safeTransferBNB(address(msg.sender), pending);
+                        safeTransferReward(address(msg.sender), pending);
                     }
                 }
             }
@@ -174,9 +178,9 @@ contract BNBRewardApe is Ownable {
             uint256 currentRewardBalance = rewardBalance();
             if(currentRewardBalance > 0) {
                 if(pending > currentRewardBalance) {
-                    safeTransferBNB(address(msg.sender), currentRewardBalance);
+                    safeTransferReward(address(msg.sender), currentRewardBalance);
                 } else {
-                    safeTransferBNB(address(msg.sender), pending);
+                    safeTransferReward(address(msg.sender), pending);
                 }
             }
         }
@@ -193,21 +197,20 @@ contract BNBRewardApe is Ownable {
     /// Obtain the reward balance of this contract
     /// @return wei balace of conract
     function rewardBalance() public view returns (uint256) {
-        return payable(address(this)).balance;
+        return rewardToken.balanceOf(address(this));
     }
 
     // Deposit Rewards into contract
-    function depositBNBRewards() external payable {
-        require(msg.value > 0, 'Message has no BNB value to deposit into contract.');
-        emit DepositBNBRewards(msg.value);
+    function depositRewards(uint256 _amount) external {
+        require(_amount > 0, 'Deposit value must be greater than 0.');
+        rewardToken.safeTransferFrom(address(msg.sender), address(this), _amount);
+        emit DepositRewards(_amount);
     }
 
-    /// @param to address to send BNB to
-    /// @param value wei value of BNB to transfer
-    function safeTransferBNB(address to, uint256 value) internal {
-        // Transfer BNB to address
-        (bool success, ) = to.call{gas: 23000, value: value}("");
-        require(success, 'TransferHelper: BNB_TRANSFER_FAILED');
+    /// @param _to address to send reward token to
+    /// @param _amount value of reward token to transfer
+    function safeTransferReward(address _to, uint256 _amount) internal {
+        rewardToken.safeTransfer(_to, _amount);
     }
 
     /* Emergency Functions */ 
@@ -225,8 +228,8 @@ contract BNBRewardApe is Ownable {
     // Withdraw reward. EMERGENCY ONLY.
     function emergencyRewardWithdraw(uint256 _amount) external onlyOwner {
         require(_amount <= rewardBalance(), 'not enough rewards');
-        // Withdraw the BNB rewards
-        safeTransferBNB(address(msg.sender), _amount);
+        // Withdraw rewards
+        safeTransferReward(address(msg.sender), _amount);
         emit EmergencyRewardWithdraw(msg.sender, _amount);
     }
 
