@@ -5,13 +5,10 @@ import MasterApe from '../build/contracts/MasterApe.json'
 import Timelock from '../build/contracts/Timelock.json'
 
 const currentTimestamp = Math.floor(Date.now() / 1000);
-const OFFSET = 100;
-/*
- * Set unix ETA of tx (secs) based on currentTimestamp or an absolute value
- * https://www.unixtimestamp.com/
- */ 
-// const ETA = currentTimestamp + OFFSET;
-const ETA = 1614207600
+const OFFSET = 3600 * 24.5;
+const ETA = currentTimestamp + OFFSET;
+const dateTimestamp = Math.floor(+new Date('March 9, 2021 19:30:00') / 1000)
+// const ETA = dateTimestamp
 
 /*
  * TESTNET or MAINNET? 
@@ -35,7 +32,9 @@ const encode = async () => {
     // set(uint256 _pid, uint256 _allocPoint, bool _withUpdate)
     // const masterApeTXEncoded = await masterApeContract.populateTransaction.set(1, 3555, false)
     // add(uint256 _allocPoint, IBEP20 _lpToken, bool _withUpdate)
-    const masterApeTXEncoded = await masterApeContract.populateTransaction.add(800, "0x51bB531A5253837A23cE8de478a4941A71A4202C", false)
+    const masterApeTXEncodeFunction = masterApeContract.populateTransaction.add;
+    const masterApeArgs = [400, "0xdbcdA7B58c2078fcc790dD7C2c7272EdB7EAa2b0", false];
+    const masterApeTXEncoded = await masterApeTXEncodeFunction(...masterApeArgs);
 
     // queueTransaction(address target, uint value, string memory signature, bytes memory data, uint eta)
     const timelockQueueEncoded = await timelockContract.populateTransaction
