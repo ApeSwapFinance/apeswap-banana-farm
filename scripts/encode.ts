@@ -7,9 +7,9 @@ import Timelock from '../build/contracts/Timelock.json'
 
 const currentTimestamp = Math.floor(Date.now() / 1000);
 const OFFSET = 3600 * 24.5;
-// const ETA = currentTimestamp + OFFSET;
+const ETA = currentTimestamp + OFFSET;
 const dateTimestamp = Math.floor(+new Date('March 12, 2021 19:00:00') / 1000)
-const ETA = dateTimestamp
+// const ETA = dateTimestamp
 
 /*
  * TESTNET or MAINNET? 
@@ -41,14 +41,14 @@ const encode = async () => {
      * set(uint256 _pid, uint256 _allocPoint, bool _withUpdate)
      */
     const masterApeTXEncodeFunction = masterApeContract.populateTransaction.set;
-    const masterApeArgs = [14, 100, false];
+    const masterApeArgs = [7, 400, false];
     
     /**
      * Add a new farm to MasterApe 
      * add(uint256 _allocPoint, IBEP20 _lpToken, bool _withUpdate)
      */
     // const masterApeTXEncodeFunction = masterApeContract.populateTransaction.add;
-    // const masterApeArgs = [200, "0x044F2b275A344D4edfc3d98e1cb7c02B30e6484e", false];
+    // const masterApeArgs = [50, "0xD7903933B10504a7C67f191285a6A7E5A233fD3B", false];
 
     /**
      * Encode child tx
