@@ -3,7 +3,7 @@
   "version": "1.0.0",
   "main": "index.js",
   "scripts": {
-    "migrate:dev": "truffle migrate --network development --reset",
+    "migrate:development": "truffle migrate --network development --reset",
     "migrate:testnet": "truffle migrate --network testnet --reset",
     "migrate:bsc": "truffle migrate --network bsc --dry-run",
     "compile": "truffle compile --network bscTestnet",
