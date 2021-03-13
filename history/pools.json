@@ -28,7 +28,7 @@
     },
     {
         "name": "NUTS/BANANA LP -> NUTS Reward Pool",
-        "address": "",
+        "address": "0x3523cE00C9f82FfafC850C0Acccb78341239028b",
         "stakeToken": "0x44Baf117d79D5313BeA1fBBA416E4067436E4bBE",
         "rewardToken": "0x8893D5fA71389673C5c4b9b3cb4EE1ba71207556",
         "rewardPerBlock": 86805555560000000, // 0.0868 NUTS/Block
@@ -37,7 +37,7 @@
     },
     {
         "name": "NUTS/BANANA LP -> BANANA Reward Pool",
-        "address": "",
+        "address": "0xdb28A11Fe950C9979A8050E6cBA76D187D5C3b70",
         "stakeToken": "0x44Baf117d79D5313BeA1fBBA416E4067436E4bBE",
         "rewardToken": "0x603c7f932ED1fc6575303D8Fb018fDCBb0f39a95",
         "rewardPerBlock": 144652777800000000, // 0.1446527778 BANANA/BLOCK
