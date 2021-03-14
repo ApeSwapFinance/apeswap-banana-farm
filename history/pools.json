@@ -43,5 +43,14 @@
         "rewardPerBlock": 144652777800000000, // 0.1446527778 BANANA/BLOCK
         "startBlock": 5658203,
         "endBlock" : 5687003
+    },
+    {
+        "name": "CRX/BANANA LP -> CRX Reward Pool",
+        "address": "0x084beaa501dB448869001BA49913c9aD009b1694s",
+        "stakeToken": "0xbD896f59BAf9A624A7587DE5D28B7aD3459342bA",
+        "rewardToken": "0x97a30C692eCe9C317235d48287d23d358170FC40",
+        "rewardPerBlock": 2604166666667000, // 0.002604166666667000 CRX/BLOCK
+        "startBlock": 5682212,
+        "endBlock": 5826212
     }
 ]
