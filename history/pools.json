@@ -31,7 +31,7 @@
         "address": "",
         "stakeToken": "0x44Baf117d79D5313BeA1fBBA416E4067436E4bBE",
         "rewardToken": "0x8893D5fA71389673C5c4b9b3cb4EE1ba71207556",
-        "rewardPerBlock": 86805555560000000, // 0.0868 NUTS/Block
+        "rewardPerBlock": 86805555560000000,
         "startBlock": 5629403,
         "endBlock" : 5658203
     },
@@ -40,7 +40,7 @@
         "address": "",
         "stakeToken": "0x44Baf117d79D5313BeA1fBBA416E4067436E4bBE",
         "rewardToken": "0x603c7f932ED1fc6575303D8Fb018fDCBb0f39a95",
-        "rewardPerBlock": 144652777800000000, // 0.1446527778 BANANA/BLOCK
+        "rewardPerBlock": 144652777800000000,
         "startBlock": 5658203,
         "endBlock" : 5687003
     }
