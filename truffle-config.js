@@ -1,8 +1,8 @@
 const HDWalletProvider = require('truffle-hdwallet-provider');
 require('dotenv').config();
-const fs = require('fs');
-const mnemonic = fs.readFileSync(".secret").toString().trim();
-const mnemonicTestnet = fs.readFileSync(".secret-testnet").toString().trim();
+
+const BSC_DEPLOYER_KEY = process.env.BSC_DEPLOYER_KEY;
+const BSC_TESTNET_DEPLOYER_KEY = process.env.BSC_TESTNET_DEPLOYER_KEY;
 
 module.exports = {
   networks: {
@@ -12,7 +12,7 @@ module.exports = {
       network_id: "*",       // Any network (default: none)
     },
     testnet: {
-      provider: () => new HDWalletProvider(mnemonicTestnet, `https://data-seed-prebsc-1-s1.binance.org:8545`, 0, 10),
+      provider: () => new HDWalletProvider(BSC_TESTNET_DEPLOYER_KEY, `https://data-seed-prebsc-1-s1.binance.org:8545`, 0, 10),
       network_id: 97,
       confirmations: 2,
       timeoutBlocks: 200,
@@ -20,7 +20,7 @@ module.exports = {
       from: '0xE375D169F8f7bC18a544a6e5e546e63AD7511581'
     },
     bsc: {
-      provider: () => new HDWalletProvider(mnemonic, `https://bsc-dataseed1.binance.org`),
+      provider: () => new HDWalletProvider(BSC_DEPLOYER_KEY, `https://bsc-dataseed1.binance.org`),
       network_id: 56,
       confirmations: 10,
       timeoutBlocks: 200,
@@ -31,8 +31,8 @@ module.exports = {
     'truffle-plugin-verify'
   ],
   api_keys: {
-    // Add ETHERSCAN_API_KEY in .env file to verify contracts deployed through truffle
-    etherscan: process.env.ETHERSCAN_API_KEY
+    // Add BSCSCAN_API_KEY in .env file to verify contracts deployed through truffle
+    etherscan: process.env.BSCSCAN_API_KEY
   },
   // Set default mocha options here, use special reporters etc.
   mocha: {
