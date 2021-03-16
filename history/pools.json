@@ -33,7 +33,7 @@
         "rewardToken": "0x8893D5fA71389673C5c4b9b3cb4EE1ba71207556",
         "rewardPerBlock": 86805555560000000,
         "startBlock": 5629403,
-        "endBlock" : 5658203
+        "endBlock": 5658203
     },
     {
         "name": "NUTS/BANANA LP -> BANANA Reward Pool",
@@ -42,15 +42,33 @@
         "rewardToken": "0x603c7f932ED1fc6575303D8Fb018fDCBb0f39a95",
         "rewardPerBlock": 144652777800000000,
         "startBlock": 5658203,
-        "endBlock" : 5687003
+        "endBlock": 5687003
     },
     {
         "name": "CRX/BANANA LP -> CRX Reward Pool",
-        "address": "0x084beaa501dB448869001BA49913c9aD009b1694s",
+        "address": "0x084beaa501dB448869001BA49913c9aD009b1694",
         "stakeToken": "0xbD896f59BAf9A624A7587DE5D28B7aD3459342bA",
         "rewardToken": "0x97a30C692eCe9C317235d48287d23d358170FC40",
         "rewardPerBlock": 2604166666667000,
         "startBlock": 5682212,
         "endBlock": 5826212
+    },
+    {
+        "name": "NAUT/BNB LP -> NAUT Reward Pool",
+        "address": "0x114d54e18eb4A7Dc9bB8280e283E5799D4188E3f",
+        "stakeToken": "0x288EA5437c7aaD045a393cee2F41E548df24d1C8",
+        "rewardToken": "0x05B339B0A346bF01f851ddE47a5d485c34FE220c",
+        "rewardPerBlock": "28935185",
+        "startingBlock": 5720710,
+        "endingBlock": 6584710
+    },
+    {
+        "name": "NUTS/BANANA LP -> NUTZ Reward Pool",
+        "address": "0x6Fd37f3F83F11100f9f501e2690E96F6fAC37E94",
+        "stakeToken": "0x44Baf117d79D5313BeA1fBBA416E4067436E4bBE",
+        "rewardToken": "0x8893D5fA71389673C5c4b9b3cb4EE1ba71207556",
+        "rewardPerBlock": "24965277777778000",
+        "startingBlock": 5744527,
+        "endingBlock": 5946127
     }
 ]
