@@ -72,12 +72,12 @@
         "endingBlock": 5946127
     },
     {
-        "name": "TTDX/BNB LP -> TTDX Reward Pool",
-        "address": "0xe8dAB3Ce4AC0ed536742e455E79876483B63C070",
-        "stakeToken": "0x7aECF50a835a354B95c33B134F75F2e81D8f4465",
-        "rewardToken": "0xc4957a864245AA4373Be1f33ae24E93876b7Dfe1",
-        "rewardPerBlock": "69444444",
-        "startingBlock": 5793683,
-        "endingBlock": 5937683
+        "name": "HPS/BANANA LP -> HPS Reward Pool",
+        "address": "0x9c64Cec2Ad86E918929665cF9AADf91cd755fEf1",
+        "stakeToken": "0x268f002A3B8d2faC2aA2bA6D4B90d519ca0d1d46",
+        "rewardToken": "0xeDa21B525Ac789EaB1a08ef2404dd8505FfB973D",
+        "rewardPerBlock": "14880952380952000",
+        "startingBlock": 5850334,
+        "endingBlock": 6253534
     }
 ]
