@@ -88,5 +88,23 @@
         "rewardPerBlock": "2976190476190476000",
         "startingBlock": 5878788,
         "endingBlock": 6080388
+    },
+    {
+        "name": "JDI/BNB LP -> JDI Reward Pool",
+        "address": "0x7336B60aC64a5Bf04Eec760bD135ea105994387C",
+        "stakeToken": "0xfb6063f29AF6dcd1fc03A8E221c6D91DEabbE764",
+        "rewardToken": "0x0491648C910ad2c1aFaab733faF71D30313Df7FC",
+        "rewardPerBlock": "77160493827160000",
+        "startBlock": "6206295",
+        "bonusEndBlock": "11390295"
+    },
+    {
+        "name": "BANANA -> JDI Reward Pool",
+        "address": "0x72C8750af0744282E065F0dF3F73460A3764c624",
+        "stakeToken": "0x603c7f932ED1fc6575303D8Fb018fDCBb0f39a95",
+        "rewardToken": "0x0491648C910ad2c1aFaab733faF71D30313Df7FC",
+        "rewardPerBlock": "115640358485111000",
+        "startBlock": "6401695",
+        "bonusEndBlock": "9860695"
     }
 ]
