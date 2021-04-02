@@ -23,6 +23,9 @@ BNBRewardApe contract is a spin off of Pankcake's SmartChef contract, but will p
 ## BEP20RewardApe
 BEP20RewardApe contract is similar to the BNBRewardApe contract, but it gives out a BEP20 token as the reward in place of BNB. Find the updates from the BNBRewardApe here: https://www.diffchecker.com/IYZFKbNf
 
+## BEP20RewardApeV2
+BEP20RewardApeV2 adds two admin functions which allow the pool rewards to be updated allowing the pool to be extended for a longer period of time. https://www.diffchecker.com/h96HRT2L
+
 ## Architecture
 For a general overview of the architecture check out this diagram: 
 ![banana-farm-architecture](./images/ApeSwap-Architecture.png)

@@ -10,8 +10,6 @@ coverage
 coverage.json
 
 #Envs
-.secret
-.secret-testnet
 .env
 
 #Scripts
