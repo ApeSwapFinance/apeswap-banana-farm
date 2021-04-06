@@ -106,5 +106,14 @@
         "rewardPerBlock": "115640358485111000",
         "startBlock": "6401695",
         "bonusEndBlock": "9860695"
+    },
+    {
+        "name": "BANANA -> Foxy Reward Pool",
+        "address": "0x4cB75836d3254F7454D1Bf6D95448C496cbC16b1",
+        "stakeToken": "0x603c7f932ED1fc6575303D8Fb018fDCBb0f39a95",
+        "rewardToken": "0x4354a4F710182966E55EA30CFa807FA1b821a67b",
+        "rewardPerBlock": "57870370",
+        "startBlock": "6346011",
+        "bonusEndBlock": "7210011" 
     }
 ]
