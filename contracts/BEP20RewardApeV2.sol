@@ -31,7 +31,7 @@ contract BEP20RewardApeV2 is Ownable {
         IBEP20 lpToken;           // Address of LP token contract.
         uint256 allocPoint;       // How many allocation points assigned to this pool. Rewards to distribute per block.
         uint256 lastRewardBlock;  // Last block number that Rewards distribution occurs.
-        uint256 accRewardTokenPerShare; // Accumulated Rewards per share, times 1e12. See below.
+        uint256 accRewardTokenPerShare; // Accumulated Rewards per share, times 1e30. See below.
     }
 
     // The stake token
@@ -105,9 +105,9 @@ contract BEP20RewardApeV2 is Ownable {
         if (block.number > pool.lastRewardBlock && lpSupply != 0) {
             uint256 multiplier = getMultiplier(pool.lastRewardBlock, block.number);
             uint256 tokenReward = multiplier.mul(rewardPerBlock).mul(pool.allocPoint).div(totalAllocPoint);
-            accRewardTokenPerShare = accRewardTokenPerShare.add(tokenReward.mul(1e12).div(lpSupply));
+            accRewardTokenPerShare = accRewardTokenPerShare.add(tokenReward.mul(1e30).div(lpSupply));
         }
-        return user.amount.mul(accRewardTokenPerShare).div(1e12).sub(user.rewardDebt);
+        return user.amount.mul(accRewardTokenPerShare).div(1e30).sub(user.rewardDebt);
     }
 
     // Update reward variables of the given pool to be up-to-date.
@@ -123,7 +123,7 @@ contract BEP20RewardApeV2 is Ownable {
         }
         uint256 multiplier = getMultiplier(pool.lastRewardBlock, block.number);
         uint256 tokenReward = multiplier.mul(rewardPerBlock).mul(pool.allocPoint).div(totalAllocPoint);
-        pool.accRewardTokenPerShare = pool.accRewardTokenPerShare.add(tokenReward.mul(1e12).div(lpSupply));
+        pool.accRewardTokenPerShare = pool.accRewardTokenPerShare.add(tokenReward.mul(1e30).div(lpSupply));
         pool.lastRewardBlock = block.number;
     }
 
@@ -145,7 +145,7 @@ contract BEP20RewardApeV2 is Ownable {
         UserInfo storage user = userInfo[msg.sender];
         updatePool(0);
         if (user.amount > 0) {
-            uint256 pending = user.amount.mul(pool.accRewardTokenPerShare).div(1e12).sub(user.rewardDebt);
+            uint256 pending = user.amount.mul(pool.accRewardTokenPerShare).div(1e30).sub(user.rewardDebt);
             if(pending > 0) {
                 uint256 currentRewardBalance = rewardBalance();
                 if(currentRewardBalance > 0) {
@@ -161,7 +161,7 @@ contract BEP20RewardApeV2 is Ownable {
             pool.lpToken.safeTransferFrom(address(msg.sender), address(this), _amount);
             user.amount = user.amount.add(_amount);
         }
-        user.rewardDebt = user.amount.mul(pool.accRewardTokenPerShare).div(1e12);
+        user.rewardDebt = user.amount.mul(pool.accRewardTokenPerShare).div(1e30);
 
         emit Deposit(msg.sender, _amount);
     }
@@ -173,7 +173,7 @@ contract BEP20RewardApeV2 is Ownable {
         UserInfo storage user = userInfo[msg.sender];
         require(user.amount >= _amount, "withdraw: not good");
         updatePool(0);
-        uint256 pending = user.amount.mul(pool.accRewardTokenPerShare).div(1e12).sub(user.rewardDebt);
+        uint256 pending = user.amount.mul(pool.accRewardTokenPerShare).div(1e30).sub(user.rewardDebt);
         if(pending > 0) {
             uint256 currentRewardBalance = rewardBalance();
             if(currentRewardBalance > 0) {
@@ -189,7 +189,7 @@ contract BEP20RewardApeV2 is Ownable {
             pool.lpToken.safeTransfer(address(msg.sender), _amount);
         }
 
-        user.rewardDebt = user.amount.mul(pool.accRewardTokenPerShare).div(1e12);
+        user.rewardDebt = user.amount.mul(pool.accRewardTokenPerShare).div(1e30);
 
         emit Withdraw(msg.sender, _amount);
     }
