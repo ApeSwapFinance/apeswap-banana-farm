@@ -124,5 +124,14 @@
         "rewardPerBlock": "57870370",
         "startBlock": "6348011",
         "bonusEndBlock": "7212011"
+    },
+    {
+        "name": "BANANA -> Lyptus Reward Pool",
+        "address": "0x1900f5370830F0aa46DF76a6a4F0656Ef321b9f8",
+        "stakeToken": "0x603c7f932ED1fc6575303D8Fb018fDCBb0f39a95",
+        "rewardToken": "0xBA26397cdFF25F0D26E815d218Ef3C77609ae7f1",
+        "rewardPerBlock": "57870370370370000",
+        "startBlock": "6427200",
+        "bonusEndBlock": "7291200"
     }
 ]
