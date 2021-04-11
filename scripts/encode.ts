@@ -40,15 +40,17 @@ const encode = async () => {
      * Update a farm multiplier by the pid (pool id) 
      * set(uint256 _pid, uint256 _allocPoint, bool _withUpdate)
      */
-    const masterApeTXEncodeFunction = masterApeContract.populateTransaction.set;
-    const masterApeArgs = [7, 400, false];
+    // const method = 'set';
+    // const masterApeTXEncodeFunction = masterApeContract.populateTransaction[method];
+    // const masterApeArgs = [16, 100, false];
     
     /**
      * Add a new farm to MasterApe 
      * add(uint256 _allocPoint, IBEP20 _lpToken, bool _withUpdate)
      */
-    // const masterApeTXEncodeFunction = masterApeContract.populateTransaction.add;
-    // const masterApeArgs = [50, "0xD7903933B10504a7C67f191285a6A7E5A233fD3B", false];
+    const method = 'add';
+    const masterApeTXEncodeFunction = masterApeContract.populateTransaction[method];
+    const masterApeArgs = [100, "0xc1C7a1D33B34019F82808F64bA07e77512a13d1A", false];
 
     /**
      * Encode child tx
@@ -90,7 +92,7 @@ const encode = async () => {
         'ETA-Timestamp': ETA, 
         'Date': new Date(ETA * 1000),
         tx: "",
-        masterApeTXEncodeFunction: masterApeTXEncodeFunction.toString(),
+        masterApeTXEncodeFunction: method,
         masterApeArgs,
         MASTER_APE_ADDRESS,
         masterApeTXEncoded,
