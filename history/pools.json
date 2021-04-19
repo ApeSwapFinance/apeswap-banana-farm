@@ -142,5 +142,23 @@
         "rewardPerBlock": "479442180800000",
         "startBlock": "6680032",
         "bonusEndBlock": "8408032"
+    },
+    {
+        "name": "NAUT/BNB -> NAUT Reward Pool",
+        "address": "0x330de89a559a75738acB5b87aE93579120d53AfB",
+        "stakeToken": "0x288EA5437c7aaD045a393cee2F41E548df24d1C8",
+        "rewardToken": "0x05b339b0a346bf01f851dde47a5d485c34fe220c",
+        "rewardPerBlock": "4960317",
+        "startBlock": "6658428",
+        "bonusEndBlock": "7061628"
+    },
+    {
+        "name": "BANANA -> ALLOY Reward Pool",
+        "address": "0x834534853bff9C97F8A9b0fb9FFF864E3584Df99",
+        "stakeToken": "0x603c7f932ED1fc6575303D8Fb018fDCBb0f39a95",
+        "rewardToken": "0x5eF5994fA33FF4eB6c82d51ee1DC145c546065Bd",
+        "rewardPerBlock": "14676730320000000",
+        "startBlock": "6707400",
+        "bonusEndBlock": "8435400"
     }
 ]
