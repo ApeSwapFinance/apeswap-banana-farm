@@ -12,7 +12,7 @@ module.exports = {
       network_id: "*",       // Any network (default: none)
     },
     testnet: {
-      provider: () => new HDWalletProvider(BSC_TESTNET_DEPLOYER_KEY, `https://data-seed-prebsc-1-s1.binance.org:8545`, 0, 10),
+      provider: () => new HDWalletProvider(BSC_TESTNET_DEPLOYER_KEY, `https://data-seed-prebsc-1-s1.binance.org:8545`),
       network_id: 97,
       confirmations: 2,
       timeoutBlocks: 200,
