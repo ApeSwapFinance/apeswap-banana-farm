@@ -1,10 +1,10 @@
 pragma solidity 0.6.12;
 
 /*
- * ApeSwapFinance 
+ * ApeSwapFinance
  * App:             https://apeswap.finance
- * Medium:          https://ape-swap.medium.com    
- * Twitter:         https://twitter.com/ape_swap 
+ * Medium:          https://ape-swap.medium.com
+ * Twitter:         https://twitter.com/ape_swap
  * Telegram:        https://t.me/ape_swap
  * Announcements:   https://t.me/ape_swap_news
  * GitHub:          https://github.com/ApeSwapFinance
@@ -42,6 +42,8 @@ contract BEP20RewardApeV2 is Ownable {
     // Reward tokens created per block.
     uint256 public rewardPerBlock;
 
+    // Keep track of number of tokens staked in case the contract earns reflect fees
+    uint256 public totalStaked = 0;
 
     // Info of each pool.
     PoolInfo[] public poolInfo;
@@ -51,7 +53,7 @@ contract BEP20RewardApeV2 is Ownable {
     uint256 private totalAllocPoint = 0;
     // The block number when Reward mining starts.
     uint256 public startBlock;
-	// The block number when mining ends.	
+	// The block number when mining ends.
     uint256 public bonusEndBlock;
 
     event Deposit(address indexed user, uint256 amount);
@@ -59,6 +61,7 @@ contract BEP20RewardApeV2 is Ownable {
     event Withdraw(address indexed user, uint256 amount);
     event EmergencyWithdraw(address indexed user, uint256 amount);
     event EmergencyRewardWithdraw(address indexed user, uint256 amount);
+    event SkimStakeTokenFees(address indexed user, uint256 amount);
 
     constructor(
         IBEP20 _stakeToken,
@@ -101,11 +104,10 @@ contract BEP20RewardApeV2 is Ownable {
         PoolInfo storage pool = poolInfo[0];
         UserInfo storage user = userInfo[_user];
         uint256 accRewardTokenPerShare = pool.accRewardTokenPerShare;
-        uint256 lpSupply = pool.lpToken.balanceOf(address(this));
-        if (block.number > pool.lastRewardBlock && lpSupply != 0) {
+        if (block.number > pool.lastRewardBlock && totalStaked != 0) {
             uint256 multiplier = getMultiplier(pool.lastRewardBlock, block.number);
             uint256 tokenReward = multiplier.mul(rewardPerBlock).mul(pool.allocPoint).div(totalAllocPoint);
-            accRewardTokenPerShare = accRewardTokenPerShare.add(tokenReward.mul(1e30).div(lpSupply));
+            accRewardTokenPerShare = accRewardTokenPerShare.add(tokenReward.mul(1e30).div(totalStaked));
         }
         return user.amount.mul(accRewardTokenPerShare).div(1e30).sub(user.rewardDebt);
     }
@@ -116,14 +118,13 @@ contract BEP20RewardApeV2 is Ownable {
         if (block.number <= pool.lastRewardBlock) {
             return;
         }
-        uint256 lpSupply = pool.lpToken.balanceOf(address(this));
-        if (lpSupply == 0) {
+        if (totalStaked == 0) {
             pool.lastRewardBlock = block.number;
             return;
         }
         uint256 multiplier = getMultiplier(pool.lastRewardBlock, block.number);
         uint256 tokenReward = multiplier.mul(rewardPerBlock).mul(pool.allocPoint).div(totalAllocPoint);
-        pool.accRewardTokenPerShare = pool.accRewardTokenPerShare.add(tokenReward.mul(1e30).div(lpSupply));
+        pool.accRewardTokenPerShare = pool.accRewardTokenPerShare.add(tokenReward.mul(1e30).div(totalStaked));
         pool.lastRewardBlock = block.number;
     }
 
@@ -136,13 +137,14 @@ contract BEP20RewardApeV2 is Ownable {
     }
 
 
-    /// Deposit staking token into the contract to earn rewards. 
-    /// @dev Since this contract needs to be supplied with rewards we are 
+    /// Deposit staking token into the contract to earn rewards.
+    /// @dev Since this contract needs to be supplied with rewards we are
     ///  sending the balance of the contract if the pending rewards are higher
     /// @param _amount The amount of staking tokens to deposit
     function deposit(uint256 _amount) public {
         PoolInfo storage pool = poolInfo[0];
         UserInfo storage user = userInfo[msg.sender];
+        uint256 finalDepositAmount = 0;
         updatePool(0);
         if (user.amount > 0) {
             uint256 pending = user.amount.mul(pool.accRewardTokenPerShare).div(1e30).sub(user.rewardDebt);
@@ -157,16 +159,19 @@ contract BEP20RewardApeV2 is Ownable {
                 }
             }
         }
-        if(_amount > 0) {
+        if (_amount > 0) {
+            uint256 preStakeBalance = totalStakeTokenBalance();
             pool.lpToken.safeTransferFrom(address(msg.sender), address(this), _amount);
-            user.amount = user.amount.add(_amount);
+            finalDepositAmount = totalStakeTokenBalance().sub(preStakeBalance);
+            user.amount = user.amount.add(finalDepositAmount);
+            totalStaked = totalStaked.add(finalDepositAmount);
         }
         user.rewardDebt = user.amount.mul(pool.accRewardTokenPerShare).div(1e30);
 
-        emit Deposit(msg.sender, _amount);
+        emit Deposit(msg.sender, finalDepositAmount);
     }
 
-    /// Withdraw rewards and/or staked tokens. Pass a 0 amount to withdraw only rewards 
+    /// Withdraw rewards and/or staked tokens. Pass a 0 amount to withdraw only rewards
     /// @param _amount The amount of staking tokens to withdraw
     function withdraw(uint256 _amount) public {
         PoolInfo storage pool = poolInfo[0];
@@ -187,6 +192,7 @@ contract BEP20RewardApeV2 is Ownable {
         if(_amount > 0) {
             user.amount = user.amount.sub(_amount);
             pool.lpToken.safeTransfer(address(msg.sender), _amount);
+            totalStaked = totalStaked.sub(_amount);
         }
 
         user.rewardDebt = user.amount.mul(pool.accRewardTokenPerShare).div(1e30);
@@ -219,20 +225,40 @@ contract BEP20RewardApeV2 is Ownable {
     function setRewardPerBlock(uint256 _rewardPerBlock) external onlyOwner {
         rewardPerBlock = _rewardPerBlock;
     }
-    
+
     /// @param  _bonusEndBlock The block when rewards will end
     function setBonusEndBlock(uint256 _bonusEndBlock) external onlyOwner {
         require(_bonusEndBlock > bonusEndBlock, 'new bonus end block must be greater than current');
         bonusEndBlock = _bonusEndBlock;
     }
 
-    /* Emergency Functions */ 
+    /// @dev Obtain the stake token fees (if any) earned by reflect token
+    function getStakeTokenFeeBalance() public view returns (uint256) {
+        return totalStakeTokenBalance().sub(totalStaked);
+    }
+
+    /// @dev Obtain the stake balance of this contract
+    /// @return wei balace of contract
+    function totalStakeTokenBalance() public view returns (uint256) {
+        // Return BEO20 balance
+        return stakeToken.balanceOf(address(this));
+    }
+
+    /// @dev Remove excess stake tokens earned by reflect fees
+    function skimStakeTokenFees() external onlyOwner {
+        uint256 stakeTokenFeeBalance = getStakeTokenFeeBalance();
+        stakeToken.safeTransfer(msg.sender, stakeTokenFeeBalance);
+        emit SkimStakeTokenFees(msg.sender, stakeTokenFeeBalance);
+    }
+
+    /* Emergency Functions */
 
     // Withdraw without caring about rewards. EMERGENCY ONLY.
     function emergencyWithdraw() external {
         PoolInfo storage pool = poolInfo[0];
         UserInfo storage user = userInfo[msg.sender];
         pool.lpToken.safeTransfer(address(msg.sender), user.amount);
+        totalStaked = totalStaked.sub(user.amount);
         user.amount = 0;
         user.rewardDebt = 0;
         emit EmergencyWithdraw(msg.sender, user.amount);
