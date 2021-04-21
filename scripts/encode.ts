@@ -50,7 +50,7 @@ const encode = async () => {
      */
     const method = 'add';
     const masterApeTXEncodeFunction = masterApeContract.populateTransaction[method];
-    const masterApeArgs = [100, "0xc1C7a1D33B34019F82808F64bA07e77512a13d1A", false];
+    const masterApeArgs = [600, "0x924D3f2F94618e8Ee837d4C2b8d703F0de12a57e", false];
 
     /**
      * Encode child tx
@@ -91,7 +91,9 @@ const encode = async () => {
     const output = {
         'ETA-Timestamp': ETA, 
         'Date': new Date(ETA * 1000),
-        tx: "",
+        queueTx: "",
+        executeTx: "",
+        cancelTx: "",
         masterApeTXEncodeFunction: method,
         masterApeArgs,
         MASTER_APE_ADDRESS,
