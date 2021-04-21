@@ -178,5 +178,14 @@
         "rewardPerBlock": "3858024",
         "startBlock": "6744393",
         "bonusEndBlock": "9336393"
+    },
+    {
+        "name": "GNANA -> BANANA Reward Pool",
+        "address": "0x8F97B2E6559084CFaBA140e2AB4Da9aAF23FE7F8",
+        "stakeToken": "0xdDb3Bd8645775F59496c821E4F55A7eA6A6dc299",
+        "rewardToken": "0x603c7f932ED1fc6575303D8Fb018fDCBb0f39a95",
+        "rewardPerBlock": "86805555555556000",
+        "startBlock": "6770043",
+        "bonusEndBlock": "8498043"
     }
 ]
