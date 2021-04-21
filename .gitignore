@@ -14,3 +14,6 @@ coverage.json
 
 #Scripts
 /scripts/encode-output.json
+
+#VSCode 
+.vscode/settings.json
