@@ -199,20 +199,20 @@
     },
     {
         "name": "BFT -> BFT",
-        "address": "0xBeBd54F2a796C4cB14D1a2336642bba488d68d00",
+        "address": "0x49bbB345c432b9B66b407f1525A81A84F4509b8b",
         "stakeToken": "0xa4f93159ce0a4b533b443c74b89967c60a5969f8",
         "rewardToken": "0xa4f93159ce0a4b533b443c74b89967c60a5969f8",
         "rewardPerBlock": "3858024691358025000",
-        "startBlock": "6833472",
-        "bonusEndBlock": "9425472"
+        "startBlock": "6834460",
+        "bonusEndBlock": "9426460"
     },
     {
         "name": "GNANA -> BFT",
-        "address": "0x0958A6c1C52c7d8763fD274F65D9c84ebCef9f15",
+        "address": "0x5798271B134e27c4dE28CB33aa8D18e5753e83fC",
         "stakeToken": "0xdDb3Bd8645775F59496c821E4F55A7eA6A6dc299",
         "rewardToken": "0xa4f93159ce0a4b533b443c74b89967c60a5969f8",
         "rewardPerBlock": "5787037037000000000",
-        "startBlock": "6833472",
-        "bonusEndBlock": "7697472"
+        "startBlock": "6834460",
+        "bonusEndBlock": "7698460"
     }
 ]
