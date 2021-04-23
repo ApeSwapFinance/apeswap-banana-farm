@@ -196,5 +196,23 @@
         "rewardPerBlock": "2142857142000000000",
         "startBlock": "6794775",
         "bonusEndBlock": "6996375"
+    },
+    {
+        "name": "BFT -> BFT",
+        "address": "0xBeBd54F2a796C4cB14D1a2336642bba488d68d00",
+        "stakeToken": "0xa4f93159ce0a4b533b443c74b89967c60a5969f8",
+        "rewardToken": "0xa4f93159ce0a4b533b443c74b89967c60a5969f8",
+        "rewardPerBlock": "3858024691358025000",
+        "startBlock": "6833472",
+        "bonusEndBlock": "9425472"
+    },
+    {
+        "name": "GNANA -> BFT",
+        "address": "0x0958A6c1C52c7d8763fD274F65D9c84ebCef9f15",
+        "stakeToken": "0xdDb3Bd8645775F59496c821E4F55A7eA6A6dc299",
+        "rewardToken": "0xa4f93159ce0a4b533b443c74b89967c60a5969f8",
+        "rewardPerBlock": "5787037037000000000",
+        "startBlock": "6833472",
+        "bonusEndBlock": "7697472"
     }
 ]
