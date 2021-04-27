@@ -214,5 +214,23 @@
         "rewardPerBlock": "5787037037000000000",
         "startBlock": "6834460",
         "bonusEndBlock": "7698460"
+    },
+    {
+        "name": "GNANA -> SAFEP",
+        "address": "0xEdea59e33A6D0A2d491Aa818f6E08ea18DE13c32",
+        "stakeToken": "0xdDb3Bd8645775F59496c821E4F55A7eA6A6dc299",
+        "rewardToken": "0xA8c514D991F59baB02d32b68f04204cB89261c88",
+        "rewardPerBlock": "1157407407",
+        "startBlock": "6907900",
+        "bonusEndBlock": "8635900"
+    },
+    {
+        "name": "GNANA -> GEN",
+        "address": "0x6FbB19A87f1E86f027A084C8bfc3528120Cf8249",
+        "stakeToken": "0xdDb3Bd8645775F59496c821E4F55A7eA6A6dc299",
+        "rewardToken": "0xb0f2939a1c0e43683e5954c9fe142f7df9f8d967",
+        "rewardPerBlock": "24801587301587000",
+        "startBlock": "6942111",
+        "bonusEndBlock": "7345311"
     }
 ]
