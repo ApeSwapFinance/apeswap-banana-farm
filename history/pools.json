@@ -249,5 +249,14 @@
         "rewardPerBlock": "3592308202022",
         "startBlock": "7110269",
         "bonusEndBlock": "9702269"
-    }
+    },
+    {
+        "name": "GNANA -> vBSWAP", 
+        "address": "0x3c04Fdb9F396B585c6CDAaeDfa59FDdeB34A18Cf",
+        "stakeToken": "0xddb3bd8645775f59496c821e4f55a7ea6a6dc299",
+        "rewardToken": "0x4f0ed527e8a95ecaa132af214dfd41f30b361600",
+        "rewardPerBlock": "173611110000000",
+        "startBlock": "7161750",
+        "bonusEndBlock": "9177750"
+      }
 ]
