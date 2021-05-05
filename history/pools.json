@@ -241,5 +241,13 @@
         "rewardPerBlock": "115740740740000000",
         "startBlock": "6962657",
         "bonusEndBlock": "8690657"
+    },
+    {
+        "name": "GNANA -> BINGUS", 
+        "stakeToken": "0xddb3bd8645775f59496c821e4f55a7ea6a6dc299",
+        "rewardToken": "0xda20c8a5c3b1ab48e31ba6e43f0f2830e50218d8",
+        "rewardPerBlock": "3592308202022",
+        "startBlock": "7110269",
+        "bonusEndBlock": "9702269"
     }
 ]
