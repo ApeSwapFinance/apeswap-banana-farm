@@ -251,6 +251,15 @@
         "bonusEndBlock": "9702269"
     },
     {
+        "name": "GNANA -> vBSWAP",
+        "address": "0x3c04Fdb9F396B585c6CDAaeDfa59FDdeB34A18Cf",
+        "stakeToken": "0xddb3bd8645775f59496c821e4f55a7ea6a6dc299",
+        "rewardToken": "0x4f0ed527e8a95ecaa132af214dfd41f30b361600",
+        "rewardPerBlock": "173611110000000",
+        "startBlock": "7161750",
+        "bonusEndBlock": "9177750"
+    },
+    {
         "name": "BANANA -> bxBTC",
         "address": "0xd65f1319f6408C03EBA7f27e156391784492A9EF",
         "stakeToken": "0x603c7f932ed1fc6575303d8fb018fdcbb0f39a95",
