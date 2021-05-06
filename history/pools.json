@@ -243,11 +243,20 @@
         "bonusEndBlock": "8690657"
     },
     {
-        "name": "GNANA -> BINGUS", 
+        "name": "GNANA -> BINGUS",
         "stakeToken": "0xddb3bd8645775f59496c821e4f55a7ea6a6dc299",
         "rewardToken": "0xda20c8a5c3b1ab48e31ba6e43f0f2830e50218d8",
         "rewardPerBlock": "3592308202022",
         "startBlock": "7110269",
         "bonusEndBlock": "9702269"
+    },
+    {
+        "name": "BANANA -> bxBTC",
+        "address": "0xd65f1319f6408C03EBA7f27e156391784492A9EF",
+        "stakeToken": "0x603c7f932ed1fc6575303d8fb018fdcbb0f39a95",
+        "rewardToken": "0xab111d5948470ba73d98d66bbdf2798fbe093546",
+        "rewardPerBlock": "300625000",
+        "startBlock": "7189195",
+        "bonusEndBlock": "9781195"
     }
 ]
