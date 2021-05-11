@@ -285,5 +285,23 @@
         "rewardPerBlock": "15432098765432098", 
         "startBlock": "7246473",
         "bonusEndBlock": "9838473"
-      }
+    },
+    {
+        "name": "GNANA -> KEYFI",
+        "address": "0xEedd7475Eb5D05D591bE0927B178AcBBdC5ee1c1",
+        "stakeToken": "0xddb3bd8645775f59496c821e4f55a7ea6a6dc299",
+        "rewardToken": "0x4b6000f9163de2e3f0a01ec37e06e1469dbbce9d",
+        "rewardPerBlock": "25483796296296296",
+        "startBlock": "7305030",
+        "bonusEndBlock": "8601030"
+    },
+    {
+        "name": "BANANA -> BFT",
+        "address": "0x73775564d2cbad604c41d0b3ddf061e80e1d0279",
+        "stakeToken": "0x603c7f932ed1fc6575303d8fb018fdcbb0f39a95",
+        "rewardToken": "0xa4f93159ce0a4b533b443c74b89967c60a5969f8",
+        "rewardPerBlock": "1929012345679012400",
+        "startBlock": "7323325",
+        "bonusEndBlock": "12507325"
+    }
 ]
