@@ -303,5 +303,14 @@
         "rewardPerBlock": "1929012345679012400",
         "startBlock": "7323325",
         "bonusEndBlock": "12507325"
-    }
+    },
+    {
+        "name": "GNANA -> NRV",
+        "address": "0x48ee3f7748fac3e8e4858bd0b09483c4339d3d7e",
+        "stakeToken": "0xddb3bd8645775f59496c821e4f55a7ea6a6dc299",
+        "rewardToken": "0x42F6f551ae042cBe50C739158b4f0CAC0Edb9096",
+        "rewardPerBlock": "64484126984126990",
+        "startBlock": "7433841",
+        "bonusEndBlock": "9449841"
+      }
 ]
