@@ -312,5 +312,14 @@
         "rewardPerBlock": "64484126984126990",
         "startBlock": "7433841",
         "bonusEndBlock": "9449841"
-      }
+    },
+    {
+        "name": "GNANA -> MOONLIGHT",
+        "address": "0xe44d4786e9d367a475a0789dc618c76a2b2d05ec",
+        "stakeToken": "0xddb3bd8645775f59496c821e4f55a7ea6a6dc299",
+        "rewardToken": "0xb1ced2e320e3f4c8e3511b1dc59203303493f382",
+        "rewardPerBlock": "15098621485023728",
+        "startBlock": "7635704",
+        "bonusEndBlock": "9363704"
+    }
 ]
