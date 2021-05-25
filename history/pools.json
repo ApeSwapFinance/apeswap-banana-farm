@@ -269,7 +269,7 @@
         "bonusEndBlock": "9781195"
     },
     {
-        "name": "GNANA -> vBSWAP", 
+        "name": "GNANA -> vBSWAP",
         "address": "0x7124d635a4bb82319acfd57ce9da18137a7a6f22",
         "stakeToken": "0xddb3bd8645775f59496c821e4f55a7ea6a6dc299",
         "rewardToken": "0x4f0ed527e8a95ecaa132af214dfd41f30b361600",
@@ -281,8 +281,8 @@
         "name": "BANANA -> WATCH",
         "address": "0x465a3782d9014e6eefccc21470c5e41b2cad9d6d",
         "stakeToken": "0x603c7f932ed1fc6575303d8fb018fdcbb0f39a95",
-        "rewardToken": "0x7a9f28eb62c791422aa23ceae1da9c847cbec9b0", 
-        "rewardPerBlock": "15432098765432098", 
+        "rewardToken": "0x7a9f28eb62c791422aa23ceae1da9c847cbec9b0",
+        "rewardPerBlock": "15432098765432098",
         "startBlock": "7246473",
         "bonusEndBlock": "9838473"
     },
@@ -312,5 +312,14 @@
         "rewardPerBlock": "64484126984126990",
         "startBlock": "7433841",
         "bonusEndBlock": "9449841"
-      }
+    },
+    {
+        "name": "SPACE/BNB -> SPACE",
+        "address": "0xfE615dA45dBC8C763851A34Cf14d65B0056a2D8A",
+        "stakeToken": "0xd0F82498051067E154d1dcd3d88fA95063949D7e",
+        "rewardToken": "0xe486a69E432Fdc29622bF00315f6b34C99b45e80",
+        "rewardPerBlock": "27557043650000000",
+        "startBlock": "7706570",
+        "bonusEndBlock": "8109770"
+    }
 ]
