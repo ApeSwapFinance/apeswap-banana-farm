@@ -148,7 +148,7 @@
         "ETA-Timestamp": 1621218045,
         "Date": "2021-05-17T02:20:45.000Z",
         "queueTx": "https://bscscan.com/tx/0x094d82205c11b77a8a638eef95b2d5a690ac7e44997a14ec6d5564a5fd4cdb25",
-        "executeTx": "",
+        "executeTx": "https://bscscan.com/tx/0x2a084480cf21878274ff63c47dbd121f79c81562d0ab1385055f2297021546b7",
         "cancelTx": "",
         "masterApeTXEncodeFunction": "add",
         "masterApeArgs": [
@@ -177,7 +177,7 @@
         "ETA-Timestamp": 1621218045,
         "Date": "2021-05-17T02:20:45.000Z",
         "queueTx": "https://bscscan.com/tx/0x220a7097a00d74cd2cf27131f579d776c76537114713e7d815a942807646c7ca",
-        "executeTx": "",
+        "executeTx": "https://bscscan.com/tx/0x366c7719451620b4918984233646a07e603230d1b0edc0c62760b1c9ad1f4b0a",
         "cancelTx": "",
         "masterApeTXEncodeFunction": "add",
         "masterApeArgs": [
