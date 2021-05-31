@@ -339,5 +339,14 @@
         "rewardPerBlock": "2314814814814814700",
         "startBlock": "7870997",
         "bonusEndBlock": "8734997"
+    },
+    {
+        "name": "GNANA -> SPACE",
+        "address": "0x52634C2763a6DADA2028440d0892431b04809d88",
+        "stakeToken": "0xddb3bd8645775f59496c821e4f55a7ea6a6dc299",
+        "rewardToken": "0xe486a69e432fdc29622bf00315f6b34c99b45e80",
+        "rewardPerBlock": "9902199074074074",
+        "startBlock": "7897297", 
+        "bonusEndBlock": "9625297"
     }
 ]
