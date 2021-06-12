@@ -34,6 +34,7 @@
         "queueTx": "https://bscscan.com/tx/0x39fe661a447d78cf715a8a76bf860fb5c482e3d83fe4bf81fd2ebd1e9a8cd5cb",
         "executeTx": "",
         "cancelTx": "",
+        "staleTx":"https://bscscan.com/tx/0x9ba4bb4e031f5da6054b6d66d7702b6703112c7e331986bfa7b1630af890f4bb",
         "masterApeTXEncodeFunction": "set",
         "masterApeArgs": [
             57,
