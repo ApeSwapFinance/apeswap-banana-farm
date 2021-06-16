@@ -393,5 +393,23 @@
         "rewardPerBlock": "1257518026451967",
         "startBlock": "8270381",
         "bonusEndBlock": "9998381"
+    },
+    {
+        "name": "GNANA -> HERO",
+        "address": "0xc417D9D9b01b5985c1720cA89B963c2417821bdC",
+        "stakeToken": "0xddb3bd8645775f59496c821e4f55a7ea6a6dc299",
+        "rewardToken": "0x9b26e16377ad29a6ccc01770bcfb56de3a36d8b2", 
+        "rewardPerBlock": "578703703703703700",
+        "startBlock": "8329545",
+        "bonusEndBlock": "9193545"
+    },
+    {
+        "name": "BANANA -> FOXY",
+        "address": "0x6D5A4371B0B658765D5282Ae64eFaf9e6f9A4600",
+        "stakeToken": "0x603c7f932ed1fc6575303d8fb018fdcbb0f39a95",
+        "rewardToken": "0x4354a4f710182966e55ea30cfa807fa1b821a67b", 
+        "rewardPerBlock": "289351851",
+        "startBlock": "8350940",
+        "bonusEndBlock": "9214940"
     }
 ]
