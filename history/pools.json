@@ -411,5 +411,14 @@
         "rewardPerBlock": "289351851",
         "startBlock": "8350940",
         "bonusEndBlock": "9214940"
+    },
+    {
+        "name": "BANANA -> MBOX",
+        "address": "0x19383690321291Cb00dE31DdEC94f4596d504f5A",
+        "stakeToken": "0x603c7f932ed1fc6575303d8fb018fdcbb0f39a95",
+        "rewardToken": "0x3203c9e46ca618c8c1ce5dc67e7e9d75f5da2377", 
+        "rewardPerBlock": "183043981481481500",
+        "startBlock": "8361077",
+        "bonusEndBlock": "10089077"
     }
 ]
