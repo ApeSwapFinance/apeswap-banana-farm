@@ -26,22 +26,33 @@ BEP20RewardApe contract is similar to the BNBRewardApe contract, but it gives ou
 ## BEP20RewardApeV2
 BEP20RewardApeV2 adds two admin functions which allow the pool rewards to be updated allowing the pool to be extended for a longer period of time. https://www.diffchecker.com/h96HRT2L
 
+### BSCMAINNET
+
+DEX Contracts
+- **ApeFactory**: [0x0841BD0B734E4F5853f0dD8d7Ea041c241fb0Da6](https://bscscan.com/address/0x0841BD0B734E4F5853f0dD8d7Ea041c241fb0Da6)
+    The ApeFactory is the primary DEX contract which is used to create and track all pairs created on the ApeSwap protocol. When a new pair needs to be created, this contract deploys a completely new pair contract specifically for these tokens and notes the address for future lookup.
+- **ApeRouter**: [0xcF0feBd3f17CEf5b47b0cD257aCf6025c5BFf3b7](https://bscscan.com/address/0xcF0feBd3f17CEf5b47b0cD257aCf6025c5BFf3b7) 
+    The ApeRouter is an external, non-value holding, contract which manages different sets of interactions with the ApeFactory related to adding/removing liquidity and swapping tokens. Because this contract holds no value it can be upgraded without needing to redeploy the ApeFactory. 
+
+#### Farm Contracts
+- **BananaToken**: [0x603c7f932ED1fc6575303D8Fb018fDCBb0f39a95](https://bscscan.com/token/0x603c7f932ED1fc6575303D8Fb018fDCBb0f39a95) 
+    BananaToken represents the native token of the ApeSwap protocol. This token is distributed to farmers who stake tokens which are recognized by ApeSwap's farm. 
+- **MasterApe**: [0x5c8D727b265DBAfaba67E050f2f739cAeEB4A6F9](https://bscscan.com/address/0x5c8D727b265DBAfaba67E050f2f739cAeEB4A6F9)
+    The MasterApe contract represents the main farm contract which is in charge of distributing BANANA to farmers staking on the ApeSwap protocol. 
+- **Timelock**: [0x2F07969090a2E9247C761747EA2358E5bB033460](https://bscscan.com/address/0x2F07969090a2E9247C761747EA2358E5bB033460)
+    The Timelock acts as the owner of the MasterApe to limit how fast owner functions can be called on the protocol. A transaction must first be queued in this contract which emits an event that users can evaluate. After a set delay, this tx can be executed which updates a setting on the MasterApe. The Timelock is primarily used to manage the farm by adding new staking tokens and updating their reward weight. 
+- **MultiCall**: [0x38ce767d81de3940CFa5020B55af1A400ED4F657](https://bscscan.com/address/0x38ce767d81de3940CFa5020B55af1A400ED4F657)
+    The MultiCall contract is a non-value holding contract which is used by the front-end to batch calls to contracts. 
+
+#### Deprecated Contracts
+- **BananaSplitBar**: [0x86Ef5e73EDB2Fea111909Fe35aFcC564572AcC06](https://bscscan.com/address/0x86Ef5e73EDB2Fea111909Fe35aFcC564572AcC06)
+     The BananaSplitBar is a token contract for the BananaSplit token. The BananaSplit token is deprecated because there is a known vulnerability in the MasterApe contract that allows unlimited BananaSplit tokens to be generated. As such, the BananaSplit token is not acknowledged on the ApeSwap protocol. 
+
+- **SupportApe**: [0x54aff400858Dcac39797a81894D9920f16972D1D](https://bscscan.com/address/0x54aff400858Dcac39797a81894D9920f16972D1D)
+    The SupportApe contract is meant to be used as a staking contract for BananaSplit tokens. As BananaSplit tokens are not used on the ApeSwap protocol, this contract has been deprecated. 
+
+
 ## Architecture
 For a general overview of the architecture check out this diagram: 
 ![banana-farm-architecture](./images/ApeSwap-Architecture.png)
 
-
-### BSCMAINNET
-
-#### Dex Contracts
-- ApeFactory: [0x0841BD0B734E4F5853f0dD8d7Ea041c241fb0Da6](https://bscscan.com/address/0x0841BD0B734E4F5853f0dD8d7Ea041c241fb0Da6)
-- ApeRouter: [0xC0788A3aD43d79aa53B09c2EaCc313A787d1d607](https://bscscan.com/address/0xC0788A3aD43d79aa53B09c2EaCc313A787d1d607)
-
-#### Farm Contracts
-
-- BananaToken: [0x603c7f932ED1fc6575303D8Fb018fDCBb0f39a95](https://bscscan.com/token/0x603c7f932ED1fc6575303D8Fb018fDCBb0f39a95)
-- MasterApe: [0x5c8D727b265DBAfaba67E050f2f739cAeEB4A6F9](https://bscscan.com/address/0x5c8D727b265DBAfaba67E050f2f739cAeEB4A6F9)
-- Timelock: [0x2F07969090a2E9247C761747EA2358E5bB033460](https://bscscan.com/address/0x2F07969090a2E9247C761747EA2358E5bB033460)
-- SupportApe: [0x54aff400858Dcac39797a81894D9920f16972D1D](https://bscscan.com/address/0x54aff400858Dcac39797a81894D9920f16972D1D)
-- BananaSplitBar: [0x86Ef5e73EDB2Fea111909Fe35aFcC564572AcC06](https://bscscan.com/address/0x86Ef5e73EDB2Fea111909Fe35aFcC564572AcC06)
-- MultiCall: [0x38ce767d81de3940CFa5020B55af1A400ED4F657](https://bscscan.com/address/0x38ce767d81de3940CFa5020B55af1A400ED4F657)
