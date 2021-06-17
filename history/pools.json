@@ -420,5 +420,15 @@
         "rewardPerBlock": "183043981481481500",
         "startBlock": "8361077",
         "bonusEndBlock": "10089077"
+    },
+    {
+        "name": "BANANA -> WYVERN",
+        "address": "0x33a8CE49cFBdeF61e5E494f769b5626d395a56f3",
+        "stakeToken": "0x603c7f932ed1fc6575303d8fb018fdcbb0f39a95",
+        "rewardToken": "0x470862af0cf8d27ebfe0ff77b0649779c29186db", 
+        "rewardPerBlock": "1352941671296",
+        "startBlock": "8381901",
+        "bonusEndBlock": "9245901"
     }
+]
 ]
