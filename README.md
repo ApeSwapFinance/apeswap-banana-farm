@@ -51,8 +51,3 @@ DEX Contracts
 - **SupportApe**: [0x54aff400858Dcac39797a81894D9920f16972D1D](https://bscscan.com/address/0x54aff400858Dcac39797a81894D9920f16972D1D)
     The SupportApe contract is meant to be used as a staking contract for BananaSplit tokens. As BananaSplit tokens are not used on the ApeSwap protocol, this contract has been deprecated. 
 
-
-## Architecture
-For a general overview of the architecture check out this diagram: 
-![banana-farm-architecture](./images/ApeSwap-Architecture.png)
-
