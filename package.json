@@ -15,6 +15,7 @@
     "verify:bsc": "truffle run verify MasterApe --network bsc && truffle run verify SupportApe --network bsc && truffle run verify BananaToken --network bsc && truffle run verify Timelock --network bsc && truffle run verify BananaSplitBar --network bsc",
     "verify:testnet": "truffle run verify MasterApe --network testnet && truffle run verify SupportApe --network testnet && truffle run verify BananaToken --network testnet && truffle run verify Timelock --network testnet && truffle run verify BananaSplitBar --network testnet",
     "encode": "clear && ts-node ./scripts/encode.ts",
+    "encode-timelock-delay": "clear && ts-node ./scripts/encode-timelock-delay.ts",
     "test": "npx builder test",
     "coverage": "npx builder coverage"
   },
