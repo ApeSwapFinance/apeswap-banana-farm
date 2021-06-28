@@ -1,13 +1,112 @@
-interface FarmDetails {
-    pid: number;
+
+interface QueueFarmDetails {
     name: string;
     allocation: number | string;
+    nextAllocation?: {
+        allocation: number | string;
+        date: Date
+    }[];
     address: string;
     explorer: string;
-    status: 'to-queue' | 'queued' | 'active' | 'deprecated'
+    status: 'to-queue' | 'queued'
+}
+
+export const queueFarmDetails: QueueFarmDetails[] = [
+    // {
+    //     name: 'BNB/ LP',
+    //     allocation: ,
+    //     address: '',
+    //     explorer: 'https://bscscan.com/address/',
+    //     status: 'queued'
+    // },
+    {
+        name: 'BNB/SISTA LP',
+        allocation: 50,
+        address: '0x45546310FDA2fbDB7Ee26EA0A5b6F82D075254bC',
+        explorer: 'https://bscscan.com/address/0x45546310FDA2fbDB7Ee26EA0A5b6F82D075254bC',
+        status: 'queued'
+    },
+    {
+        name: 'BNB/HUGO LP',
+        allocation: 100,
+        address: '0x6499B675EB745Fb2b63dc96f45A6Ea29F6172c46',
+        explorer: 'https://bscscan.com/address/0x6499B675EB745Fb2b63dc96f45A6Ea29F6172c46',
+        status: 'queued'
+    },
+    {
+        name: 'BNB/HAKA LP',
+        allocation: 100,
+        address: '0x8B57A889ccbd4D0C522D12DCd95f327AF3803A44',
+        explorer: 'https://bscscan.com/address/0x8B57A889ccbd4D0C522D12DCd95f327AF3803A44',
+        status: 'queued'
+    },
+    {
+        name: 'BNB/SCAM LP',
+        allocation: 50,
+        address: '0xaAB7b3C31c8f76e4bFe0D0Cd073b1bCa6279072c',
+        explorer: 'https://bscscan.com/address/0xaAB7b3C31c8f76e4bFe0D0Cd073b1bCa6279072c',
+        status: 'queued'
+    },
+    {
+        name: 'BNB/LORY LP',
+        allocation: 100,
+        address: '0x3d0c2Ee0156675B90Bc41E5559970415a20414F5',
+        explorer: 'https://bscscan.com/address/0x3d0c2Ee0156675B90Bc41E5559970415a20414F5',
+        status: 'queued'
+    },
+]
+
+
+
+
+
+
+interface FarmDetails extends Omit<QueueFarmDetails, 'status'> {
+    pid: number;
+    status: 'active' | 'deprecated' | 'to-update'
 }
 
 export const farmDetails: FarmDetails[] = [
+    {
+        pid: 77,
+        name: 'BNB/BOG LP',
+        allocation: 100,
+        address: '0x9D8370C3E6833942b8c38478c84ef74374F28b9f',
+        explorer: 'https://bscscan.com/address/0x9D8370C3E6833942b8c38478c84ef74374F28b9f',
+        status: 'active'
+    },
+    {
+        pid: 76,
+        name: 'BNB/Wyvern LP',
+        allocation: 50,
+        address: '0xeef751Bba57E90B832c96b0E65ef5430868C69a7',
+        explorer: 'https://bscscan.com/address/0xeef751Bba57E90B832c96b0E65ef5430868C69a7',
+        status: 'active'
+    },
+    {
+        pid: 75,
+        name: 'POLYGON FARM',
+        allocation: 2000,
+        address: '0xA5818a82016cb07D0D9892736A2Abd1B47E78ea4',
+        explorer: 'https://bscscan.com/address/0xA5818a82016cb07D0D9892736A2Abd1B47E78ea4',
+        status: 'active'
+    },
+    {
+        pid: 74,
+        name: 'BNB/ACD LP',
+        allocation: 25,
+        address: '0xbe3e38918Ca1180f0285fa18c3FA154d0ddE6853',
+        explorer: 'https://bscscan.com/address/0xbe3e38918Ca1180f0285fa18c3FA154d0ddE6853',
+        status: 'active'
+    },
+    {
+        pid: 73,
+        name: 'BNB/MBOX LP',
+        allocation: 25,
+        address: '0xE5459c34E13797372f6c95c0aAC81A5fAf60223E',
+        explorer: 'https://bscscan.com/address/0xE5459c34E13797372f6c95c0aAC81A5fAf60223E',
+        status: 'active'
+    },
     {
         pid: 72,
         name: 'BNB/TWIN LP',
