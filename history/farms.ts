@@ -1,4 +1,6 @@
 
+const BSC_MASTER_APE = 'https://bscscan.com/address/0x5c8D727b265DBAfaba67E050f2f739cAeEB4A6F9#readContract'
+
 interface QueueFarmDetails {
     name: string;
     allocation: number | string;
@@ -41,13 +43,6 @@ export const queueFarmDetails: QueueFarmDetails[] = [
         status: 'queued'
     },
     {
-        name: 'BNB/SCAM LP',
-        allocation: 50,
-        address: '0xaAB7b3C31c8f76e4bFe0D0Cd073b1bCa6279072c',
-        explorer: 'https://bscscan.com/address/0xaAB7b3C31c8f76e4bFe0D0Cd073b1bCa6279072c',
-        status: 'queued'
-    },
-    {
         name: 'BNB/LORY LP',
         allocation: 100,
         address: '0x3d0c2Ee0156675B90Bc41E5559970415a20414F5',
@@ -67,6 +62,14 @@ interface FarmDetails extends Omit<QueueFarmDetails, 'status'> {
 }
 
 export const farmDetails: FarmDetails[] = [
+    {
+        pid: 78,
+        name: 'BNB/SCAM LP',
+        allocation: 50,
+        address: '0xaAB7b3C31c8f76e4bFe0D0Cd073b1bCa6279072c',
+        explorer: 'https://bscscan.com/address/0xaAB7b3C31c8f76e4bFe0D0Cd073b1bCa6279072c',
+        status: 'active'
+    },
     {
         pid: 77,
         name: 'BNB/BOG LP',
