@@ -66,9 +66,8 @@ export const farmDetails: FarmDetails[] = [
     {
         pid: 78,
         name: 'BNB/SCAM LP',
-        allocation: 50,
+        allocation: 0,
         nextAllocation: [
-            { allocation: 0 },
             { allocation: 50 },
         ],
         address: '0xaAB7b3C31c8f76e4bFe0D0Cd073b1bCa6279072c',

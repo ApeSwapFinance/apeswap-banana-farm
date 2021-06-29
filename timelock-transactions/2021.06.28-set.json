@@ -3,7 +3,7 @@
         "ETA-Timestamp": 1624953962,
         "Date": "2021-06-29T08:06:02.000Z",
         "queueTx": "https://bscscan.com/tx/0x995ccb2585c022b83747e17dfaa5eb25dd9c9d52a1b50adf9d0c0796d6647560",
-        "executeTx": "",
+        "executeTx": "https://bscscan.com/tx/0xbc41296794ab39abd2f01da59fc75d7199483a41fc23c4411d51a37dc28ba1eb",
         "cancelTx": "",
         "masterApeTXEncodeFunction": "set",
         "masterApeArgs": [
