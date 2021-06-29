@@ -6,7 +6,7 @@ interface QueueFarmDetails {
     allocation: number | string;
     nextAllocation?: {
         allocation: number | string;
-        date: Date
+        date?: Date
     }[];
     address: string;
     explorer: string;
@@ -42,13 +42,6 @@ export const queueFarmDetails: QueueFarmDetails[] = [
         explorer: 'https://bscscan.com/address/0x8B57A889ccbd4D0C522D12DCd95f327AF3803A44',
         status: 'queued'
     },
-    {
-        name: 'BNB/LORY LP',
-        allocation: 100,
-        address: '0x3d0c2Ee0156675B90Bc41E5559970415a20414F5',
-        explorer: 'https://bscscan.com/address/0x3d0c2Ee0156675B90Bc41E5559970415a20414F5',
-        status: 'queued'
-    },
 ]
 
 
@@ -63,12 +56,24 @@ interface FarmDetails extends Omit<QueueFarmDetails, 'status'> {
 
 export const farmDetails: FarmDetails[] = [
     {
+        pid: 79,
+        name: 'BNB/LORY LP',
+        allocation: 100,
+        address: '0x3d0c2Ee0156675B90Bc41E5559970415a20414F5',
+        explorer: 'https://bscscan.com/address/0x3d0c2Ee0156675B90Bc41E5559970415a20414F5',
+        status: 'active'
+    },
+    {
         pid: 78,
         name: 'BNB/SCAM LP',
         allocation: 50,
+        nextAllocation: [
+            { allocation: 0 },
+            { allocation: 50 },
+        ],
         address: '0xaAB7b3C31c8f76e4bFe0D0Cd073b1bCa6279072c',
         explorer: 'https://bscscan.com/address/0xaAB7b3C31c8f76e4bFe0D0Cd073b1bCa6279072c',
-        status: 'active'
+        status: 'to-update'
     },
     {
         pid: 77,
