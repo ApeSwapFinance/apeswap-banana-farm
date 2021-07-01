@@ -22,6 +22,20 @@ export const queueFarmDetails: QueueFarmDetails[] = [
     //     status: 'queued'
     // },
     {
+        name: 'BNB/FRUIT LP',
+        allocation: 50,
+        address: '0x0bE55fd1Fdc7134Ff8412e8BAaC63CBb691B1d64',
+        explorer: 'https://bscscan.com/address/0x0bE55fd1Fdc7134Ff8412e8BAaC63CBb691B1d64',
+        status: 'queued'
+    },
+    {
+        name: 'BNB/SKILL LP',
+        allocation: 100,
+        address: '0x0dEB588c1EC6f1D9f348126D401f05c4c7B7a80c',
+        explorer: 'https://bscscan.com/address/0x0dEB588c1EC6f1D9f348126D401f05c4c7B7a80c',
+        status: 'queued'
+    },
+    {
         name: 'BNB/SISTA LP',
         allocation: 50,
         address: '0x45546310FDA2fbDB7Ee26EA0A5b6F82D075254bC',
