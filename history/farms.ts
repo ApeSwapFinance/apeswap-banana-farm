@@ -345,7 +345,7 @@ export const farmDetails: FarmDetails[] = [
         name: 'BNB/BLZ LP',
         allocation: 200,
         nextAllocation: [{
-            allocation: 10,
+            allocation: 100,
             status: 'queued',
         }],
         address: '0x015f807d0186f7e62810d0c597a23cb19ff57e4d',
@@ -533,7 +533,7 @@ export const farmDetails: FarmDetails[] = [
         name: 'BNB/BFT LP',
         allocation: 200,
         nextAllocation: [{
-            allocation: 10,
+            allocation: 100,
             status: 'queued',
         }],
         address: '0x1696A65eA693593Ba771b5A7aFC54C8eaf4C20dE',
@@ -637,7 +637,7 @@ export const farmDetails: FarmDetails[] = [
         name: 'BNB/NAUT LP',
         allocation: 200,
         nextAllocation: [{
-            allocation: 10,
+            allocation: 100,
             status: 'queued',
         }],
         address: '0x288EA5437c7aaD045a393cee2F41E548df24d1C8BNB/CAKE LP',
