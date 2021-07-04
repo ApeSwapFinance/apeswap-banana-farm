@@ -83,7 +83,7 @@ export const queueFarmDetails: QueueFarmDetails[] = [
         allocation: 100,
         address: '0x0dEB588c1EC6f1D9f348126D401f05c4c7B7a80c',
         explorer: 'https://bscscan.com/address/0x0dEB588c1EC6f1D9f348126D401f05c4c7B7a80c',
-        status: 'queued'
+        status: 'active'
     },
     {
         name: 'BNB/SISTA LP',
