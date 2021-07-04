@@ -144,6 +144,10 @@ export const farmDetails: FarmDetails[] = [
         pid: 77,
         name: 'BNB/BOG LP',
         allocation: 100,
+        nextAllocation: [{
+            allocation: 50,
+            status: 'queued',
+        }],
         address: '0x9D8370C3E6833942b8c38478c84ef74374F28b9f',
         explorer: 'https://bscscan.com/address/0x9D8370C3E6833942b8c38478c84ef74374F28b9f',
         status: 'active'
@@ -152,6 +156,10 @@ export const farmDetails: FarmDetails[] = [
         pid: 76,
         name: 'BNB/Wyvern LP',
         allocation: 50,
+        nextAllocation: [{
+            allocation: 25,
+            status: 'queued',
+        }],
         address: '0xeef751Bba57E90B832c96b0E65ef5430868C69a7',
         explorer: 'https://bscscan.com/address/0xeef751Bba57E90B832c96b0E65ef5430868C69a7',
         status: 'active'
@@ -184,6 +192,10 @@ export const farmDetails: FarmDetails[] = [
         pid: 72,
         name: 'BNB/TWIN LP',
         allocation: 100,
+        nextAllocation: [{
+            allocation: 75,
+            status: 'queued',
+        }],
         address: '0x39ca344E2e9AAf125b0002aA37258C8b1Ed30A78',
         explorer: 'https://bscscan.com/address/0x39ca344E2e9AAf125b0002aA37258C8b1Ed30A78',
         status: 'active'
@@ -200,6 +212,10 @@ export const farmDetails: FarmDetails[] = [
         pid: 70,
         name: 'BNB/GMR LP',
         allocation: 200,
+        nextAllocation: [{
+            allocation: 75,
+            status: 'queued',
+        }],
         address: '0xB0D759CD87B74f079166283f4f6631F5703cEa1A',
         explorer: 'https://bscscan.com/address/0xB0D759CD87B74f079166283f4f6631F5703cEa1A',
         status: 'active'
@@ -216,6 +232,10 @@ export const farmDetails: FarmDetails[] = [
         pid: 68,
         name: 'BNB/GRAND LP',
         allocation: 100,
+        nextAllocation: [{
+            allocation: 50,
+            status: 'queued',
+        }],
         address: '0x0c52721790387f97fa77acaf151667c9e9730c76',
         explorer: 'https://bscscan.com/address/0x0c52721790387f97fa77acaf151667c9e9730c76',
         status: 'active'
@@ -224,6 +244,10 @@ export const farmDetails: FarmDetails[] = [
         pid: 67,
         name: 'BNB/ATA LP',
         allocation: 200,
+        nextAllocation: [{
+            allocation: 75,
+            status: 'queued',
+        }],
         address: '0x51DA890085da091b84e27c7A8234E371943b0af0',
         explorer: 'https://bscscan.com/address/0x51DA890085da091b84e27c7A8234E371943b0af0',
         status: 'active'
@@ -248,6 +272,10 @@ export const farmDetails: FarmDetails[] = [
         pid: 64,
         name: 'BNB/bMXX LP',
         allocation: 100,
+        nextAllocation: [{
+            allocation: 50,
+            status: 'queued',
+        }],
         address: '0xcF2C3aF91B5A55E283a8A8C2932B88009B557b4a',
         explorer: 'https://bscscan.com/address/0xcF2C3aF91B5A55E283a8A8C2932B88009B557b4a',
         status: 'active'
@@ -256,6 +284,10 @@ export const farmDetails: FarmDetails[] = [
         pid: 63,
         name: 'BNB/TYPH LP',
         allocation: 100,
+        nextAllocation: [{
+            allocation: 50,
+            status: 'queued',
+        }],
         address: '0xFEaf192c2662E5700bDa860c58d2686d9cc12Ec8',
         explorer: 'https://bscscan.com/address/0xFEaf192c2662E5700bDa860c58d2686d9cc12Ec8',
         status: 'active'
@@ -264,6 +296,10 @@ export const farmDetails: FarmDetails[] = [
         pid: 62,
         name: 'BNB/pCWS LP',
         allocation: 50,
+        nextAllocation: [{
+            allocation: 25,
+            status: 'queued',
+        }],
         address: '0x334E697022AeAbbA58385aFB3Abf3D9347C1b260',
         explorer: 'https://bscscan.com/address/0x334E697022AeAbbA58385aFB3Abf3D9347C1b260',
         status: 'active'
@@ -272,6 +308,10 @@ export const farmDetails: FarmDetails[] = [
         pid: 61,
         name: 'BNB/CRUSH LP',
         allocation: 100,
+        nextAllocation: [{
+            allocation: 75,
+            status: 'queued',
+        }],
         address: '0x8A10489f1255fb63217Be4cc96B8F4CD4D42a469',
         explorer: 'https://bscscan.com/address/0x8A10489f1255fb63217Be4cc96B8F4CD4D42a469',
         status: 'active'
@@ -304,6 +344,10 @@ export const farmDetails: FarmDetails[] = [
         pid: 57,
         name: 'BNB/BLZ LP',
         allocation: 200,
+        nextAllocation: [{
+            allocation: 10,
+            status: 'queued',
+        }],
         address: '0x015f807d0186f7e62810d0c597a23cb19ff57e4d',
         explorer: 'https://bscscan.com/address/0x015f807d0186f7e62810d0c597a23cb19ff57e4d',
         status: 'active'
@@ -320,6 +364,10 @@ export const farmDetails: FarmDetails[] = [
         pid: 55,
         name: 'BNB/MOONLIGHT LP',
         allocation: 50,
+        nextAllocation: [{
+            allocation: 25,
+            status: 'queued',
+        }],
         address: '0xe6de19Ae48969aF0a6f78271e41D3CE47580eaFB',
         explorer: 'https://bscscan.com/address/0xe6de19Ae48969aF0a6f78271e41D3CE47580eaFB',
         status: 'active'
@@ -336,6 +384,10 @@ export const farmDetails: FarmDetails[] = [
         pid: 53,
         name: 'BNB/COTI LP',
         allocation: 100,
+        nextAllocation: [{
+            allocation: 75,
+            status: 'queued',
+        }],
         address: '0xaCfDCF0486ADC2421aAc3FFc0923b9c56FAEBC47',
         explorer: 'https://bscscan.com/address/0xaCfDCF0486ADC2421aAc3FFc0923b9c56FAEBC47',
         status: 'active'
@@ -360,6 +412,10 @@ export const farmDetails: FarmDetails[] = [
         pid: 50,
         name: 'BNB/NRV LP',
         allocation: 100,
+        nextAllocation: [{
+            allocation: 75,
+            status: 'queued',
+        }],
         address: '0x876Ba49c4F438643Ab33F871e14a54CBb897Df49',
         explorer: 'https://bscscan.com/address/0x876Ba49c4F438643Ab33F871e14a54CBb897Df49',
         status: 'active'
@@ -407,7 +463,11 @@ export const farmDetails: FarmDetails[] = [
     {
         pid: 44,
         name: 'BNB/WATCH LP',
-        allocation: 200,
+        allocation: 100,
+        nextAllocation: [{
+            allocation: 50,
+            status: 'queued',
+        }],
         address: '0xa00A91fBB39051e2a6368424A93895c3f1F2290b',
         explorer: 'https://bscscan.com/address/0xa00A91fBB39051e2a6368424A93895c3f1F2290b',
         status: 'active'
@@ -424,6 +484,10 @@ export const farmDetails: FarmDetails[] = [
         pid: 42,
         name: 'BNB/bxBTC LP',
         allocation: 50,
+        nextAllocation: [{
+            allocation: 10,
+            status: 'queued',
+        }],
         address: '0xc2feF4BEC915315beF9f6E8a06b2516E64D29D06',
         explorer: 'https://bscscan.com/address/0xc2feF4BEC915315beF9f6E8a06b2516E64D29D06',
         status: 'active'
@@ -432,6 +496,10 @@ export const farmDetails: FarmDetails[] = [
         pid: 41,
         name: 'BNB/AUTO LP',
         allocation: 100,
+        nextAllocation: [{
+            allocation: 75,
+            status: 'queued',
+        }],
         address: '0x649A5Ad5135B4bd287e5AcA8d41f4d5e1b52af5C',
         explorer: 'https://bscscan.com/address/0x649A5Ad5135B4bd287e5AcA8d41f4d5e1b52af5C',
         status: 'active'
@@ -464,6 +532,10 @@ export const farmDetails: FarmDetails[] = [
         pid: 37,
         name: 'BNB/BFT LP',
         allocation: 200,
+        nextAllocation: [{
+            allocation: 10,
+            status: 'queued',
+        }],
         address: '0x1696A65eA693593Ba771b5A7aFC54C8eaf4C20dE',
         explorer: 'https://bscscan.com/address/0x1696A65eA693593Ba771b5A7aFC54C8eaf4C20dE',
         status: 'active'
@@ -512,6 +584,10 @@ export const farmDetails: FarmDetails[] = [
         pid: 31,
         name: 'BNB/ONT LP',
         allocation: 100,
+        nextAllocation: [{
+            allocation: 75,
+            status: 'queued',
+        }],
         address: '0x924D3f2F94618e8Ee837d4C2b8d703F0de12a57e',
         explorer: 'https://bscscan.com/address/0x924D3f2F94618e8Ee837d4C2b8d703F0de12a57e',
         status: 'active'
@@ -520,6 +596,10 @@ export const farmDetails: FarmDetails[] = [
         pid: 30,
         name: 'BNB/KeyFi LP',
         allocation: 100,
+        nextAllocation: [{
+            allocation: 25,
+            status: 'queued',
+        }],
         address: '0x7A8ACAEAfC4Fa051De4EAbff8D1abdD0388aE08a',
         explorer: 'https://bscscan.com/address/0x7A8ACAEAfC4Fa051De4EAbff8D1abdD0388aE08a',
         status: 'active'
@@ -536,6 +616,10 @@ export const farmDetails: FarmDetails[] = [
         pid: 28,
         name: 'BNB/NUTS LP',
         allocation: 100,
+        nextAllocation: [{
+            allocation: 50,
+            status: 'queued',
+        }],
         address: '0x789fd04BFbC64169104466Ee0d48716E0452Bcf6',
         explorer: 'https://bscscan.com/address/0x789fd04BFbC64169104466Ee0d48716E0452Bcf6',
         status: 'active'
@@ -552,6 +636,10 @@ export const farmDetails: FarmDetails[] = [
         pid: 24,
         name: 'BNB/NAUT LP',
         allocation: 200,
+        nextAllocation: [{
+            allocation: 10,
+            status: 'queued',
+        }],
         address: '0x288EA5437c7aaD045a393cee2F41E548df24d1C8BNB/CAKE LP',
         explorer: 'https://bscscan.com/address/0x288EA5437c7aaD045a393cee2F41E548df24d1C8BNB/CAKE LP',
         status: 'active'
