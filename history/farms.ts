@@ -6,12 +6,14 @@ interface QueueFarmDetails {
     allocation: number | string;
     nextAllocation?: {
         allocation: number | string;
-        date?: Date
+        status: 'to-queue' | 'queued';
+        date?: Date | string
     }[];
     address: string;
     explorer: string;
     status: 'to-queue' | 'queued'
 }
+
 
 export const queueFarmDetails: QueueFarmDetails[] = [
     // {
@@ -21,6 +23,54 @@ export const queueFarmDetails: QueueFarmDetails[] = [
     //     explorer: 'https://bscscan.com/address/',
     //     status: 'queued'
     // },
+    {
+        name: 'BNB/SFP LP',
+        allocation: 200,
+        nextAllocation: [{
+            allocation: 100,
+            status: 'to-queue',
+            date: "two days after activation"
+        }],
+        address: '0x6411A2240c8cD1dd48718eEE1ae4a10E71123Fd3',
+        explorer: 'https://bscscan.com/address/0x6411A2240c8cD1dd48718eEE1ae4a10E71123Fd3',
+        status: 'queued'
+    },
+    {
+        name: 'BNB/TWT LP',
+        allocation: 200,
+        nextAllocation: [{
+            allocation: 100,
+            status: 'to-queue',
+            date: "two days after activation"
+        }],
+        address: '0x4c48D692e3de076C7b844B956b28cdd1DD5C0945',
+        explorer: 'https://bscscan.com/address/0x4c48D692e3de076C7b844B956b28cdd1DD5C0945',
+        status: 'queued'
+    },
+    {
+        name: 'BNB/EPS LP',
+        allocation: 200,
+        nextAllocation: [{
+            allocation: 100,
+            status: 'to-queue',
+            date: "two days after activation"
+        }],
+        address: '0x97c4C531e739E870d958940E8688017894084003',
+        explorer: 'https://bscscan.com/address/0x97c4C531e739E870d958940E8688017894084003',
+        status: 'queued'
+    },
+    {
+        name: 'BNB/XVS LP',
+        allocation: 200,
+        nextAllocation: [{
+            allocation: 100,
+            status: 'to-queue',
+            date: "two days after activation"
+        }],
+        address: '0x9e199da6f87E09a290724EbA866eEdae2e971A0b',
+        explorer: 'https://bscscan.com/address/0x9e199da6f87E09a290724EbA866eEdae2e971A0b',
+        status: 'queued'
+    },
     {
         name: 'BNB/GNT LP',
         allocation: 25,
@@ -57,10 +107,6 @@ export const queueFarmDetails: QueueFarmDetails[] = [
         status: 'queued'
     },
 ]
-
-
-
-
 
 
 interface FarmDetails extends Omit<QueueFarmDetails, 'status'> {
