@@ -1,5 +1,7 @@
 
 const BSC_MASTER_APE = 'https://bscscan.com/address/0x5c8D727b265DBAfaba67E050f2f739cAeEB4A6F9#readContract'
+const POLYGON_MINI_APE = 'https://polygonscan.com/address/0x54aff400858dcac39797a81894d9920f16972d1d#readContract'
+const POLYGON_MATIC_REWARDER = 'https://polygonscan.com/address/0x1f234b1b83e21cb5e2b99b4e498fe70ef2d6e3bf#readContract'
 
 interface QueueFarmDetails {
     name: string;
@@ -14,6 +16,15 @@ interface QueueFarmDetails {
     status: 'to-queue' | 'queued'
 }
 
+/**
+ * The farm is intended only for APE-LP tokens to incentivize the DEX
+ * 
+ * Known Issues:
+ * - CANNOT add deflationary tokens to the farm (APE-LP is not deflationary)
+ * - CANNOT add ERC-777 tokens to the farm as it would allow a reentrancy attack
+ *    through emergencyWithdraw which could drain all the funds in that farm. (APE-LP is an ERC-20 token)
+ */
+
 
 export const queueFarmDetails: QueueFarmDetails[] = [
     // {
@@ -23,13 +34,6 @@ export const queueFarmDetails: QueueFarmDetails[] = [
     //     explorer: 'https://bscscan.com/address/',
     //     status: 'queued'
     // },
-    {
-        name: 'BNB/PACOCA LP',
-        allocation: 50,
-        address: '0x0fee6E1E55fA772fAE71E6734a7F9E8622900D75',
-        explorer: 'https://bscscan.com/address/0x0fee6E1E55fA772fAE71E6734a7F9E8622900D75',
-        status: 'queued'
-    },
     {
         name: 'BNB/SISTA LP',
         allocation: 50,
@@ -65,6 +69,14 @@ interface FarmDetails extends Omit<QueueFarmDetails, 'status' | 'nextAllocation.
 }
 
 export const farmDetails: FarmDetails[] = [
+    {
+        pid: 87,
+        name: 'BNB/PACOCA LP',
+        allocation: 50,
+        address: '0x0fee6E1E55fA772fAE71E6734a7F9E8622900D75',
+        explorer: 'https://bscscan.com/address/0x0fee6E1E55fA772fAE71E6734a7F9E8622900D75',
+        status: 'active'
+    },
     {
         pid: 86,
         name: 'BNB/XVS LP',
@@ -161,12 +173,7 @@ export const farmDetails: FarmDetails[] = [
     {
         pid: 77,
         name: 'BNB/BOG LP',
-        allocation: 50,
-        nextAllocation: [{
-            allocation: 100,
-            status: 'queued',
-            date: 'asap'
-        }],
+        allocation: 100,
         address: '0x9D8370C3E6833942b8c38478c84ef74374F28b9f',
         explorer: 'https://bscscan.com/address/0x9D8370C3E6833942b8c38478c84ef74374F28b9f',
         status: 'active'
