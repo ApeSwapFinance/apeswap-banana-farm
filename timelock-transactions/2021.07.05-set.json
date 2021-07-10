@@ -3,7 +3,7 @@
         "ETA-Timestamp": 1625540092,
         "Date": "2021-07-06T02:54:52.000Z",
         "queueTx": "https://bscscan.com/tx/0x5341ab31aa20c0c288f4edcc5821045d6fe5afc5d1ab297db4df0d22ab4ea0c1",
-        "executeTx": "",
+        "executeTx": "https://bscscan.com/tx/0x554a3a0eba4f6862a612930c51464c768e0cc5a8e7213d2832aed75d838cf594",
         "cancelTx": "",
         "masterApeTXEncodeFunction": "set",
         "masterApeArgs": [
@@ -32,7 +32,7 @@
         "ETA-Timestamp": 1625540092,
         "Date": "2021-07-06T02:54:52.000Z",
         "queueTx": "https://bscscan.com/tx/0x1e81f41326421d4bec03f1032e43a2119976020e25ab84fbb198ebed3c5f2d66",
-        "executeTx": "",
+        "executeTx": "https://bscscan.com/tx/0x354e959ec43961019f96492a7bc18944c3f22fb2beb5c61c2a3fb8046e86bf34",
         "cancelTx": "",
         "masterApeTXEncodeFunction": "set",
         "masterApeArgs": [
@@ -61,7 +61,7 @@
         "ETA-Timestamp": 1625540092,
         "Date": "2021-07-06T02:54:52.000Z",
         "queueTx": "https://bscscan.com/tx/0xddebd2e06bb5bfa6ca6d91fa40f8225aea640c7632e3b717330221871ab0a45a",
-        "executeTx": "",
+        "executeTx": "https://bscscan.com/tx/0x354e959ec43961019f96492a7bc18944c3f22fb2beb5c61c2a3fb8046e86bf34",
         "cancelTx": "",
         "masterApeTXEncodeFunction": "set",
         "masterApeArgs": [
@@ -90,7 +90,7 @@
         "ETA-Timestamp": 1625540092,
         "Date": "2021-07-06T02:54:52.000Z",
         "queueTx": "https://bscscan.com/tx/0x2a6e4aeac0db5913aaf01aae4f7de791df97c65b23e524409c97772abd4fc0ef",
-        "executeTx": "",
+        "executeTx": "https://bscscan.com/tx/0x97de2954ee20f137cdbfb1b8ff53ca3f559150aa1c5384bc873fc0f52dada87f",
         "cancelTx": "",
         "masterApeTXEncodeFunction": "set",
         "masterApeArgs": [
