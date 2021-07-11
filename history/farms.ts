@@ -589,6 +589,10 @@ export const farmDetails: FarmDetails[] = [
         pid: 24,
         name: 'BNB/NAUT LP',
         allocation: 100,
+        nextAllocation: [{
+            allocation: 0,
+            status: 'queued'
+        }],
         address: '0x288EA5437c7aaD045a393cee2F41E548df24d1C8BNB/CAKE LP',
         explorer: 'https://bscscan.com/address/0x288EA5437c7aaD045a393cee2F41E548df24d1C8BNB/CAKE LP',
         status: 'active'
