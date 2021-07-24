@@ -181,11 +181,7 @@ export const farmDetails: FarmDetails[] = [
     {
         pid: 81,
         name: 'BNB/SKILL LP',
-        allocation: 100,
-        nextAllocation: [{
-            allocation: 200,
-            status: 'queued'
-        }],
+        allocation: 200,
         address: '0x0dEB588c1EC6f1D9f348126D401f05c4c7B7a80c',
         explorer: 'https://bscscan.com/address/0x0dEB588c1EC6f1D9f348126D401f05c4c7B7a80c',
         status: 'active'
@@ -242,6 +238,10 @@ export const farmDetails: FarmDetails[] = [
         pid: 74,
         name: 'BNB/FOXY LP',
         allocation: 10,
+        nextAllocation:[{
+            allocation: 25,
+            status: 'queued'
+        }],
         address: '0xbe3e38918Ca1180f0285fa18c3FA154d0ddE6853',
         explorer: 'https://bscscan.com/address/0xbe3e38918Ca1180f0285fa18c3FA154d0ddE6853',
         status: 'active'
