@@ -65,7 +65,7 @@ const encode = async () => {
     const method = 'add';
     const masterApeTXEncodeFunction = masterApeContract.populateTransaction[method];
     const masterApeArgsArray = [
-        [50, "0xe6de19Ae48969aF0a6f78271e41D3CE47580eaFB", false],
+        [50, "0xe6de19Ae48969aF0a6f78271e41D3CE47580eaFB", true],
     ]
 
     let outputs = [];
