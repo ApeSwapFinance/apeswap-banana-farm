@@ -35,10 +35,10 @@ export const queueFarmDetails: QueueFarmDetails[] = [
     //     status: 'queued'
     // }, 
     {
-        name: 'BUSD/HOTCROSS LP',
-        allocation: 50,
-        address: '0x3B9Aa711D1D90A4f8639f66C227881729a3317F2',
-        explorer: 'https://bscscan.com/address/0x3B9Aa711D1D90A4f8639f66C227881729a3317F2',
+        name: 'BNB/LMT LP',
+        allocation: 100,
+        address: '0xbac4313d7f908c9a657b58b5b42f0f7713a3990b',
+        explorer: 'https://bscscan.com/address/0xbac4313d7f908c9a657b58b5b42f0f7713a3990b',
         status: 'queued'
     },
     {
@@ -76,6 +76,14 @@ interface FarmDetails extends Omit<QueueFarmDetails, 'status' | 'nextAllocation.
 }
 
 export const farmDetails: FarmDetails[] = [
+    {
+        pid: 105,
+        name: 'BUSD/HOTCROSS LP',
+        allocation: 50,
+        address: '0x3B9Aa711D1D90A4f8639f66C227881729a3317F2',
+        explorer: 'https://bscscan.com/address/0x3B9Aa711D1D90A4f8639f66C227881729a3317F2',
+        status: 'active'
+    },
     {
         pid: 104,
         name: 'BNB/CYT LP',
