@@ -104,6 +104,12 @@ export const farmDetails: FarmDetails[] = [
         pid: 104,
         name: 'BNB/CYT LP',
         allocation: 100,
+        nextAllocation: [
+            {
+                allocation: 200,
+                status: 'queued'
+            }
+        ],
         address: '0x5a55Fce6F6aCB2B1b20514964301Db4f37028C81',
         explorer: 'https://bscscan.com/address/0x5a55Fce6F6aCB2B1b20514964301Db4f37028C81',
         status: 'active'
