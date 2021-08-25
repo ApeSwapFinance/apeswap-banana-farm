@@ -35,13 +35,6 @@ export const queueFarmDetails: QueueFarmDetails[] = [
     //     status: 'queued'
     // }, 
     {
-        name: 'BNB/NABOX LP',
-        allocation: 50,
-        address: '0x7c35e27c6dc847ea720c435abbe30bdd29168581',
-        explorer: 'https://bscscan.com/address/0x7c35e27c6dc847ea720c435abbe30bdd29168581',
-        status: 'queued'
-    },
-    {
         name: 'BNB/LMT LP',
         allocation: 100,
         address: '0xbac4313d7f908c9a657b58b5b42f0f7713a3990b',
@@ -76,6 +69,38 @@ interface FarmDetails extends Omit<QueueFarmDetails, 'status' | 'nextAllocation.
 }
 
 export const farmDetails: FarmDetails[] = [
+    {
+        pid: 111,
+        name: 'BNB/WIZARD LP',
+        allocation: 100,
+        address: '0xF258A201EE142C1fdeb0C29a2C9941779fDfCE0E',
+        explorer: 'https://bscscan.com/address/0xF258A201EE142C1fdeb0C29a2C9941779fDfCE0E',
+        status: 'active'
+    },
+    {
+        pid: 110,
+        name: 'BNB/REVV LP',
+        allocation: 200,
+        address: '0x7e3d5bb5ec1fba3e780632490b4cf5b14a3cc12e',
+        explorer: 'https://bscscan.com/address/0x7e3d5bb5ec1fba3e780632490b4cf5b14a3cc12e',
+        status: 'active'
+    },
+    {
+        pid: 109,
+        name: 'BNB/BABI LP',
+        allocation: 75,
+        address: '0x07999087e34fa79e7145c051ac4b1ae9407beff4',
+        explorer: 'https://bscscan.com/address/0x07999087e34fa79e7145c051ac4b1ae9407beff4',
+        status: 'active'
+    },
+    {
+        pid: 108,
+        name: 'BNB/NABOX LP',
+        allocation: 50,
+        address: '0x7c35e27c6dc847ea720c435abbe30bdd29168581',
+        explorer: 'https://bscscan.com/address/0x7c35e27c6dc847ea720c435abbe30bdd29168581',
+        status: 'active'
+    },
     {
         pid: 107,
         name: 'BNB/FOOT LP',
@@ -291,7 +316,7 @@ export const farmDetails: FarmDetails[] = [
     {
         pid: 82,
         name: 'BNB/GNT LP',
-        allocation: 50,
+        allocation: 100,
         address: '0xE19C4B62eAb3b1b61C93c5Ddb27779c992413b0E',
         explorer: 'https://bscscan.com/address/0xE19C4B62eAb3b1b61C93c5Ddb27779c992413b0E',
         status: 'active'
