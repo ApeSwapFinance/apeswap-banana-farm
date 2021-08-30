@@ -3,7 +3,7 @@
     "Date": "2021-08-30T08:57:43.000Z",
     "queueTx": "https://bscscan.com/tx/0xd53ac2c4b06253230f3aea2d89ebf730eede72ef7f63528bb94c6edc604cb227",
     "executeTx": "",
-    "cancelTx": "",
+    "cancelTx": "https://bscscan.com/tx/0x3ed467d0d82c46b533dd4143f23919e20eb04734ef71ef8eb773851731ca7072",
     "masterApeTXEncodeFunction": "add",
     "masterApeArgs": [
         "100",
