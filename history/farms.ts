@@ -35,6 +35,13 @@ export const queueFarmDetails: QueueFarmDetails[] = [
     //     status: 'queued'
     // },
     {
+        name: 'BUSD/MOR LP',
+        allocation: 0,
+        address: '0x33526eD690200663EAAbF28e1D8621e58898c5fd',
+        explorer: 'https://bscscan.com/address/0x33526eD690200663EAAbF28e1D8621e58898c5fd',
+        status: 'queued'
+    },
+    {
         name: 'BNB/POLAR LP',
         allocation: 100,
         address: '0xf16ca1bEe548F30818F7D5FFA6c2bb5E5EcbeD32',
@@ -410,11 +417,7 @@ export const farmDetails: FarmDetails[] = [
     {
         pid: 75,
         name: 'POLYGON FARM',
-        allocation: 2000,
-        nextAllocation: [{
-            allocation: 2200,
-            status: 'queued'
-        }],
+        allocation: 2200,
         address: '0xA5818a82016cb07D0D9892736A2Abd1B47E78ea4',
         explorer: 'https://bscscan.com/address/0xA5818a82016cb07D0D9892736A2Abd1B47E78ea4',
         status: 'active'
