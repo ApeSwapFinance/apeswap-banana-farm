@@ -79,9 +79,9 @@ export const farmDetails: FarmDetails[] = [
     {
         pid: 115,
         name: 'BUSD/MOR LP',
-        allocation: 0,
+        allocation: 100,
         nextAllocation:[{
-            allocation: 100,
+            allocation: 10,
             status: 'queued'
         }],
         address: '0x33526eD690200663EAAbF28e1D8621e58898c5fd',
