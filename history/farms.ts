@@ -33,12 +33,11 @@ export const queueFarmDetails: QueueFarmDetails[] = [
     //     explorer: 'https://bscscan.com/address/',
     //     status: 'queued'
     // },
-
     {
-        name: 'BNB/POLAR LP',
+        name: 'BNB/CEEK LP',
         allocation: 100,
-        address: '0xf16ca1bEe548F30818F7D5FFA6c2bb5E5EcbeD32',
-        explorer: 'https://bscscan.com/address/0xf16ca1bEe548F30818F7D5FFA6c2bb5E5EcbeD32',
+        address: '0x119d6ebe840966c9cf4ff6603e76208d30ba2179',
+        explorer: 'https://bscscan.com/address/0x119d6ebe840966c9cf4ff6603e76208d30ba2179',
         status: 'queued'
     },
     {
@@ -77,13 +76,17 @@ interface FarmDetails extends Omit<QueueFarmDetails, 'status' | 'nextAllocation.
 
 export const farmDetails: FarmDetails[] = [
     {
+        pid: 116,
+        name: 'BNB/POLAR LP',
+        allocation: 100,
+        address: '0xf16ca1bEe548F30818F7D5FFA6c2bb5E5EcbeD32',
+        explorer: 'https://bscscan.com/address/0xf16ca1bEe548F30818F7D5FFA6c2bb5E5EcbeD32',
+        status: 'active'
+    },
+    {
         pid: 115,
         name: 'BUSD/MOR LP',
-        allocation: 100,
-        nextAllocation:[{
-            allocation: 10,
-            status: 'queued'
-        }],
+        allocation: 10,
         address: '0x33526eD690200663EAAbF28e1D8621e58898c5fd',
         explorer: 'https://bscscan.com/address/0x33526eD690200663EAAbF28e1D8621e58898c5fd',
         status: 'active'
