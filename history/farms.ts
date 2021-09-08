@@ -34,6 +34,18 @@ export const queueFarmDetails: QueueFarmDetails[] = [
     //     status: 'queued'
     // },
     {
+        name: 'BNB/DEP LP',
+        allocation: 100,
+        nextAllocation: [{
+            allocation: 50,
+            status: 'to-queue',
+            date: 'Execute two days after release'
+        }],
+        address: '0x6518709dC42F70Dbf89934cA382F1d9dB26370e8',
+        explorer: 'https://bscscan.com/address/0x6518709dC42F70Dbf89934cA382F1d9dB26370e8',
+        status: 'queued'
+    },
+    {
         name: 'BNB/ONG LP',
         allocation: 100, //50 in 2 days
         address: '0xe569fdbe1ea6b7e49c3fb3ad7fe3758ca701e90f',
