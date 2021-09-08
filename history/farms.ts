@@ -12,6 +12,7 @@ interface QueueFarmDetails {
     }[];
     address: string;
     explorer: string;
+    date?: string;
     status: 'to-queue' | 'queued'
 }
 
@@ -38,6 +39,7 @@ export const queueFarmDetails: QueueFarmDetails[] = [
         allocation: 50,
         address: '0x6b8e6F32C703e90F23515AE12ad14f6ceA67C766',
         explorer: 'https://bscscan.com/address/0x6b8e6F32C703e90F23515AE12ad14f6ceA67C766',
+        date: '2021.09.11 2300 UTC',
         status: 'queued'
     },
     {
@@ -90,7 +92,7 @@ export const queueFarmDetails: QueueFarmDetails[] = [
 ]
 
 
-interface FarmDetails extends Omit<QueueFarmDetails, 'status' | 'nextAllocation.status'> {
+interface FarmDetails extends Omit<QueueFarmDetails, 'status' | 'date' | 'nextAllocation.status'> {
     pid: number;
     status: 'active' | 'deprecated' | 'to-update'
     nextAllocation?: [{
