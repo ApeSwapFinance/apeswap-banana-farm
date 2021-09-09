@@ -35,7 +35,7 @@ export const queueFarmDetails: QueueFarmDetails[] = [
     //     status: 'queued'
     // },
     {
-        name: 'BNB/ LP',
+        name: 'BNB/TXL LP',
         allocation: 100,
         address: '0xD2fd92BB7aEE4D15fFa68D39ebbfc937f2B3970D',
         explorer: 'https://bscscan.com/address/0xD2fd92BB7aEE4D15fFa68D39ebbfc937f2B3970D',
