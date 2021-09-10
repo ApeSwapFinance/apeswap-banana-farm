@@ -51,32 +51,6 @@ export const queueFarmDetails: QueueFarmDetails[] = [
         status: 'queued'
     },
     {
-        name: 'BNB/DEP LP',
-        allocation: 100,
-        nextAllocation: [{
-            allocation: 50,
-            status: 'to-queue',
-            date: 'Execute two days after release'
-        }],
-        address: '0x6518709dC42F70Dbf89934cA382F1d9dB26370e8',
-        explorer: 'https://bscscan.com/address/0x6518709dC42F70Dbf89934cA382F1d9dB26370e8',
-        status: 'queued'
-    },
-    {
-        name: 'BNB/ONG LP',
-        allocation: 100, //50 in 2 days
-        address: '0xe569fdbe1ea6b7e49c3fb3ad7fe3758ca701e90f',
-        explorer: 'https://bscscan.com/address/0xe569fdbe1ea6b7e49c3fb3ad7fe3758ca701e90f',
-        status: 'queued'
-    },
-    {
-        name: 'BNB/YDR LP',
-        allocation: 100, // 50 in 1 day 
-        address: '0xE11E8e81748185d1980b7134e5812b65d1ac4E4f',
-        explorer: 'https://bscscan.com/address/0xE11E8e81748185d1980b7134e5812b65d1ac4E4f',
-        status: 'queued'
-    },
-    {
         name: 'BNB/LMT LP',
         allocation: 100,
         address: '0xbac4313d7f908c9a657b58b5b42f0f7713a3990b',
@@ -111,6 +85,35 @@ interface FarmDetails extends Omit<QueueFarmDetails, 'status' | 'date' | 'nextAl
 }
 
 export const farmDetails: FarmDetails[] = [
+    {
+        pid: 120,
+        name: 'BNB/DEP LP',
+        allocation: 100,
+        nextAllocation: [{
+            allocation: 50,
+            status: 'queued',
+            date: '2021.09.12 2200 UTC'
+        }],
+        address: '0x6518709dC42F70Dbf89934cA382F1d9dB26370e8',
+        explorer: 'https://bscscan.com/address/0x6518709dC42F70Dbf89934cA382F1d9dB26370e8',
+        status: 'active'
+    },
+    {
+        pid: 119,
+        name: 'BNB/ONG LP',
+        allocation: 100, //50 in 2 days
+        address: '0xe569fdbe1ea6b7e49c3fb3ad7fe3758ca701e90f',
+        explorer: 'https://bscscan.com/address/0xe569fdbe1ea6b7e49c3fb3ad7fe3758ca701e90f',
+        status: 'active'
+    },
+    {
+        pid: 118,
+        name: 'BNB/YDR LP',
+        allocation: 100, // 50 in 1 day 
+        address: '0xE11E8e81748185d1980b7134e5812b65d1ac4E4f',
+        explorer: 'https://bscscan.com/address/0xE11E8e81748185d1980b7134e5812b65d1ac4E4f',
+        status: 'active'
+    },
     {
         pid: 117,
         name: 'BNB/CEEK LP',
@@ -158,7 +161,7 @@ export const farmDetails: FarmDetails[] = [
         address: '0x344a9C3a0961DA3Cd78A8f5A62Bd04A0358178be',
         explorer: 'https://bscscan.com/address/0x344a9C3a0961DA3Cd78A8f5A62Bd04A0358178be',
         status: 'active'
-    }, 
+    },
     {
         pid: 111,
         name: 'BNB/WIZARD LP',
