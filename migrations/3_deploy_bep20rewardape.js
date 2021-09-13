@@ -10,6 +10,14 @@ const deployConfigs = [
     //   startBlock: '', // x_date x_time UTC
     //   bonusEndBlock: '' // x Months
     // },
+    {
+      name: "GNANA -> BHC Reward Pool",
+      stakeToken: '0xdDb3Bd8645775F59496c821E4F55A7eA6A6dc299', // GNANA
+      rewardToken: '0x6fd7c98458a943f469E1Cf4eA85B173f5Cd342F4', // BHC
+      rewardPerBlock: '2474537037000000', // 0.002474537037 / Block (18 decimals)
+      startBlock: '9807952', // x_date x_time UTC
+      bonusEndBlock: '10671952' // 30 Days / 864000 Blocks
+    },
   ]
   
 // let block = await web3.eth.getBlock("latest")
