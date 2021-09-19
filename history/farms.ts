@@ -36,21 +36,9 @@ export const queueFarmDetails: QueueFarmDetails[] = [
     // },
     {
         name: 'BNB/SX LP',
-        allocation: 100,
-        nextAllocation: [{
-            allocation: 75,
-            status: 'to-queue',
-            date: 'Sept 19 23:00 UTC'
-        }],
+        allocation: 75,
         address: '0x0ba3bbe401ad1d010927d572fbd7b58fb9fb7b59',
         explorer: 'https://bscscan.com/address/0x0ba3bbe401ad1d010927d572fbd7b58fb9fb7b59',
-        status: 'queued'
-    },
-    {
-        name: 'BNB/CFI LP',
-        allocation: 50,
-        address: '0xab72c0a3a1174ba0ae4a79083ff6d06dcf4336ed',
-        explorer: 'https://bscscan.com/address/0xab72c0a3a1174ba0ae4a79083ff6d06dcf4336ed',
         status: 'queued'
     },
     {
@@ -82,9 +70,17 @@ interface FarmDetails extends Omit<QueueFarmDetails, 'status' | 'date' | 'nextAl
 
 export const farmDetails: FarmDetails[] = [
     {
+        pid: 128,
+        name: 'BNB/SX LP',
+        allocation: 100,
+        address: '0x0ba3bbe401ad1d010927d572fbd7b58fb9fb7b59',
+        explorer: 'https://bscscan.com/address/0x0ba3bbe401ad1d010927d572fbd7b58fb9fb7b59',
+        status: 'active'
+    },
+    {
         pid: 127,
         name: 'BNB/CFI LP',
-        allocation: 100,
+        allocation: 50,
         address: '0xab72c0a3a1174ba0ae4a79083ff6d06dcf4336ed',
         explorer: 'https://bscscan.com/address/0xab72c0a3a1174ba0ae4a79083ff6d06dcf4336ed',
         status: 'active'
