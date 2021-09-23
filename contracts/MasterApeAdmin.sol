@@ -10,22 +10,18 @@ pragma solidity 0.6.12;
  * GitHub:          https://github.com/ApeSwapFinance
  */
 
-import "@pancakeswap/pancake-swap-lib/contracts/math/SafeMath.sol";
-import "@pancakeswap/pancake-swap-lib/contracts/token/BEP20/IBEP20.sol";
-import "@pancakeswap/pancake-swap-lib/contracts/token/BEP20/SafeBEP20.sol";
-import "@pancakeswap/pancake-swap-lib/contracts/access/Ownable.sol";
 
+import "@openzeppelin/contracts/math/SafeMath.sol";
+import "@openzeppelin/contracts/access/Ownable.sol";
 import "./interfaces/IMasterApe.sol";
-import "./BananaToken.sol";
-import "./BananaSplitBar.sol";
 
 // TEST: Needs tests written
 // NOTE: dev address must be changed by dev address
+// TODO: Add sweepToken function
 
 
-contract MasterApe is Ownable {
+contract MasterApeAdmin is Ownable {
     using SafeMath for uint256;
-    using SafeBEP20 for IBEP20;
 
     struct GhostFarmInfo {
         uint256 pid;
@@ -91,7 +87,7 @@ contract MasterApe is Ownable {
 
     function addBatch(
         uint256[] memory _allocPoints,
-        IBEP20[] memory _lpTokens,
+        address[] memory _lpTokens,
         bool _withUpdate
     ) external onlyFarmAdmin {
         require(

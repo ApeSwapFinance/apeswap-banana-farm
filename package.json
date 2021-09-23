@@ -16,7 +16,8 @@
     "verify:testnet": "truffle run verify MasterApe --network testnet && truffle run verify SupportApe --network testnet && truffle run verify BananaToken --network testnet && truffle run verify Timelock --network testnet && truffle run verify BananaSplitBar --network testnet",
     "encode": "clear && ts-node ./scripts/encode.ts",
     "encode-timelock-delay": "clear && ts-node ./scripts/encode-timelock-delay.ts",
-    "test": "npx builder test",
+    "test": "yarn run compile && yarn mocha --exit --timeout 10000",
+    "testt": "npx builder test",
     "coverage": "npx builder coverage"
   },
   "dependencies": {
@@ -24,6 +25,7 @@
     "@ethersproject/contracts": "^5.0.11",
     "@openzeppelin/test-helpers": "^0.5.6",
     "@pancakeswap/pancake-swap-lib": "^0.0.1",
+    "@openzeppelin/contracts": "3.3.0",
     "dotenv": "^8.2.0",
     "fs": "^0.0.1-security",
     "path": "^0.12.7",
@@ -37,6 +39,7 @@
     "@nomiclabs/buidler-truffle5": "^1.3.4",
     "@nomiclabs/buidler-waffle": "^2.0.0",
     "@nomiclabs/buidler-web3": "^1.3.4",
+    "@openzeppelin/test-environment": "^0.1.9",
     "chai": "^4.2.0",
     "ethereum-waffle": "^3.0.0",
     "ethers": "^5.0.14",
