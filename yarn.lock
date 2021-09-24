@@ -2,6 +2,22 @@
 # yarn lockfile v1
 
 
+"@apeswapfinance/test-helpers@^0.0.1":
+  version "0.0.1"
+  resolved "https://npm.pkg.github.com/download/@apeswapfinance/test-helpers/0.0.1/162a2ee0692028e55ae1e550ea11e32fae73d0e4adc951e92d4576f123e7bf9b#1a9f2dcd9c85fb4e1d91e699dc2f7cdd957a8f42"
+  integrity sha512-7d004P/OD+OgFmc7aj0JDxWCT5486cqWgE5PmWEwOVXFxt8UzQaCs1mohVnzfsAMOG1tzgy1iLiVcmGZIBTOnA==
+  dependencies:
+    "@openzeppelin/contract-loader" "^0.6.2"
+    "@openzeppelin/test-environment" "^0.1.9"
+    "@truffle/contract" "^4.0.35"
+    ansi-colors "^3.2.3"
+    chai-bn "^0.2.1"
+    ethjs-abi "^0.2.1"
+    lodash.flatten "^4.4.0"
+    semver "^5.6.0"
+    web3 "^1.2.5"
+    web3-utils "^1.2.5"
+
 "@ensdomains/ens@^0.4.4":
   version "0.4.5"
   resolved "https://registry.npmjs.org/@ensdomains/ens/-/ens-0.4.5.tgz"
