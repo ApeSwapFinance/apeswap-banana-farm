@@ -18,41 +18,44 @@ import "./interfaces/IMasterApe.sol";
 // TEST: Needs tests written
 // NOTE: dev address must be changed by dev address
 // TODO: Add sweepToken function
+// TODO: batchUpdatePools function to update masterape pools in batches to avoid out of gas 
 
 
 contract MasterApeAdmin is Ownable {
     using SafeMath for uint256;
 
-    struct GhostFarmInfo {
+    struct FixedPercentFarmInfo {
         uint256 pid;
         uint256 allocationPercent;
         bool isActive;
     }
 
-    // Farm admin can manage master ape farms and ghost farms
+    // Farm admin can manage master ape farms and fixed percent farms
     address public farmAdmin;
     // MasterApe Address
     IMasterApe public masterApe;
-    // Array of MasterApe pids that are active ghost farms
-    uint256[] public ghostFarmPids;
-    // mapping of MasterApe pids to GhostFarmInfo
-    mapping(uint256 => GhostFarmInfo) public getGhostFarmFromPid;
-    // The amount which decimal precentages are expanded to
-    uint256 constant public PERCENTAGE_PRECISION = 1e4;
+    // Array of MasterApe pids that are active fixed percent farms
+    uint256[] public fixedPercentFarmPids;
+    // mapping of MasterApe pids to FixedPercentFarmInfo
+    mapping(uint256 => FixedPercentFarmInfo) public getFixedPercentFarmFromPid;
+    // The percentages are divided by 1000
+    uint256 constant public PERCENTAGE_PRECISION = 1e3;
     // Percentage of base pool allocation managed by MasterApe internally
-    /// @dev The BASE_PERCENTAGE needs to be considered in ghost farm allocation updates as it's allocation is based on a percentage
+    /// @dev The BASE_PERCENTAGE needs to be considered in fixed percent farm allocation updates as it's allocation is based on a percentage
     uint256 constant public BASE_PERCENTAGE = PERCENTAGE_PRECISION / 4; // The base staking pool always gets 25%
-    // Percentage available to additional ghost farms
-    uint256 constant public MAX_GHOST_FARM_PERCENTAGE = PERCENTAGE_PRECISION - BASE_PERCENTAGE;
-    // Total allocation percentage for ghost farms
-    uint256 public totalGhostFarmPercentage = 0;
+    // Approaching max fixed farm percentage makes the fixed farm allocations go to infinity
+    uint256 constant public MAX_FIXED_FARM_PERCENTAGE_BUFFER = 100; // 10% Buffer
+    // Percentage available to additional fixed percent farms
+    uint256 constant public MAX_FIXED_FARM_PERCENTAGE = PERCENTAGE_PRECISION - BASE_PERCENTAGE - MAX_FIXED_FARM_PERCENTAGE_BUFFER;
+    // Total allocation percentage for fixed percent farms
+    uint256 public totalFixedPercentFarmPercentage = 0;
 
-    event AddFarmBatch(uint256 numBatches);
-    event SetFarmBatch(uint256 numBatches);
-    event GhostFarmAdded(uint256 indexed pid, uint256 allocationPercentage);
-    event GhostFarmUpdated(uint256 indexed pid, uint256 previousAllocationPercentage, uint256 allocationPercentage);
+    event AddFarm(address indexed lpToken, uint256 allocation);
+    event SetFarm(uint256 indexed pid, uint256 allocation);
+    event SyncFixedPercentFarm(uint256 indexed pid, uint256 allocation);
+    event AddFixedPercentFarm(uint256 indexed pid, uint256 allocationPercentage);
+    event SetFixedPercentFarm(uint256 indexed pid, uint256 previousAllocationPercentage, uint256 allocationPercentage);
     event TransferredFarmAdmin(address indexed previousFarmAdmin, address indexed newFarmAdmin);
-    event SyncGhostFarms();
 
 
     constructor(
@@ -85,138 +88,138 @@ contract MasterApeAdmin is Ownable {
         masterApe.updateMultiplier(multiplierNumber);
     }
 
-    function addBatch(
+    function addMasterApeFarms(
         uint256[] memory _allocPoints,
         address[] memory _lpTokens,
         bool _withUpdate
     ) external onlyFarmAdmin {
-        require(
-            _allocPoints.length == _lpTokens.length,
-            "array length mismatch"
-        );
+        require(_allocPoints.length == _lpTokens.length, "array length mismatch");
+
         if (_withUpdate) {
             masterApe.massUpdatePools();
         }
+
         for (uint256 index = 0; index < _allocPoints.length; index++) {
-            masterApe.add(_allocPoints[index], address(_lpTokens[index]), false);
+            masterApe.add(_allocPoints[index], _lpTokens[index], false);
+            emit AddFarm(_lpTokens[index], _allocPoints[index]);
         }
-
-        syncGhostFarmWithAllocationsInternal();
-
-        emit AddFarmBatch(_allocPoints.length);
+        syncFixedPercentFarmInternal();
     }
 
-    function setBatch(
+    function setMasterApeFarms(
         uint256[] memory _pids,
         uint256[] memory _allocPoints,
         bool _withUpdate
     ) external onlyFarmAdmin {
-        require(
-            _pids.length == _allocPoints.length,
-            "array length mismatch"
-        );
+        require(_pids.length == _allocPoints.length, "array length mismatch");
 
         if (_withUpdate) {
             masterApe.massUpdatePools();
         }
 
-        for (uint256 index = 0; index < _allocPoints.length; index++) {
+        uint256 pidIndexes = masterApe.poolLength();
+        for (uint256 index = 0; index < _pids.length; index++) {
+            require(_pids[index] < pidIndexes, "pid is out of bounds of MasterApe");
+            // Set all pids with no update
             masterApe.set(_pids[index], _allocPoints[index], false);
+            emit SetFarm(_pids[index], _allocPoints[index]);
         }
 
-        syncGhostFarmWithAllocationsInternal();
-
-        emit SetFarmBatch(_allocPoints.length);
+        syncFixedPercentFarmInternal();
     }
 
-    function addGhostFarmAllocation(
+    function addFixedPercentFarmAllocation(
         uint256 _pid,
         uint256 _allocPercentage,
         bool _withUpdate
     ) external onlyFarmAdmin {
         require(_pid < masterApe.poolLength(), "pid is out of bounds of MasterApe");
-        require(!getGhostFarmFromPid[_pid].isActive, "ghost farm already added");
-        require(_allocPercentage.add(totalGhostFarmPercentage) <= MAX_GHOST_FARM_PERCENTAGE, "allocation out of bounds");
- 
+        require(!getFixedPercentFarmFromPid[_pid].isActive, "fixed percent farm already added");
+        uint256 newTotalFixedPercentage = totalFixedPercentFarmPercentage.add(_allocPercentage);
+        require(newTotalFixedPercentage <= MAX_FIXED_FARM_PERCENTAGE, "allocation out of bounds");
+    
+        totalFixedPercentFarmPercentage = newTotalFixedPercentage;
+        getFixedPercentFarmFromPid[_pid] = FixedPercentFarmInfo(_pid, _allocPercentage, true);
+        fixedPercentFarmPids.push(_pid);
+        emit AddFixedPercentFarm(_pid, _allocPercentage);
+       
         if (_withUpdate) {
             masterApe.massUpdatePools();
         }
-
-        getGhostFarmFromPid[_pid].isActive = true;
-        totalGhostFarmPercentage = totalGhostFarmPercentage.add(_allocPercentage);
-
-        getGhostFarmFromPid[_pid] = GhostFarmInfo(_pid, _allocPercentage, true);
-        ghostFarmPids.push(_pid);
-        syncGhostFarmWithAllocationsInternal();
-        emit GhostFarmAdded(_pid, _allocPercentage);
+        syncFixedPercentFarmInternal();
     }
 
-    function setGhostFarmAllocation(
+    function setFixedPercentFarmAllocation(
         uint256 _pid,
         uint256 _allocPercentage,
         bool _withUpdate
     ) external onlyFarmAdmin {
-        GhostFarmInfo storage ghostFarm = getGhostFarmFromPid[_pid];
-        require(ghostFarm.isActive, "not a valid farm pid");
-        uint256 newTotalGhostFarmPercentage = _allocPercentage.add(totalGhostFarmPercentage).sub(ghostFarm.allocationPercent);
-        require(newTotalGhostFarmPercentage <= MAX_GHOST_FARM_PERCENTAGE, "new allocation out of bounds");
+        FixedPercentFarmInfo storage fixedPercentFarm = getFixedPercentFarmFromPid[_pid];
+        require(fixedPercentFarm.isActive, "not a valid farm pid");
+        uint256 newTotalFixedPercentFarmPercentage = _allocPercentage.add(totalFixedPercentFarmPercentage).sub(fixedPercentFarm.allocationPercent);
+        require(newTotalFixedPercentFarmPercentage <= MAX_FIXED_FARM_PERCENTAGE, "new allocation out of bounds");
 
-        totalGhostFarmPercentage = newTotalGhostFarmPercentage;
-        uint256 previousAllocation = ghostFarm.allocationPercent;
-        ghostFarm.allocationPercent = _allocPercentage;
+        totalFixedPercentFarmPercentage = newTotalFixedPercentFarmPercentage;
+        uint256 previousAllocation = fixedPercentFarm.allocationPercent;
+        fixedPercentFarm.allocationPercent = _allocPercentage;
 
         if(_allocPercentage == 0) {
-            ghostFarm.isActive = false;
-            // Remove ghost farm from pid array
-            for (uint256 index = 0; index < ghostFarmPids.length; index++) {
-                if(ghostFarmPids[index] == _pid) {
-                    removeFromArray(index, ghostFarmPids);
+            fixedPercentFarm.isActive = false;
+            // Remove fixed percent farm from pid array
+            for (uint256 index = 0; index < fixedPercentFarmPids.length; index++) {
+                if(fixedPercentFarmPids[index] == _pid) {
+                    removeFromArray(index, fixedPercentFarmPids);
                     break;
                 }
             }
+            // Disable farm on MasterApe
+            masterApe.updatePool(_pid);
+            masterApe.set(_pid, 0, false);
         }
+        emit SetFixedPercentFarm(_pid, previousAllocation, _allocPercentage);
       
         if (_withUpdate) {
             masterApe.massUpdatePools();
         }
-        syncGhostFarmWithAllocationsInternal();
-        emit GhostFarmUpdated(_pid, previousAllocation, _allocPercentage);
+        syncFixedPercentFarmInternal();
     }
 
     /** Public Functions  */
 
-    function getNumberOfGhostFarms() public view returns (uint256) {
-        return ghostFarmPids.length;
+    function getNumberOfFixedPercentFarms() public view returns (uint256) {
+        return fixedPercentFarmPids.length;
     }
 
     function getTotalAllocationPercent() public view returns (uint256) {
-        return totalGhostFarmPercentage + BASE_PERCENTAGE;
+        return totalFixedPercentFarmPercentage + BASE_PERCENTAGE;
     }
 
     /** Internal Functions  */
 
-    function syncGhostFarmWithAllocationsInternal() internal {
+    function syncFixedPercentFarmInternal() internal {
+        if(fixedPercentFarmPids.length == 0) {
+            return; 
+        }
         uint256 masterApeTotalAllocation = masterApe.totalAllocPoint();
         ( ,uint256 poolAllocation,,) = masterApe.getPoolInfo(0);
-        uint256 currentTotalGhostFarmAllocation = 0;
-        // Calculate the total allocation points of the ghost farms
-        for (uint256 index = 0; index < ghostFarmPids.length; index++) {
-            ( ,uint256 ghostFarmAllocation,,) = masterApe.getPoolInfo(ghostFarmPids[index]);
-            currentTotalGhostFarmAllocation = currentTotalGhostFarmAllocation.add(ghostFarmAllocation);
+        uint256 currentTotalFixedPercentFarmAllocation = 0;
+        // Calculate the total allocation points of the fixed percent farms
+        for (uint256 index = 0; index < fixedPercentFarmPids.length; index++) {
+            ( ,uint256 fixedPercentFarmAllocation,,) = masterApe.getPoolInfo(fixedPercentFarmPids[index]);
+            currentTotalFixedPercentFarmAllocation = currentTotalFixedPercentFarmAllocation.add(fixedPercentFarmAllocation);
         }
         // Calculate alloted allocations
-        uint256 nonPercentageBasedAllocation = masterApeTotalAllocation.sub(poolAllocation).sub(currentTotalGhostFarmAllocation);
-        uint256 percentageIncrease = (PERCENTAGE_PRECISION.mul(PERCENTAGE_PRECISION)).div(PERCENTAGE_PRECISION.sub(getTotalAllocationPercent()));
+        uint256 nonPercentageBasedAllocation = masterApeTotalAllocation.sub(poolAllocation).sub(currentTotalFixedPercentFarmAllocation);
+        uint256 percentageIncrease = (PERCENTAGE_PRECISION * PERCENTAGE_PRECISION) / (PERCENTAGE_PRECISION.sub(getTotalAllocationPercent()));
         uint256 finalAllocation = nonPercentageBasedAllocation.mul(percentageIncrease).div(PERCENTAGE_PRECISION);
-        uint256 allotedGhostFarmAllocation = finalAllocation.sub(nonPercentageBasedAllocation);
-        // Update Ghost farm allocations
-        for (uint256 index = 0; index < ghostFarmPids.length; index++) {
-            GhostFarmInfo memory ghostFarm = getGhostFarmFromPid[ghostFarmPids[index]];
-            uint256 newGhostFarmAllocation = allotedGhostFarmAllocation.mul(ghostFarm.allocationPercent).div(getTotalAllocationPercent());
-            masterApe.set(ghostFarm.pid, newGhostFarmAllocation, false);
+        uint256 allotedFixedPercentFarmAllocation = finalAllocation.sub(nonPercentageBasedAllocation);
+        // Update fixed percentage farm allocations
+        for (uint256 index = 0; index < fixedPercentFarmPids.length; index++) {
+            FixedPercentFarmInfo memory fixedPercentFarm = getFixedPercentFarmFromPid[fixedPercentFarmPids[index]];
+            uint256 newFixedPercentFarmAllocation = allotedFixedPercentFarmAllocation.mul(fixedPercentFarm.allocationPercent).div(getTotalAllocationPercent());
+            masterApe.set(fixedPercentFarm.pid, newFixedPercentFarmAllocation, false);
+            emit SyncFixedPercentFarm(fixedPercentFarm.pid, newFixedPercentFarmAllocation);
         }
-
-        emit SyncGhostFarms();
     }
 
     // Move the last element to the deleted spot.
