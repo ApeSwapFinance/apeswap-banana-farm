@@ -1,5 +1,6 @@
 const { accounts, contract } = require('@openzeppelin/test-environment');
-const { farm, dex, BN } = require('@apeswapfinance/test-helpers');
+const { BN, expectRevert } = require('@openzeppelin/test-helpers');
+const { farm, dex } = require('@apeswapfinance/test-helpers');
 const { expect, assert } = require('chai');
 
 const MasterApeAdmin = contract.fromArtifact('MasterApeAdmin'); // Loads a compiled contract
@@ -19,8 +20,8 @@ async function assertFixedFarmPercentages(masterApe, fixedFarmDetails, buffer = 
   }
 }
 
-describe('MasterApeAdmin', function () {
-  const [owner, farmAdmin] = accounts;
+describe('MasterApeAdmin', async function () {
+  const [owner, farmAdmin, alice] = accounts;
 
   describe('add/update batch farms', function () {
     this.NUM_POOLS = 20;
@@ -96,7 +97,59 @@ describe('MasterApeAdmin', function () {
     });
   });
 
-  describe('owner functions', function () {
+  describe('owner functions', async function () {
 
+    before(async () => {
+      const {
+        //   bananaToken,
+        //   bananaSplitBar,
+        masterApe,
+      } = await farm.deployMockFarm(accounts); // accounts passed will be used in the deployment
+      this.masterApe = masterApe;
+
+      const {
+        // dexFactory,
+        // mockWBNB,
+        // mockTokens,
+        dexPairs,
+      } = await dex.deployMockDex(accounts, this.NUM_POOLS - 1);
+      this.dexPairs = dexPairs;
+
+      this.masterApeAdmin = await MasterApeAdmin.new(this.masterApe.address, farmAdmin, { from: owner });
+      await this.masterApe.transferOwnership(this.masterApeAdmin.address, { from: owner });
+    });
+
+    describe('negative test cases', async () => {
+
+      it('should NOT adjust the MasterApe bonus multiplier from wrong address', async () => {
+        const NEW_MULTIPLIER = 50;
+        await expectRevert(this.masterApeAdmin.updateMasterApeMultiplier(NEW_MULTIPLIER, { from: alice }),
+          'Ownable: caller is not the owner'
+        );
+      });
+
+      it('should NOT transfer MasterApe owner to owner of MasterApeAdmin from wrong address', async () => {
+        await expectRevert(this.masterApeAdmin.transferMasterApeOwnershipToCurrentOwner({ from: alice }),
+          'Ownable: caller is not the owner'
+        );
+      });
+
+    });
+
+    describe('positive test cases', async () => {
+
+      it('should set adjust the MasterApe bonus multiplier', async () => {
+        const NEW_MULTIPLIER = 50;
+        await this.masterApeAdmin.updateMasterApeMultiplier(NEW_MULTIPLIER, { from: owner });
+        const bonusMultiplier = await this.masterApe.BONUS_MULTIPLIER();
+        assert.equal(bonusMultiplier, NEW_MULTIPLIER, `Multiplier update inaccurate`)
+      });
+
+      it('should transfer MasterApe owner to owner of MasterApeAdmin', async () => {
+        await this.masterApeAdmin.transferMasterApeOwnershipToCurrentOwner({ from: owner });
+        const masterApeOwner = await this.masterApe.owner();
+        assert.equal(masterApeOwner, owner, `Owner of MasterApe not transferred to owner of MasterApeAdmin`)
+      });
+    });
   });
 });

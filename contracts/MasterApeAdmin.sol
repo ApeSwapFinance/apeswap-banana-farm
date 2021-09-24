@@ -84,8 +84,8 @@ contract MasterApeAdmin is Ownable {
         emit TransferredFarmAdmin(previousFarmAdmin, newFarmAdmin);
     }
 
-    function updateMultiplier(uint256 multiplierNumber) external onlyOwner {
-        masterApe.updateMultiplier(multiplierNumber);
+    function updateMasterApeMultiplier(uint256 multiplier) external onlyOwner {
+        masterApe.updateMultiplier(multiplier);
     }
 
     function addMasterApeFarms(
