@@ -22,5 +22,5 @@ interface IBananaAllocator {
     function removeAdminsFromAllocation(uint256 aid, address[] memory allocationAdminsToRemove) external; // onlyOwner
     /// @dev Transfers the MasterApe dev address to the owner of this contract
     function transferDevToOwner() external; // onlyOwner
-    function sweepToken() external; //onlyOwner
+    function sweepToken(address tokenAddress) external; //onlyOwner
 }
