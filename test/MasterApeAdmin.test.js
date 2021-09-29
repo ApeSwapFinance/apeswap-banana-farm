@@ -5,11 +5,24 @@ const { expect, assert } = require('chai');
 
 const MasterApeAdmin = contract.fromArtifact('MasterApeAdmin'); // Loads a compiled contract
 
+const SHOW_LOGS = true
+const log = (message) => {
+  SHOW_LOGS && console.dir(message);
+}
+
+const [owner, farmAdmin, alice] = accounts;
+
+// TEST: large amount (10000+) of pids 
+// TEST: max amount of farmAdds
+// TEST: max amount of farmSets
+// TEST: high range of buffer
+
 async function assertFixedFarmPercentages(masterApe, fixedFarmDetails, buffer = 2) {
   const totalMasterApeAllocation = await masterApe.totalAllocPoint();
 
   for (let index = 0; index < fixedFarmDetails.length; index++) {
     const fixedFarmDetail = fixedFarmDetails[index];
+
     const { allocPoint } = await masterApe.getPoolInfo(fixedFarmDetail.pid);
     actualAllocationPercent = (allocPoint.mul(new BN('1000')).div(totalMasterApeAllocation)).toNumber();
 
@@ -20,10 +33,30 @@ async function assertFixedFarmPercentages(masterApe, fixedFarmDetails, buffer = 
   }
 }
 
-describe('MasterApeAdmin', async function () {
-  const [owner, farmAdmin, alice] = accounts;
+async function setupMasterApeAdmin(that, numPairs) {
+  const {
+    //   bananaToken,
+    //   bananaSplitBar,
+    masterApe,
+  } = await farm.deployMockFarm(accounts); // accounts passed will be used in the deployment
+  that.masterApe = masterApe;
 
-  describe('add/update batch farms', function () {
+  const {
+    // dexFactory,
+    // mockWBNB,
+    // mockTokens,
+    dexPairs,
+  } = await dex.deployMockDex(accounts, numPairs);
+  that.dexPairs = dexPairs;
+
+  that.masterApeAdmin = await MasterApeAdmin.new(that.masterApe.address, farmAdmin, { from: owner });
+  await that.masterApe.transferOwnership(that.masterApeAdmin.address, { from: owner });
+}
+
+describe('MasterApeAdmin', async function () {
+  this.timeout(10000);
+
+  describe('onlyFarmAdmin functions', async () => {
     this.NUM_POOLS = 20;
     this.FIXED_PERCENTAGE_FARMS = [
       {
@@ -39,84 +72,137 @@ describe('MasterApeAdmin', async function () {
         percentage: 25 // 5%
       },
     ]
+    this.FIXED_PERCENTAGE_PIDS = this.FIXED_PERCENTAGE_FARMS.map(farm => farm.pid);
 
     before(async () => {
-      const {
-        //   bananaToken,
-        //   bananaSplitBar,
-        masterApe,
-      } = await farm.deployMockFarm(accounts); // accounts passed will be used in the deployment
-      this.masterApe = masterApe;
-
-      const {
-        // dexFactory,
-        // mockWBNB,
-        // mockTokens,
-        dexPairs,
-      } = await dex.deployMockDex(accounts, this.NUM_POOLS - 1);
-      this.dexPairs = dexPairs;
-
-      this.masterApeAdmin = await MasterApeAdmin.new(this.masterApe.address, farmAdmin, { from: owner });
-      await this.masterApe.transferOwnership(this.masterApeAdmin.address, { from: owner });
-    });
-
-    it('should add batch farms through MasterApeAdmin', async () => {
-      let addresses = [];
-      let allocations = [];
-
-      for (let index = 0; index < this.dexPairs.length; index++) {
-        const ALLOCATION_MULTIPLIER = 10;
-        const dexPair = this.dexPairs[index];
-        addresses.push(dexPair.address);
-        allocations.push((index * ALLOCATION_MULTIPLIER) + 1);
-
-      }
-
-      // TEST: Revert with non farm admin
-      await this.masterApeAdmin.addMasterApeFarms(allocations, addresses, true, { from: farmAdmin });
-      for (let index = 0; index < this.FIXED_PERCENTAGE_FARMS.length; index++) {
-        const fixedFarmDetails = this.FIXED_PERCENTAGE_FARMS[index];
-        await this.masterApeAdmin.addFixedPercentFarmAllocation(fixedFarmDetails.pid, fixedFarmDetails.percentage, false, { from: farmAdmin });
-      }
-
-      await assertFixedFarmPercentages(this.masterApe, this.FIXED_PERCENTAGE_FARMS);
-
-      expect((await this.masterApe.poolLength()).toNumber()).to.equal(this.NUM_POOLS);
+      await setupMasterApeAdmin(this, this.NUM_POOLS - 1);
     });
 
 
-    it('should set fixedFarmPercentages', async () => {
-      this.FIXED_PERCENTAGE_UPDATE = this.FIXED_PERCENTAGE_FARMS.map(({ pid, percentage }) => { return { pid, percentage: percentage * 2 } });
+    describe('farm admin ownership', async () => {
+      it('should transfer farm admin ownership', async () => {
+        await this.masterApeAdmin.transferFarmAdminOwnership(alice, { from: farmAdmin });
+        assert.equal(await this.masterApeAdmin.farmAdmin(), alice, 'farm admin owner did not change');
+        await this.masterApeAdmin.transferFarmAdminOwnership(farmAdmin, { from: alice });
+      });
 
-      for (let index = 0; index < this.FIXED_PERCENTAGE_UPDATE.length; index++) {
-        const fixedFarmDetails = this.FIXED_PERCENTAGE_UPDATE[index];
-        await this.masterApeAdmin.setFixedPercentFarmAllocation(fixedFarmDetails.pid, fixedFarmDetails.percentage, false, { from: farmAdmin });
-      }
+      it('should NOT transfer farm admin ownership from non farmAdmin account', async () => {
+        await expectRevert(this.masterApeAdmin.transferFarmAdminOwnership(alice, { from: alice }),
+          'must be called by farm admin'
+        );
+      });
+    });
 
-      await assertFixedFarmPercentages(this.masterApe, this.FIXED_PERCENTAGE_UPDATE);
+    describe('add/update batch farms', async () => {
+      it('should add batch farms through MasterApeAdmin', async () => {
+        let addresses = [];
+        let allocations = [];
+
+        for (let index = 0; index < this.dexPairs.length; index++) {
+          const ALLOCATION_MULTIPLIER = 10;
+          const dexPair = this.dexPairs[index];
+          addresses.push(dexPair.address);
+          allocations.push((index * ALLOCATION_MULTIPLIER) + 1);
+
+        }
+
+        await expectRevert(this.masterApeAdmin.addMasterApeFarms(allocations, addresses, true, { from: alice }),
+          'must be called by farm admin'
+        );
+        await this.masterApeAdmin.addMasterApeFarms(allocations, addresses, true, { from: farmAdmin });
+
+        for (let index = 0; index < this.FIXED_PERCENTAGE_FARMS.length; index++) {
+          const fixedFarmDetails = this.FIXED_PERCENTAGE_FARMS[index];
+          await this.masterApeAdmin.addFixedPercentFarmAllocation(fixedFarmDetails.pid, fixedFarmDetails.percentage, false, { from: farmAdmin });
+          const { allocationPercent: fixedFarmAllocation, isActive: fixedFarmIsActive } = await this.masterApeAdmin.getFixedPercentFarmFromPid(fixedFarmDetails.pid);
+          assert.equal(fixedFarmIsActive, true, 'fixed farm should be active')
+          assert.equal(fixedFarmAllocation, fixedFarmDetails.percentage, 'fixed percentage farm allocation is incorrect')
+
+        }
+        // Check that allocations are accurate
+        for (let pid = 1; pid < this.NUM_POOLS; pid++) {
+          if (this.FIXED_PERCENTAGE_PIDS.includes(pid)) {
+            continue; // Fixed percentage pids are checked below
+          }
+          const { allocPoint } = await this.masterApe.poolInfo(pid);
+          assert.equal(allocPoint.toNumber(), allocations[pid - 1], `allocation for pid ${pid}, is inaccurate`)
+        }
+
+        await assertFixedFarmPercentages(this.masterApe, this.FIXED_PERCENTAGE_FARMS);
+
+        expect((await this.masterApe.poolLength()).toNumber()).to.equal(this.NUM_POOLS);
+      });
+
+      it('should add set batch farm allocations through MasterApeAdmin', async () => {
+        let pids = [];
+        let allocations = [];
+
+        for (let pid = 1; pid < this.NUM_POOLS; pid++) {
+          const ALLOCATION_MULTIPLIER = 69;
+          pids.push(pid);
+          allocations.push((pid * ALLOCATION_MULTIPLIER) + 1);
+        }
+
+        await this.masterApeAdmin.setMasterApeFarms(pids, allocations, true, { from: farmAdmin });
+        for (let pid = 1; pid < this.NUM_POOLS; pid++) {
+          if (this.FIXED_PERCENTAGE_PIDS.includes(pid)) {
+            continue; // Fixed percentage pids are checked below
+          }
+          const { allocPoint } = await this.masterApe.poolInfo(pid);
+          assert.equal(allocPoint.toNumber(), allocations[pid - 1], `allocation for pid ${pid}, is inaccurate`)
+        }
+        await assertFixedFarmPercentages(this.masterApe, this.FIXED_PERCENTAGE_FARMS);
+      });
+    });
+
+    describe('fixed percentage farms', async () => {
+      it('should set fixed percentage farm', async () => {
+        this.FIXED_PERCENTAGE_UPDATE = this.FIXED_PERCENTAGE_FARMS.map(({ pid, percentage }) => { return { pid, percentage: percentage * 2 } });
+
+        for (let index = 0; index < this.FIXED_PERCENTAGE_UPDATE.length; index++) {
+          const fixedFarmDetails = this.FIXED_PERCENTAGE_UPDATE[index];
+          await expectRevert(this.masterApeAdmin.setFixedPercentFarmAllocation(fixedFarmDetails.pid, fixedFarmDetails.percentage, false, { from: alice }),
+            'must be called by farm admin'
+          );
+          await this.masterApeAdmin.setFixedPercentFarmAllocation(fixedFarmDetails.pid, fixedFarmDetails.percentage, false, { from: farmAdmin });
+          const { allocationPercent: fixedFarmAllocation, isActive: fixedFarmIsActive } = await this.masterApeAdmin.getFixedPercentFarmFromPid(fixedFarmDetails.pid);
+          assert.equal(fixedFarmIsActive, true, 'fixed farm should be active')
+          assert.equal(fixedFarmAllocation, fixedFarmDetails.percentage, 'fixed percentage farm allocation is incorrect')
+        }
+
+        await assertFixedFarmPercentages(this.masterApe, this.FIXED_PERCENTAGE_UPDATE);
+      });
+
+      it('should remove fixed percentage farm', async () => {
+        this.FIXED_PERCENTAGE_UPDATE_2 = { ...this.FIXED_PERCENTAGE_UPDATE }
+        this.FIXED_PERCENTAGE_UPDATE_2[0].percentage = 0;
+        const { pid, percentage } = this.FIXED_PERCENTAGE_UPDATE_2[0]
+        let totalFixedPercentFarmPercentage = await this.masterApeAdmin.totalFixedPercentFarmPercentage();
+        assert.equal(totalFixedPercentFarmPercentage.toNumber(), 350, 'total fixed percentage farm percentage is inaccurate')
+        await this.masterApeAdmin.setFixedPercentFarmAllocation(pid, 0, false, { from: farmAdmin });
+        const { allocPoint: afterAllocationPoint } = await this.masterApe.poolInfo(pid);
+        assert.equal(afterAllocationPoint.toNumber(), 0, 'fixed farm allocation should be 0')
+        totalFixedPercentFarmPercentage = await this.masterApeAdmin.totalFixedPercentFarmPercentage();
+        assert.equal(totalFixedPercentFarmPercentage.toNumber(), 150, 'total fixed percentage farm percentage is inaccurate')
+        const fixedPercentFarmLength = await this.masterApeAdmin.getNumberOfFixedPercentFarms();
+        assert.equal(fixedPercentFarmLength, 2, 'fixed farm percentage length inaccurate')
+        // Check fixed farm status
+        const { allocationPercent: fixedFarmAllocation, isActive: fixedFarmIsActive } = await this.masterApeAdmin.getFixedPercentFarmFromPid(pid);
+        assert.equal(fixedFarmIsActive, false, 'fixed farm should be inactive')
+        assert.equal(fixedFarmAllocation, 0, 'fixed percentage farm allocation is incorrect');
+        // Check that pool is disabled
+        const { allocPoint } = await this.masterApe.poolInfo(pid);
+        assert.equal(allocPoint.toNumber(), 0, `allocation for pid ${pid}, is inaccurate`)
+        // Check that the fixed farm percentages are accurate
+        await assertFixedFarmPercentages(this.masterApe, this.FIXED_PERCENTAGE_UPDATE_2);
+      });
     });
   });
 
-  describe('owner functions', async function () {
+  describe('onlyOwner functions', async function () {
 
     before(async () => {
-      const {
-        //   bananaToken,
-        //   bananaSplitBar,
-        masterApe,
-      } = await farm.deployMockFarm(accounts); // accounts passed will be used in the deployment
-      this.masterApe = masterApe;
-
-      const {
-        // dexFactory,
-        // mockWBNB,
-        // mockTokens,
-        dexPairs,
-      } = await dex.deployMockDex(accounts, this.NUM_POOLS - 1);
-      this.dexPairs = dexPairs;
-
-      this.masterApeAdmin = await MasterApeAdmin.new(this.masterApe.address, farmAdmin, { from: owner });
-      await this.masterApe.transferOwnership(this.masterApeAdmin.address, { from: owner });
+      await setupMasterApeAdmin(this, this.NUM_POOLS - 1);
     });
 
     describe('negative test cases', async () => {

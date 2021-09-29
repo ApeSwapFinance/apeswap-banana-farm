@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT
 pragma solidity 0.6.12;
 
 /*
@@ -13,10 +14,12 @@ pragma solidity 0.6.12;
 
 import "@openzeppelin/contracts/math/SafeMath.sol";
 import "@openzeppelin/contracts/access/Ownable.sol";
+import "@openzeppelin/contracts/token/ERC20/IERC20.sol";
 import "./interfaces/IMasterApe.sol";
 
 // TEST: Needs tests written
 // NOTE: dev address must be changed by dev address
+// TODO: Add naatspec comments
 // TODO: Add sweepToken function
 // TODO: batchUpdatePools function to update masterape pools in batches to avoid out of gas 
 
@@ -50,12 +53,13 @@ contract MasterApeAdmin is Ownable {
     // Total allocation percentage for fixed percent farms
     uint256 public totalFixedPercentFarmPercentage = 0;
 
-    event AddFarm(address indexed lpToken, uint256 allocation);
+    event AddFarm(IERC20 indexed lpToken, uint256 allocation);
     event SetFarm(uint256 indexed pid, uint256 allocation);
     event SyncFixedPercentFarm(uint256 indexed pid, uint256 allocation);
     event AddFixedPercentFarm(uint256 indexed pid, uint256 allocationPercentage);
     event SetFixedPercentFarm(uint256 indexed pid, uint256 previousAllocationPercentage, uint256 allocationPercentage);
     event TransferredFarmAdmin(address indexed previousFarmAdmin, address indexed newFarmAdmin);
+    event SweepWithdraw(address indexed to, IERC20 indexed token, uint256 amount);
 
 
     constructor(
@@ -74,7 +78,26 @@ contract MasterApeAdmin is Ownable {
     /** External Functions  */
 
     function transferMasterApeOwnershipToCurrentOwner() external onlyOwner {
+        // Event emitted in MasterApe
         masterApe.transferOwnership(owner());
+    }
+
+    function updateMasterApeMultiplier(uint256 multiplier) external onlyOwner {
+        masterApe.updateMultiplier(multiplier);
+    }
+
+    // TEST: sweep
+    /// @notice A public function to sweep accidental ERC20 transfers to this contract. 
+    ///   Tokens are sent to owner
+    /// @param tokens Array of ERC20 addresses to sweep
+    /// @param to Address to send tokens to
+    function sweepToken(IERC20[] memory tokens, address to) external onlyOwner {
+        for (uint256 index = 0; index < tokens.length; index++) {
+            IERC20 token = tokens[index];
+            uint256 balance = token.balanceOf(address(this));
+            token.transfer(to, balance);
+            emit SweepWithdraw(to, token, balance);
+        }
     }
 
     function transferFarmAdminOwnership(address newFarmAdmin) external onlyFarmAdmin {
@@ -84,13 +107,9 @@ contract MasterApeAdmin is Ownable {
         emit TransferredFarmAdmin(previousFarmAdmin, newFarmAdmin);
     }
 
-    function updateMasterApeMultiplier(uint256 multiplier) external onlyOwner {
-        masterApe.updateMultiplier(multiplier);
-    }
-
     function addMasterApeFarms(
         uint256[] memory _allocPoints,
-        address[] memory _lpTokens,
+        IERC20[] memory _lpTokens,
         bool _withUpdate
     ) external onlyFarmAdmin {
         require(_allocPoints.length == _lpTokens.length, "array length mismatch");
@@ -100,7 +119,7 @@ contract MasterApeAdmin is Ownable {
         }
 
         for (uint256 index = 0; index < _allocPoints.length; index++) {
-            masterApe.add(_allocPoints[index], _lpTokens[index], false);
+            masterApe.add(_allocPoints[index], address(_lpTokens[index]), false);
             emit AddFarm(_lpTokens[index], _allocPoints[index]);
         }
         syncFixedPercentFarmInternal();
@@ -164,6 +183,7 @@ contract MasterApeAdmin is Ownable {
         fixedPercentFarm.allocationPercent = _allocPercentage;
 
         if(_allocPercentage == 0) {
+            // Disable fixed percentage farm and MasterApe allocation
             fixedPercentFarm.isActive = false;
             // Remove fixed percent farm from pid array
             for (uint256 index = 0; index < fixedPercentFarmPids.length; index++) {
@@ -173,8 +193,9 @@ contract MasterApeAdmin is Ownable {
                 }
             }
             // Disable farm on MasterApe
+            // Update pool for pid before disabling without mass update
             masterApe.updatePool(_pid);
-            masterApe.set(_pid, 0, false);
+            masterApe.set(_pid, 0, false); // NOTE: When disabling a fixed farm, it sets the allocation point to zero
         }
         emit SetFixedPercentFarm(_pid, previousAllocation, _allocPercentage);
       
@@ -197,7 +218,7 @@ contract MasterApeAdmin is Ownable {
     /** Internal Functions  */
 
     function syncFixedPercentFarmInternal() internal {
-        if(fixedPercentFarmPids.length == 0) {
+        if(getNumberOfFixedPercentFarms() == 0) {
             return; 
         }
         uint256 masterApeTotalAllocation = masterApe.totalAllocPoint();
