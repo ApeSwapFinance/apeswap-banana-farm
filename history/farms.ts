@@ -77,6 +77,14 @@ interface FarmDetails extends Omit<QueueFarmDetails, 'status' | 'date' | 'nextAl
 
 export const farmDetails: FarmDetails[] = [
     {
+        pid: 132,
+        name: 'BNB/NFTY LP',
+        allocation: 100,
+        address: '0x884be30e2c95b9cfed614ad2b5edf40af2a144ad',
+        explorer: 'https://bscscan.com/address/0x884be30e2c95b9cfed614ad2b5edf40af2a144ad',
+        status: 'active'
+    },
+    {
         pid: 131,
         name: 'BNB/DCB LP',
         allocation: 50,
