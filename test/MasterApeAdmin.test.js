@@ -17,14 +17,14 @@ const [owner, farmAdmin, alice] = accounts;
 // TEST: max amount of farmSets
 // TEST: high range of buffer
 
-async function assertFixedFarmPercentages(masterApe, fixedFarmDetails, buffer = 2) {
+async function assertFixedFarmPercentages(masterApe, fixedFarmDetails, buffer = 3) {
   const totalMasterApeAllocation = await masterApe.totalAllocPoint();
 
   for (let index = 0; index < fixedFarmDetails.length; index++) {
     const fixedFarmDetail = fixedFarmDetails[index];
 
     const { allocPoint } = await masterApe.getPoolInfo(fixedFarmDetail.pid);
-    actualAllocationPercent = (allocPoint.mul(new BN('1000')).div(totalMasterApeAllocation)).toNumber();
+    actualAllocationPercent = (allocPoint.mul(new BN('10000')).div(totalMasterApeAllocation)).toNumber();
 
     assert.isAtLeast(actualAllocationPercent, fixedFarmDetail.percentage - buffer,
       `Fixed farm allocation for pid ${fixedFarmDetail.pid} is too low`);
@@ -61,15 +61,15 @@ describe('MasterApeAdmin', async function () {
     this.FIXED_PERCENTAGE_FARMS = [
       {
         pid: 1,
-        percentage: 100 // 10%
+        percentage: 1000 // 10%
       },
       {
         pid: 5,
-        percentage: 50 // 5%
+        percentage: 500 // 5%
       },
       {
         pid: 10,
-        percentage: 25 // 5%
+        percentage: 250 // 2.5%
       },
     ]
     this.FIXED_PERCENTAGE_PIDS = this.FIXED_PERCENTAGE_FARMS.map(farm => farm.pid);
@@ -178,12 +178,12 @@ describe('MasterApeAdmin', async function () {
         this.FIXED_PERCENTAGE_UPDATE_2[0].percentage = 0;
         const { pid, percentage } = this.FIXED_PERCENTAGE_UPDATE_2[0]
         let totalFixedPercentFarmPercentage = await this.masterApeAdmin.totalFixedPercentFarmPercentage();
-        assert.equal(totalFixedPercentFarmPercentage.toNumber(), 350, 'total fixed percentage farm percentage is inaccurate')
+        assert.equal(totalFixedPercentFarmPercentage.toNumber(), 3500, 'total fixed percentage farm percentage is inaccurate')
         await this.masterApeAdmin.setFixedPercentFarmAllocation(pid, 0, false, { from: farmAdmin });
         const { allocPoint: afterAllocationPoint } = await this.masterApe.poolInfo(pid);
         assert.equal(afterAllocationPoint.toNumber(), 0, 'fixed farm allocation should be 0')
         totalFixedPercentFarmPercentage = await this.masterApeAdmin.totalFixedPercentFarmPercentage();
-        assert.equal(totalFixedPercentFarmPercentage.toNumber(), 150, 'total fixed percentage farm percentage is inaccurate')
+        assert.equal(totalFixedPercentFarmPercentage.toNumber(), 1500, 'total fixed percentage farm percentage is inaccurate')
         const fixedPercentFarmLength = await this.masterApeAdmin.getNumberOfFixedPercentFarms();
         assert.equal(fixedPercentFarmLength, 2, 'fixed farm percentage length inaccurate')
         // Check fixed farm status

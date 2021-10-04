@@ -1,4 +1,5 @@
 // SPDX-License-Identifier: MIT
+pragma experimental ABIEncoderV2;
 pragma solidity 0.6.12;
 
 /*
@@ -17,13 +18,11 @@ import "@openzeppelin/contracts/access/Ownable.sol";
 import "@openzeppelin/contracts/token/ERC20/IERC20.sol";
 import "./interfaces/IMasterApe.sol";
 
-// TEST: Needs tests written
-// NOTE: dev address must be changed by dev address
-// TODO: Add naatspec comments
-// TODO: Add sweepToken function
-// TODO: batchUpdatePools function to update masterape pools in batches to avoid out of gas 
-
-
+/// @title Admin MasterApe proxy contract used to add features to MasterApe admin functions
+/// @dev This contract does NOT handle changing the dev address of the MasterApe because that can only be done
+///  by the dev address itself
+/// @author DeFiFoFum (Apetastic)
+/// @notice Admin functions are separated into onlyOwner and onlyFarmAdmin to separate concerns
 contract MasterApeAdmin is Ownable {
     using SafeMath for uint256;
 
@@ -33,24 +32,35 @@ contract MasterApeAdmin is Ownable {
         bool isActive;
     }
 
-    // Farm admin can manage master ape farms and fixed percent farms
+    /// @notice Struct used to return detailed pool information
+    struct DetailedPoolInfo {
+        address lpToken;
+        uint256 allocationPoint;
+        uint256 totalAllocationPoints;
+        uint256 poolAllocationPercentMantissa;
+        uint256 poolBananaPerBlock;
+        uint256 poolBananaPerDay;
+        uint256 poolBananaPerMonth;
+    }
+
+    /// @notice Farm admin can manage master ape farms and fixed percent farms
     address public farmAdmin;
-    // MasterApe Address
+    /// @notice MasterApe Address
     IMasterApe public masterApe;
-    // Array of MasterApe pids that are active fixed percent farms
+    /// @notice Array of MasterApe pids that are active fixed percent farms
     uint256[] public fixedPercentFarmPids;
-    // mapping of MasterApe pids to FixedPercentFarmInfo
+    /// @notice mapping of MasterApe pids to FixedPercentFarmInfo
     mapping(uint256 => FixedPercentFarmInfo) public getFixedPercentFarmFromPid;
-    // The percentages are divided by 1000
-    uint256 constant public PERCENTAGE_PRECISION = 1e3;
-    // Percentage of base pool allocation managed by MasterApe internally
+    /// @notice The percentages are divided by 10000
+    uint256 constant public PERCENTAGE_PRECISION = 1e4;
+    /// @notice Percentage of base pool allocation managed by MasterApe internally
     /// @dev The BASE_PERCENTAGE needs to be considered in fixed percent farm allocation updates as it's allocation is based on a percentage
     uint256 constant public BASE_PERCENTAGE = PERCENTAGE_PRECISION / 4; // The base staking pool always gets 25%
-    // Approaching max fixed farm percentage makes the fixed farm allocations go to infinity
-    uint256 constant public MAX_FIXED_FARM_PERCENTAGE_BUFFER = 100; // 10% Buffer
-    // Percentage available to additional fixed percent farms
+    /// @notice Approaching max fixed farm percentage makes the fixed farm allocations go to infinity
+    uint256 constant public MAX_FIXED_FARM_PERCENTAGE_BUFFER = PERCENTAGE_PRECISION / 10; // 10% Buffer
+    /// @notice Percentage available to additional fixed percent farms
     uint256 constant public MAX_FIXED_FARM_PERCENTAGE = PERCENTAGE_PRECISION - BASE_PERCENTAGE - MAX_FIXED_FARM_PERCENTAGE_BUFFER;
-    // Total allocation percentage for fixed percent farms
+    /// @notice Total allocation percentage for fixed percent farms
     uint256 public totalFixedPercentFarmPercentage = 0;
 
     event AddFarm(IERC20 indexed lpToken, uint256 allocation);
@@ -82,31 +92,66 @@ contract MasterApeAdmin is Ownable {
         masterApe.transferOwnership(owner());
     }
 
-    function updateMasterApeMultiplier(uint256 multiplier) external onlyOwner {
-        masterApe.updateMultiplier(multiplier);
+    /// @notice Update the rewardPerBlock multiplier on the MasterApe contract
+    /// @param _newMultiplier Multiplier to change to
+    function updateMasterApeMultiplier(uint256 _newMultiplier) external onlyOwner {
+        masterApe.updateMultiplier(_newMultiplier);
+    }
+
+    /// @notice Helper function to update MasterApe pools in batches 
+    /// @dev The MasterApe massUpdatePools function uses a for loop which in the future
+    ///  could reach the block gas limit making it incallable. 
+    /// @param pids Array of MasterApe pids to update
+    function batchUpdateMasterApePools(uint256[] memory pids) external {
+        for (uint256 pidIndex = 0; pidIndex < pids.length; pidIndex++) {
+            masterApe.updatePool(pids[pidIndex]);
+        }
+    }
+
+    // TEST: getDetailedPoolInfo
+    /// @notice Obtain detailed allocation information regarding a MasterApe pool
+    /// @param pid MasterApe pid to pull detailed information from
+    function getDetailedPoolInfo(uint pid) external view returns (DetailedPoolInfo memory) {
+        uint256 bananaPerBlock = masterApe.cakePerBlock() * masterApe.BONUS_MULTIPLIER();
+        ( address lpToken, uint256 poolAllocation,,) = masterApe.getPoolInfo(pid);
+        uint256 totalAllocationPoints = masterApe.totalAllocPoint();
+        uint256 poolAllocationPercentMantissa = (poolAllocation.mul(1e18)).div(totalAllocationPoints);
+        uint256 poolBananaPerBlock = (bananaPerBlock.mul(poolAllocationPercentMantissa)).div(1e18);
+        // Assumes a 3 second blocktime
+        uint256 poolBananaPerDay = poolBananaPerBlock * 1200 * 24;
+        uint256 poolBananaPerMonth = poolBananaPerDay * 30;
+        return DetailedPoolInfo(lpToken, poolAllocation, totalAllocationPoints, poolAllocationPercentMantissa, poolBananaPerBlock, poolBananaPerDay, poolBananaPerMonth);
     }
 
     // TEST: sweep
     /// @notice A public function to sweep accidental ERC20 transfers to this contract. 
     ///   Tokens are sent to owner
-    /// @param tokens Array of ERC20 addresses to sweep
-    /// @param to Address to send tokens to
-    function sweepToken(IERC20[] memory tokens, address to) external onlyOwner {
-        for (uint256 index = 0; index < tokens.length; index++) {
-            IERC20 token = tokens[index];
+    /// @param _tokens Array of ERC20 addresses to sweep
+    /// @param _to Address to send tokens to
+    function sweepToken(IERC20[] memory _tokens, address _to) external onlyOwner {
+        for (uint256 index = 0; index < _tokens.length; index++) {
+            IERC20 token = _tokens[index];
             uint256 balance = token.balanceOf(address(this));
-            token.transfer(to, balance);
-            emit SweepWithdraw(to, token, balance);
+            token.transfer(_to, balance);
+            emit SweepWithdraw(_to, token, balance);
         }
     }
 
-    function transferFarmAdminOwnership(address newFarmAdmin) external onlyFarmAdmin {
-        require(newFarmAdmin != address(0), 'cannot transfer farm admin to address(0)');
+    // TODO: Should also be able to be called by owner?
+    /// @notice Transfer the farmAdmin to a new address
+    /// @param _newFarmAdmin Address of new farmAdmin
+    function transferFarmAdminOwnership(address _newFarmAdmin) external onlyFarmAdmin {
+        require(_newFarmAdmin != address(0), 'cannot transfer farm admin to address(0)');
         address previousFarmAdmin = farmAdmin;
-        farmAdmin = newFarmAdmin;
-        emit TransferredFarmAdmin(previousFarmAdmin, newFarmAdmin);
+        farmAdmin = _newFarmAdmin;
+        emit TransferredFarmAdmin(previousFarmAdmin, farmAdmin);
     }
 
+    /// @notice Add a batch of farms to the MasterApe contract
+    /// @dev syncs fixed percentage farms after update
+    /// @param _allocPoints Array of allocation points to set each address
+    /// @param _lpTokens Address of addresses to add to the farm
+    /// @param _withUpdate Mass update pools before 
     function addMasterApeFarms(
         uint256[] memory _allocPoints,
         IERC20[] memory _lpTokens,
@@ -122,9 +167,14 @@ contract MasterApeAdmin is Ownable {
             masterApe.add(_allocPoints[index], address(_lpTokens[index]), false);
             emit AddFarm(_lpTokens[index], _allocPoints[index]);
         }
-        syncFixedPercentFarmInternal();
+        _syncFixedPercentFarm();
     }
 
+    /// @notice Add a batch of farms to the MasterApe contract
+    /// @dev syncs fixed percentage farms after update
+    /// @param _pids Array of MasterApe pool ids to update
+    /// @param _allocPoints Array of allocation points to set each pid
+    /// @param _withUpdate Mass update pools before 
     function setMasterApeFarms(
         uint256[] memory _pids,
         uint256[] memory _allocPoints,
@@ -144,9 +194,14 @@ contract MasterApeAdmin is Ownable {
             emit SetFarm(_pids[index], _allocPoints[index]);
         }
 
-        syncFixedPercentFarmInternal();
+        _syncFixedPercentFarm();
     }
 
+    /// @notice Add a new fixed percentage farm allocation
+    /// @dev Must be a new MasterApe pid and below the max fixed percentage 
+    /// @param _pid MasterApe pid to create a fixed percentage farm for
+    /// @param _allocPercentage Percentage based in PERCENTAGE_PRECISION
+    /// @param _withUpdate Mass update pools before sync
     function addFixedPercentFarmAllocation(
         uint256 _pid,
         uint256 _allocPercentage,
@@ -165,9 +220,13 @@ contract MasterApeAdmin is Ownable {
         if (_withUpdate) {
             masterApe.massUpdatePools();
         }
-        syncFixedPercentFarmInternal();
+        _syncFixedPercentFarm();
     }
 
+    /// @notice Update/disable a new fixed percentage farm allocation
+    /// @param _pid MasterApe pid linked to fixed percentage farm to update
+    /// @param _allocPercentage Percentage based in PERCENTAGE_PRECISION
+    /// @param _withUpdate Mass update pools before sync
     function setFixedPercentFarmAllocation(
         uint256 _pid,
         uint256 _allocPercentage,
@@ -188,7 +247,7 @@ contract MasterApeAdmin is Ownable {
             // Remove fixed percent farm from pid array
             for (uint256 index = 0; index < fixedPercentFarmPids.length; index++) {
                 if(fixedPercentFarmPids[index] == _pid) {
-                    removeFromArray(index, fixedPercentFarmPids);
+                    _removeFromArray(index, fixedPercentFarmPids);
                     break;
                 }
             }
@@ -202,22 +261,31 @@ contract MasterApeAdmin is Ownable {
         if (_withUpdate) {
             masterApe.massUpdatePools();
         }
-        syncFixedPercentFarmInternal();
+        _syncFixedPercentFarm();
     }
 
     /** Public Functions  */
 
+    /// @notice Get the number of registered fixed percentage farms
+    /// @return Number of active fixed percentage farms 
     function getNumberOfFixedPercentFarms() public view returns (uint256) {
         return fixedPercentFarmPids.length;
     }
 
+    /// @notice Get the total percentage allocated to fixed percentage farms on the MasterApe
+    /// @dev Adds the total percent allocated to fixed percentage farms with the percentage allocated to the BANANA pool. 
+    ///  The MasterApe manages the BANANA pool internally and we need to account for this when syncing fixed percentage farms.
+    /// @return Total percentage based in PERCENTAGE_PRECISION 
     function getTotalAllocationPercent() public view returns (uint256) {
         return totalFixedPercentFarmPercentage + BASE_PERCENTAGE;
     }
 
+
     /** Internal Functions  */
 
-    function syncFixedPercentFarmInternal() internal {
+    /// @notice Run through fixed percentage farm allocations and set MasterApe allocations to match the percentage.
+    /// @dev The MasterApe contract manages the BANANA pool percentage on its own which is accounted for in the calculations below.
+    function _syncFixedPercentFarm() internal {
         if(getNumberOfFixedPercentFarms() == 0) {
             return; 
         }
@@ -243,9 +311,8 @@ contract MasterApeAdmin is Ownable {
         }
     }
 
-    // Move the last element to the deleted spot.
-    // Delete the last element, then correct the length.
-    function removeFromArray(uint index, uint256[] storage array) internal {
+    /// @notice Remove an index from an array by copying the last element to the index and then removing the last element.
+    function _removeFromArray(uint index, uint256[] storage array) internal {
         require(index < array.length, "Incorrect index");
         array[index] = array[array.length-1];
         array.pop();

@@ -16,6 +16,8 @@ interface IMasterApe {
     function add(uint256 _allocPoint, address _lpToken, bool _withUpdate) external; // onlyOwner
     function set(uint256 _pid, uint256 _allocPoint, bool _withUpdate) external; // onlyOwner
     function totalAllocPoint() external view returns (uint256);
+    function BONUS_MULTIPLIER() external view returns (uint256);
+    function cakePerBlock() external view returns (uint256);
     function poolLength() external view returns (uint256);
     function checkPoolDuplicate(address _lpToken) external view;
     function getMultiplier(uint256 _from, uint256 _to) external view returns (uint256);
