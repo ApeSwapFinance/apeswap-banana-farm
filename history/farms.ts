@@ -35,20 +35,6 @@ export const queueFarmDetails: QueueFarmDetails[] = [
     //     status: 'queued'
     // },
     {
-        name: 'BNB/SEFI LP',
-        allocation: 50,
-        address: '0xF29BaEC55254690e71A1beb5cFa5F1098A8df7E3',
-        explorer: 'https://bscscan.com/address/0xF29BaEC55254690e71A1beb5cFa5F1098A8df7E3',
-        status: 'queued'
-    },
-    {
-        name: 'BNB/NFTY LP',
-        allocation: 100,
-        address: '0x884be30e2c95b9cfed614ad2b5edf40af2a144ad',
-        explorer: 'https://bscscan.com/address/0x884be30e2c95b9cfed614ad2b5edf40af2a144ad',
-        status: 'queued'
-    },
-    {
         name: 'BNB/HUGO LP',
         allocation: 100,
         address: '0x6499B675EB745Fb2b63dc96f45A6Ea29F6172c46',
@@ -76,6 +62,14 @@ interface FarmDetails extends Omit<QueueFarmDetails, 'status' | 'date' | 'nextAl
 }
 
 export const farmDetails: FarmDetails[] = [
+    {
+        pid: 133,
+        name: 'BNB/SEFI LP',
+        allocation: 50,
+        address: '0xF29BaEC55254690e71A1beb5cFa5F1098A8df7E3',
+        explorer: 'https://bscscan.com/address/0xF29BaEC55254690e71A1beb5cFa5F1098A8df7E3',
+        status: 'active'
+    },
     {
         pid: 132,
         name: 'BNB/NFTY LP',
