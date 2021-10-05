@@ -180,6 +180,8 @@ describe('MasterApeAdmin', async function () {
         let totalFixedPercentFarmPercentage = await this.masterApeAdmin.totalFixedPercentFarmPercentage();
         assert.equal(totalFixedPercentFarmPercentage.toNumber(), 3500, 'total fixed percentage farm percentage is inaccurate')
         await this.masterApeAdmin.setFixedPercentFarmAllocation(pid, 0, false, { from: farmAdmin });
+        // Set farm allocation to zero
+        await this.masterApeAdmin.setMasterApeFarms([pid], [0], true, { from: farmAdmin });
         const { allocPoint: afterAllocationPoint } = await this.masterApe.poolInfo(pid);
         assert.equal(afterAllocationPoint.toNumber(), 0, 'fixed farm allocation should be 0')
         totalFixedPercentFarmPercentage = await this.masterApeAdmin.totalFixedPercentFarmPercentage();
@@ -214,8 +216,8 @@ describe('MasterApeAdmin', async function () {
         );
       });
 
-      it('should NOT transfer MasterApe owner to owner of MasterApeAdmin from wrong address', async () => {
-        await expectRevert(this.masterApeAdmin.transferMasterApeOwnershipToCurrentOwner({ from: alice }),
+      it('should NOT set pendingMasterApe admin from non-owner account', async () => {
+        await expectRevert(this.masterApeAdmin.setPendingMasterApeOwner(alice, { from: alice }),
           'Ownable: caller is not the owner'
         );
       });
@@ -231,10 +233,18 @@ describe('MasterApeAdmin', async function () {
         assert.equal(bonusMultiplier, NEW_MULTIPLIER, `Multiplier update inaccurate`)
       });
 
-      it('should transfer MasterApe owner to owner of MasterApeAdmin', async () => {
-        await this.masterApeAdmin.transferMasterApeOwnershipToCurrentOwner({ from: owner });
+      it('should transfer MasterApe ownership from MasterApeAdmin', async () => {
+        await this.masterApeAdmin.setPendingMasterApeOwner(owner, { from: owner });
+
+        it('should NOT accept transfer of MasterApe ownership from non-pending owner', async () => {
+          await expectRevert(this.masterApeAdmin.acceptMasterApeOwnership({ from: alice }),
+            'Ownable: caller is not the owner'
+          );
+        });
+
+        await this.masterApeAdmin.acceptMasterApeOwnership({ from: owner });
         const masterApeOwner = await this.masterApe.owner();
-        assert.equal(masterApeOwner, owner, `Owner of MasterApe not transferred to owner of MasterApeAdmin`)
+        assert.equal(masterApeOwner, owner, `Owner of MasterApe not transferred to owner`)
       });
     });
   });

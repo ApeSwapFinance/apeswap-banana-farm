@@ -47,6 +47,8 @@ contract MasterApeAdmin is Ownable {
     address public farmAdmin;
     /// @notice MasterApe Address
     IMasterApe public masterApe;
+    /// @notice Address which is eligible to accept ownership of the MasterApe. Set by the current owner.
+    address public pendingMasterApeOwner = address(0);
     /// @notice Array of MasterApe pids that are active fixed percent farms
     uint256[] public fixedPercentFarmPids;
     /// @notice mapping of MasterApe pids to FixedPercentFarmInfo
@@ -63,6 +65,7 @@ contract MasterApeAdmin is Ownable {
     /// @notice Total allocation percentage for fixed percent farms
     uint256 public totalFixedPercentFarmPercentage = 0;
 
+    event SetPendingMasterApeOwner(address pendingMasterApeOwner);
     event AddFarm(IERC20 indexed lpToken, uint256 allocation);
     event SetFarm(uint256 indexed pid, uint256 allocation);
     event SyncFixedPercentFarm(uint256 indexed pid, uint256 allocation);
@@ -87,9 +90,19 @@ contract MasterApeAdmin is Ownable {
 
     /** External Functions  */
 
-    function transferMasterApeOwnershipToCurrentOwner() external onlyOwner {
-        // Event emitted in MasterApe
-        masterApe.transferOwnership(owner());
+    /// @notice Set an address as the pending admin of the MasterApe. The address must accept afterward to take ownership.
+    /// @param _pendingMasterApeOwner Address to set as the pending owner of the MasterApe.
+    function setPendingMasterApeOwner(address _pendingMasterApeOwner) external onlyOwner {
+        pendingMasterApeOwner = _pendingMasterApeOwner;
+        emit SetPendingMasterApeOwner(pendingMasterApeOwner);
+    }
+
+    /// @notice The pendingMasterApeOwner takes ownership through this call
+    /// @dev Transferring MasterApe ownership away from this contract renders this contract useless. 
+    function acceptMasterApeOwnership() external {
+        require(msg.sender == pendingMasterApeOwner, "not pending owner");
+        masterApe.transferOwnership(pendingMasterApeOwner);
+        pendingMasterApeOwner = address(0);
     }
 
     /// @notice Update the rewardPerBlock multiplier on the MasterApe contract
@@ -108,7 +121,6 @@ contract MasterApeAdmin is Ownable {
         }
     }
 
-    // TEST: getDetailedPoolInfo
     /// @notice Obtain detailed allocation information regarding a MasterApe pool
     /// @param pid MasterApe pid to pull detailed information from
     function getDetailedPoolInfo(uint pid) external view returns (DetailedPoolInfo memory) {
@@ -123,7 +135,6 @@ contract MasterApeAdmin is Ownable {
         return DetailedPoolInfo(lpToken, poolAllocation, totalAllocationPoints, poolAllocationPercentMantissa, poolBananaPerBlock, poolBananaPerDay, poolBananaPerMonth);
     }
 
-    // TEST: sweep
     /// @notice A public function to sweep accidental ERC20 transfers to this contract. 
     ///   Tokens are sent to owner
     /// @param _tokens Array of ERC20 addresses to sweep
@@ -137,7 +148,6 @@ contract MasterApeAdmin is Ownable {
         }
     }
 
-    // TODO: Should also be able to be called by owner?
     /// @notice Transfer the farmAdmin to a new address
     /// @param _newFarmAdmin Address of new farmAdmin
     function transferFarmAdminOwnership(address _newFarmAdmin) external onlyFarmAdmin {
@@ -224,6 +234,7 @@ contract MasterApeAdmin is Ownable {
     }
 
     /// @notice Update/disable a new fixed percentage farm allocation
+    /// @dev If the farm allocation is 0, then the fixed farm will be disabled, but the allocation will be unchanged.
     /// @param _pid MasterApe pid linked to fixed percentage farm to update
     /// @param _allocPercentage Percentage based in PERCENTAGE_PRECISION
     /// @param _withUpdate Mass update pools before sync
@@ -251,10 +262,8 @@ contract MasterApeAdmin is Ownable {
                     break;
                 }
             }
-            // Disable farm on MasterApe
-            // Update pool for pid before disabling without mass update
-            masterApe.updatePool(_pid);
-            masterApe.set(_pid, 0, false); // NOTE: When disabling a fixed farm, it sets the allocation point to zero
+            // NOTE: The MasterApe pool allocation is left unchanged to not disable a fixed farm 
+            //  in case the creation was an accident.
         }
         emit SetFixedPercentFarm(_pid, previousAllocation, _allocPercentage);
       
