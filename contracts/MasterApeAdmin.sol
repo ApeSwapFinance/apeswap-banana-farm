@@ -1,5 +1,4 @@
 // SPDX-License-Identifier: MIT
-pragma experimental ABIEncoderV2;
 pragma solidity 0.6.12;
 
 /*
@@ -30,17 +29,6 @@ contract MasterApeAdmin is Ownable {
         uint256 pid;
         uint256 allocationPercent;
         bool isActive;
-    }
-
-    /// @notice Struct used to return detailed pool information
-    struct DetailedPoolInfo {
-        address lpToken;
-        uint256 allocationPoint;
-        uint256 totalAllocationPoints;
-        uint256 poolAllocationPercentMantissa;
-        uint256 poolBananaPerBlock;
-        uint256 poolBananaPerDay;
-        uint256 poolBananaPerMonth;
     }
 
     /// @notice Farm admin can manage master ape farms and fixed percent farms
@@ -123,16 +111,30 @@ contract MasterApeAdmin is Ownable {
 
     /// @notice Obtain detailed allocation information regarding a MasterApe pool
     /// @param pid MasterApe pid to pull detailed information from
-    function getDetailedPoolInfo(uint pid) external view returns (DetailedPoolInfo memory) {
+    /// @return lpToken Address of the stake token for this pool
+    /// @return poolAllocationPoint Allocation points for this pool
+    /// @return totalAllocationPoints Total allocation points across all pools
+    /// @return poolAllocationPercentMantissa Percentage of pool allocation points to total multiplied by 1e18
+    /// @return poolBananaPerBlock Amount of BANANA given to the pool per block
+    /// @return poolBananaPerDay Amount of BANANA given to the pool per day
+    /// @return poolBananaPerMonth Amount of BANANA given to the pool per month
+    function getDetailedPoolInfo(uint pid) external view returns (
+        address lpToken,
+        uint256 poolAllocationPoint,
+        uint256 totalAllocationPoints,
+        uint256 poolAllocationPercentMantissa,
+        uint256 poolBananaPerBlock,
+        uint256 poolBananaPerDay,
+        uint256 poolBananaPerMonth
+    ) {
         uint256 bananaPerBlock = masterApe.cakePerBlock() * masterApe.BONUS_MULTIPLIER();
-        ( address lpToken, uint256 poolAllocation,,) = masterApe.getPoolInfo(pid);
-        uint256 totalAllocationPoints = masterApe.totalAllocPoint();
-        uint256 poolAllocationPercentMantissa = (poolAllocation.mul(1e18)).div(totalAllocationPoints);
-        uint256 poolBananaPerBlock = (bananaPerBlock.mul(poolAllocationPercentMantissa)).div(1e18);
+        ( lpToken, poolAllocationPoint,,) = masterApe.getPoolInfo(pid);
+        totalAllocationPoints = masterApe.totalAllocPoint();
+        poolAllocationPercentMantissa = (poolAllocationPoint.mul(1e18)).div(totalAllocationPoints);
+        poolBananaPerBlock = (bananaPerBlock.mul(poolAllocationPercentMantissa)).div(1e18);
         // Assumes a 3 second blocktime
-        uint256 poolBananaPerDay = poolBananaPerBlock * 1200 * 24;
-        uint256 poolBananaPerMonth = poolBananaPerDay * 30;
-        return DetailedPoolInfo(lpToken, poolAllocation, totalAllocationPoints, poolAllocationPercentMantissa, poolBananaPerBlock, poolBananaPerDay, poolBananaPerMonth);
+        poolBananaPerDay = poolBananaPerBlock * 1200 * 24;
+        poolBananaPerMonth = poolBananaPerDay * 30;
     }
 
     /// @notice A public function to sweep accidental ERC20 transfers to this contract. 

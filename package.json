@@ -9,6 +9,7 @@
     "compile": "truffle compile --network bscTestnet",
     "flatten": "truffle-flattener ./contracts/MasterApe.sol > ./contracts-flattened/MasterApe.sol && truffle-flattener ./contracts/SupportApe.sol > ./contracts-flattened/SupportApe.sol && truffle-flattener ./contracts/BananaToken.sol > ./contracts-flattened/BananaToken.sol && truffle-flattener ./contracts/BananaSplitBar.sol > ./contracts-flattened/BananaSplitBar.sol && truffle-flattener ./contracts/Timelock.sol > ./contracts-flattened/Timelock.sol && truffle-flattener ./contracts/BNBRewardApe.sol > ./contracts-flattened/BNBRewardApe.sol",
     "flatten:pool": "truffle-flattener ./contracts/BEP20RewardApeV2.sol > ./BEP20RewardApeV2_flat.sol",
+    "verify:bsc:master-ape-admin": "truffle run verify MasterApeAdmin --network bsc",
     "verify:bsc:bep20rewardape": "truffle run verify BEP20RewardApeV2 --network bsc",
     "verify:testnet:bep20rewardape": "truffle run verify BEP20RewardApeV2 --network testnet",
     "verify:migrations": "truffle run verify Migrations --network bsc",
