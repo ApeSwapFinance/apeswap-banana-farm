@@ -111,6 +111,10 @@ describe('MasterApeAdmin', async function () {
         );
         await this.masterApeAdmin.addMasterApeFarms(allocations, addresses, true, { from: farmAdmin });
 
+        await expectRevert(this.masterApeAdmin.addFixedPercentFarmAllocation(0, 100, false, { from: farmAdmin }),
+          'cannot add reserved MasterApe pid 0'
+        );
+
         for (let index = 0; index < this.FIXED_PERCENTAGE_FARMS.length; index++) {
           const fixedFarmDetails = this.FIXED_PERCENTAGE_FARMS[index];
           await this.masterApeAdmin.addFixedPercentFarmAllocation(fixedFarmDetails.pid, fixedFarmDetails.percentage, false, { from: farmAdmin });
@@ -163,6 +167,9 @@ describe('MasterApeAdmin', async function () {
           const fixedFarmDetails = this.FIXED_PERCENTAGE_UPDATE[index];
           await expectRevert(this.masterApeAdmin.setFixedPercentFarmAllocation(fixedFarmDetails.pid, fixedFarmDetails.percentage, false, { from: alice }),
             'must be called by farm admin'
+          );
+          await expectRevert(this.masterApeAdmin.setFixedPercentFarmAllocation(fixedFarmDetails.pid, 1000000000, false, { from: farmAdmin }),
+            'allocation out of bounds'
           );
           await this.masterApeAdmin.setFixedPercentFarmAllocation(fixedFarmDetails.pid, fixedFarmDetails.percentage, false, { from: farmAdmin });
           const { allocationPercent: fixedFarmAllocation, isActive: fixedFarmIsActive } = await this.masterApeAdmin.getFixedPercentFarmFromPid(fixedFarmDetails.pid);

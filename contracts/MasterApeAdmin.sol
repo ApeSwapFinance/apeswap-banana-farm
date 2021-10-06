@@ -220,6 +220,7 @@ contract MasterApeAdmin is Ownable {
         bool _withUpdate
     ) external onlyFarmAdmin {
         require(_pid < masterApe.poolLength(), "pid is out of bounds of MasterApe");
+        require(_pid != 0, "cannot add reserved MasterApe pid 0");
         require(!getFixedPercentFarmFromPid[_pid].isActive, "fixed percent farm already added");
         uint256 newTotalFixedPercentage = totalFixedPercentFarmPercentage.add(_allocPercentage);
         require(newTotalFixedPercentage <= MAX_FIXED_FARM_PERCENTAGE, "allocation out of bounds");
