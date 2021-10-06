@@ -141,7 +141,7 @@ contract MasterApeAdmin is Ownable {
     ///   Tokens are sent to owner
     /// @param _tokens Array of ERC20 addresses to sweep
     /// @param _to Address to send tokens to
-    function sweepToken(IERC20[] memory _tokens, address _to) external onlyOwner {
+    function sweepTokens(IERC20[] memory _tokens, address _to) external onlyOwner {
         for (uint256 index = 0; index < _tokens.length; index++) {
             IERC20 token = _tokens[index];
             uint256 balance = token.balanceOf(address(this));
