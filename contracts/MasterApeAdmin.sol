@@ -159,19 +159,26 @@ contract MasterApeAdmin is Ownable {
         emit TransferredFarmAdmin(previousFarmAdmin, farmAdmin);
     }
 
+    /// @notice Update pool allocations based on fixed percentage farm percentages
+    function syncFixedPercentFarms() external onlyFarmAdmin {
+        _syncFixedPercentFarms();
+    }
+
+
     /// @notice Add a batch of farms to the MasterApe contract
     /// @dev syncs fixed percentage farms after update
     /// @param _allocPoints Array of allocation points to set each address
-    /// @param _lpTokens Address of addresses to add to the farm
-    /// @param _withUpdate Mass update pools before 
+    /// @param _withMassPoolUpdate Mass update pools before update
+    /// @param _syncFixedPercentageFarms Sync fixed percentage farm allocations
     function addMasterApeFarms(
         uint256[] memory _allocPoints,
         IERC20[] memory _lpTokens,
-        bool _withUpdate
+        bool _withMassPoolUpdate,
+        bool _syncFixedPercentageFarms
     ) external onlyFarmAdmin {
         require(_allocPoints.length == _lpTokens.length, "array length mismatch");
 
-        if (_withUpdate) {
+        if (_withMassPoolUpdate) {
             masterApe.massUpdatePools();
         }
 
@@ -179,22 +186,27 @@ contract MasterApeAdmin is Ownable {
             masterApe.add(_allocPoints[index], address(_lpTokens[index]), false);
             emit AddFarm(_lpTokens[index], _allocPoints[index]);
         }
-        _syncFixedPercentFarm();
+
+        if (_syncFixedPercentageFarms) {
+            _syncFixedPercentFarms();
+        }
     }
 
     /// @notice Add a batch of farms to the MasterApe contract
     /// @dev syncs fixed percentage farms after update
     /// @param _pids Array of MasterApe pool ids to update
     /// @param _allocPoints Array of allocation points to set each pid
-    /// @param _withUpdate Mass update pools before 
+    /// @param _withMassPoolUpdate Mass update pools before update
+    /// @param _syncFixedPercentageFarms Sync fixed percentage farm allocations
     function setMasterApeFarms(
         uint256[] memory _pids,
         uint256[] memory _allocPoints,
-        bool _withUpdate
+        bool _withMassPoolUpdate,
+        bool _syncFixedPercentageFarms
     ) external onlyFarmAdmin {
         require(_pids.length == _allocPoints.length, "array length mismatch");
 
-        if (_withUpdate) {
+        if (_withMassPoolUpdate) {
             masterApe.massUpdatePools();
         }
 
@@ -206,18 +218,22 @@ contract MasterApeAdmin is Ownable {
             emit SetFarm(_pids[index], _allocPoints[index]);
         }
 
-        _syncFixedPercentFarm();
+        if (_syncFixedPercentageFarms) {
+            _syncFixedPercentFarms();
+        }
     }
 
     /// @notice Add a new fixed percentage farm allocation
     /// @dev Must be a new MasterApe pid and below the max fixed percentage 
     /// @param _pid MasterApe pid to create a fixed percentage farm for
     /// @param _allocPercentage Percentage based in PERCENTAGE_PRECISION
-    /// @param _withUpdate Mass update pools before sync
+    /// @param _withMassPoolUpdate Mass update pools before update
+    /// @param _syncFixedPercentageFarms Sync fixed percentage farm allocations
     function addFixedPercentFarmAllocation(
         uint256 _pid,
         uint256 _allocPercentage,
-        bool _withUpdate
+        bool _withMassPoolUpdate,
+        bool _syncFixedPercentageFarms
     ) external onlyFarmAdmin {
         require(_pid < masterApe.poolLength(), "pid is out of bounds of MasterApe");
         require(_pid != 0, "cannot add reserved MasterApe pid 0");
@@ -230,21 +246,26 @@ contract MasterApeAdmin is Ownable {
         fixedPercentFarmPids.push(_pid);
         emit AddFixedPercentFarm(_pid, _allocPercentage);
        
-        if (_withUpdate) {
+        if (_withMassPoolUpdate) {
             masterApe.massUpdatePools();
         }
-        _syncFixedPercentFarm();
+
+        if (_syncFixedPercentageFarms) {
+            _syncFixedPercentFarms();
+        }
     }
 
     /// @notice Update/disable a new fixed percentage farm allocation
     /// @dev If the farm allocation is 0, then the fixed farm will be disabled, but the allocation will be unchanged.
     /// @param _pid MasterApe pid linked to fixed percentage farm to update
     /// @param _allocPercentage Percentage based in PERCENTAGE_PRECISION
-    /// @param _withUpdate Mass update pools before sync
+    /// @param _withMassPoolUpdate Mass update pools before update
+    /// @param _syncFixedPercentageFarms Sync fixed percentage farm allocations
     function setFixedPercentFarmAllocation(
         uint256 _pid,
         uint256 _allocPercentage,
-        bool _withUpdate
+        bool _withMassPoolUpdate,
+        bool _syncFixedPercentageFarms
     ) external onlyFarmAdmin {
         FixedPercentFarmInfo storage fixedPercentFarm = getFixedPercentFarmFromPid[_pid];
         require(fixedPercentFarm.isActive, "not a valid farm pid");
@@ -270,10 +291,13 @@ contract MasterApeAdmin is Ownable {
         }
         emit SetFixedPercentFarm(_pid, previousAllocation, _allocPercentage);
       
-        if (_withUpdate) {
+        if (_withMassPoolUpdate) {
             masterApe.massUpdatePools();
         }
-        _syncFixedPercentFarm();
+
+        if (_syncFixedPercentageFarms) {
+            _syncFixedPercentFarms();
+        }
     }
 
     /** Public Functions  */
@@ -297,7 +321,7 @@ contract MasterApeAdmin is Ownable {
 
     /// @notice Run through fixed percentage farm allocations and set MasterApe allocations to match the percentage.
     /// @dev The MasterApe contract manages the BANANA pool percentage on its own which is accounted for in the calculations below.
-    function _syncFixedPercentFarm() internal {
+    function _syncFixedPercentFarms() internal {
         if(getNumberOfFixedPercentFarms() == 0) {
             return; 
         }

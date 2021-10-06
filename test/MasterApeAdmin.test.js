@@ -109,15 +109,15 @@ describe('MasterApeAdmin', async function () {
         await expectRevert(this.masterApeAdmin.addMasterApeFarms(allocations, addresses, true, { from: alice }),
           'must be called by farm admin'
         );
-        await this.masterApeAdmin.addMasterApeFarms(allocations, addresses, true, { from: farmAdmin });
+        await this.masterApeAdmin.addMasterApeFarms(allocations, addresses, true, true, { from: farmAdmin });
 
-        await expectRevert(this.masterApeAdmin.addFixedPercentFarmAllocation(0, 100, false, { from: farmAdmin }),
+        await expectRevert(this.masterApeAdmin.addFixedPercentFarmAllocation(0, 100, false, true, { from: farmAdmin }),
           'cannot add reserved MasterApe pid 0'
         );
 
         for (let index = 0; index < this.FIXED_PERCENTAGE_FARMS.length; index++) {
           const fixedFarmDetails = this.FIXED_PERCENTAGE_FARMS[index];
-          await this.masterApeAdmin.addFixedPercentFarmAllocation(fixedFarmDetails.pid, fixedFarmDetails.percentage, false, { from: farmAdmin });
+          await this.masterApeAdmin.addFixedPercentFarmAllocation(fixedFarmDetails.pid, fixedFarmDetails.percentage, false, true, { from: farmAdmin });
           const { allocationPercent: fixedFarmAllocation, isActive: fixedFarmIsActive } = await this.masterApeAdmin.getFixedPercentFarmFromPid(fixedFarmDetails.pid);
           assert.equal(fixedFarmIsActive, true, 'fixed farm should be active')
           assert.equal(fixedFarmAllocation, fixedFarmDetails.percentage, 'fixed percentage farm allocation is incorrect')
@@ -147,7 +147,7 @@ describe('MasterApeAdmin', async function () {
           allocations.push((pid * ALLOCATION_MULTIPLIER) + 1);
         }
 
-        await this.masterApeAdmin.setMasterApeFarms(pids, allocations, true, { from: farmAdmin });
+        await this.masterApeAdmin.setMasterApeFarms(pids, allocations, true, true, { from: farmAdmin });
         for (let pid = 1; pid < this.NUM_POOLS; pid++) {
           if (this.FIXED_PERCENTAGE_PIDS.includes(pid)) {
             continue; // Fixed percentage pids are checked below
@@ -165,13 +165,13 @@ describe('MasterApeAdmin', async function () {
 
         for (let index = 0; index < this.FIXED_PERCENTAGE_UPDATE.length; index++) {
           const fixedFarmDetails = this.FIXED_PERCENTAGE_UPDATE[index];
-          await expectRevert(this.masterApeAdmin.setFixedPercentFarmAllocation(fixedFarmDetails.pid, fixedFarmDetails.percentage, false, { from: alice }),
+          await expectRevert(this.masterApeAdmin.setFixedPercentFarmAllocation(fixedFarmDetails.pid, fixedFarmDetails.percentage, false, true, { from: alice }),
             'must be called by farm admin'
           );
-          await expectRevert(this.masterApeAdmin.setFixedPercentFarmAllocation(fixedFarmDetails.pid, 1000000000, false, { from: farmAdmin }),
+          await expectRevert(this.masterApeAdmin.setFixedPercentFarmAllocation(fixedFarmDetails.pid, 1000000000, false, true, { from: farmAdmin }),
             'allocation out of bounds'
           );
-          await this.masterApeAdmin.setFixedPercentFarmAllocation(fixedFarmDetails.pid, fixedFarmDetails.percentage, false, { from: farmAdmin });
+          await this.masterApeAdmin.setFixedPercentFarmAllocation(fixedFarmDetails.pid, fixedFarmDetails.percentage, false, true, { from: farmAdmin });
           const { allocationPercent: fixedFarmAllocation, isActive: fixedFarmIsActive } = await this.masterApeAdmin.getFixedPercentFarmFromPid(fixedFarmDetails.pid);
           assert.equal(fixedFarmIsActive, true, 'fixed farm should be active')
           assert.equal(fixedFarmAllocation, fixedFarmDetails.percentage, 'fixed percentage farm allocation is incorrect')
@@ -186,9 +186,9 @@ describe('MasterApeAdmin', async function () {
         const { pid, percentage } = this.FIXED_PERCENTAGE_UPDATE_2[0]
         let totalFixedPercentFarmPercentage = await this.masterApeAdmin.totalFixedPercentFarmPercentage();
         assert.equal(totalFixedPercentFarmPercentage.toNumber(), 3500, 'total fixed percentage farm percentage is inaccurate')
-        await this.masterApeAdmin.setFixedPercentFarmAllocation(pid, 0, false, { from: farmAdmin });
+        await this.masterApeAdmin.setFixedPercentFarmAllocation(pid, 0, false, true, { from: farmAdmin });
         // Set farm allocation to zero
-        await this.masterApeAdmin.setMasterApeFarms([pid], [0], true, { from: farmAdmin });
+        await this.masterApeAdmin.setMasterApeFarms([pid], [0], true, true, { from: farmAdmin });
         const { allocPoint: afterAllocationPoint } = await this.masterApe.poolInfo(pid);
         assert.equal(afterAllocationPoint.toNumber(), 0, 'fixed farm allocation should be 0')
         totalFixedPercentFarmPercentage = await this.masterApeAdmin.totalFixedPercentFarmPercentage();
