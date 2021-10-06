@@ -19,7 +19,7 @@
     "encode-timelock-delay": "clear && ts-node ./scripts/encode-timelock-delay.ts",
     "test:fast": "yarn mocha --exit --timeout 10000",
     "test": "yarn run compile && yarn mocha --exit --timeout 10000",
-    "testt": "npx builder test",
+    "test:builder": "npx builder test",
     "coverage": "npx builder coverage"
   },
   "dependencies": {
