@@ -35,6 +35,13 @@ export const queueFarmDetails: QueueFarmDetails[] = [
     //     status: 'queued'
     // },
     {
+        name: 'BNB/WSG LP',
+        allocation: 100,
+        address: '0x7c9391ED34Bf49e1fCA11e1aEdD7E63af64c3663',
+        explorer: 'https://bscscan.com/address/0x7c9391ED34Bf49e1fCA11e1aEdD7E63af64c3663',
+        status: 'queued'
+    },
+    {
         name: 'BNB/IHC LP',
         allocation: 25,
         address: '0x83ccbe832e5a3b620a435fe0edb89e171c14eccb',
