@@ -137,7 +137,7 @@ contract MasterApeAdmin is Ownable {
         poolBananaPerMonth = poolBananaPerDay * 30;
     }
 
-    /// @notice A public function to sweep accidental ERC20 transfers to this contract. 
+    /// @notice An external function to sweep accidental ERC20 transfers to this contract. 
     ///   Tokens are sent to owner
     /// @param _tokens Array of ERC20 addresses to sweep
     /// @param _to Address to send tokens to
