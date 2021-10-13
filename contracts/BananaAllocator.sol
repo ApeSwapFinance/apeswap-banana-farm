@@ -57,7 +57,7 @@ contract BananaAllocator is Ownable {
     }
 
     modifier onlyAllocationAdmin(uint256 aid, address adminAddress) {
-        require(allocationInfo[aid].allocationAdmins[adminAddress], "Fuck off.");
+        require(allocationInfo[aid].allocationAdmins[adminAddress], "Not an admin ser.");
         _;
     }
 
@@ -146,7 +146,6 @@ contract BananaAllocator is Ownable {
         emit AdminsAdded(aid, newAllocationAdmins);
     }
 
-    // TODO: Finish function logic
     function removeAdminsFromAllocation(
         uint256 aid, 
         address[] memory allocationAdminsToRemove
