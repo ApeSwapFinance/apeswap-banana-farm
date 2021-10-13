@@ -18,6 +18,7 @@
     "encode-timelock-delay": "clear && ts-node ./scripts/encode-timelock-delay.ts",
     "test": "yarn run compile && yarn mocha --exit --timeout 10000",
     "testt": "npx builder test",
+    "test-allocator": "npx builder test test/BananaAllocator.test.js",
     "coverage": "npx builder coverage"
   },
   "dependencies": {

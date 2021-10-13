@@ -23,19 +23,20 @@ contract BananaAllocator is Ownable {
     using SafeMath for uint256;
 
     IERC20 public allocationToken; // BANANA token
-    PriceGetter public priceGetter;
+    PriceGetter public priceGetter; // Stubbed way to grab price
 
     // Information for each allocation
     struct AllocationInfo {
         string allocationName; // For recordkeeping purposes
         uint256 allocationAmount; // Amount (intended to be percentages, but can be treated similarly to farm multipliers)
-        address[] allocationAdmins; // People approved to extract tokens allocated to a specific allocation
-        uint256 tokensAvailable; // The current amount of 
+        uint256 tokensAvailable; // The current amount of tokens available to a specific allocation
+        mapping(address => bool) allocationAdmins; // People approved to extract tokens allocated to a specific allocation
     }
 
     // VARIABLES
     AllocationInfo[] public allocationInfo;
     uint256 public totalAllocations;
+    address public dev;
 
     // EVENTS
     event AllocationAdded(string name, uint256 allocationAmount, address[] allocationAdmins);
@@ -52,17 +53,18 @@ contract BananaAllocator is Ownable {
     ) public {
         allocationToken = _allocationToken;
         priceGetter = _priceGetter;
+        dev = msg.sender;
     }
 
-    modifier onlyAllocationAdmin(uint256 aid) {
-        // Most elegant way to see if array includes an item?
+    modifier onlyAllocationAdmin(uint256 aid, address adminAddress) {
+        require(allocationInfo[aid].allocationAdmins[adminAddress], "Fuck off.");
         _;
     }
 
     function withdrawAllocation(
         uint256 aid, 
         uint256 amount
-    ) external onlyAllocationAdmin(aid) {
+    ) external onlyAllocationAdmin(aid, msg.sender) {
         if(amount > 0 && amount <= allocationInfo[aid].tokensAvailable) {
             allocationInfo[aid].tokensAvailable = allocationInfo[aid].tokensAvailable.sub(amount);
             allocationToken.transfer(msg.sender, amount);
@@ -76,9 +78,9 @@ contract BananaAllocator is Ownable {
     }
 
     // TODO: Update once withdrawAllocation logic is finalized
-    function withdrawAllocationTo(uint256 aid, uint256 amount, address to) external onlyAllocationAdmin(aid) {}
+    function withdrawAllocationTo(uint256 aid, uint256 amount, address to) external onlyAllocationAdmin(aid, msg.sender) {}
 
-    function syncAllocations() internal {
+    function syncAllocations() public {
         uint256 length = allocationInfo.length;
         uint256 totalTokensOwed = 0;
         uint256 tokensInContract = allocationToken.balanceOf(address(this));
@@ -89,31 +91,34 @@ contract BananaAllocator is Ownable {
 
         uint256 tokensToAllocate = tokensInContract.sub(totalTokensOwed);
         
-        for (uint256 aid = 0; aid < length; aid++) {
-            uint256 _tokensOwedToAllocation = allocationInfo[aid].allocationAmount.div(totalAllocations).mul(tokensToAllocate);
-            allocationInfo[aid].tokensAvailable += _tokensOwedToAllocation;
+        for (uint256 _aid = 0; _aid < length; _aid++) {
+            uint256 _tokensOwedToAllocation = allocationInfo[_aid].allocationAmount.div(totalAllocations).mul(tokensToAllocate);
+            allocationInfo[_aid].tokensAvailable += _tokensOwedToAllocation;
         }
         
         emit AllocationsSynced();
     }
 
-    function setSyncDelay() external {}
-
     function addAllocation(
         string memory allocationName, 
         uint256 allocationAmount, 
-        address[] memory allocationAdmins
+        address[] memory newAllocationAdmins
     ) external onlyOwner {
         totalAllocations += allocationAmount;
-        
+
         allocationInfo.push(AllocationInfo({
             allocationName: allocationName,
             allocationAmount: allocationAmount, 
-            allocationAdmins: allocationAdmins, // Need to add msg.sender to allocationAdmins array 
             tokensAvailable: 0
         }));
 
-        emit AllocationAdded(allocationName, allocationAmount, allocationAdmins);
+        uint256 _aid = allocationInfo.length - 1;
+
+        for(uint256 i = 0; i < newAllocationAdmins.length; i++) {
+            allocationInfo[_aid].allocationAdmins[newAllocationAdmins[i]] = true;
+        }
+    
+        emit AllocationAdded(allocationName, allocationAmount, newAllocationAdmins);
     }
 
     function setAllocation(
@@ -135,8 +140,7 @@ contract BananaAllocator is Ownable {
         address[] memory newAllocationAdmins
     ) external onlyOwner {
         for(uint256 i = 0; i < newAllocationAdmins.length; i++) {
-            // TODO: Add no duplicates require statement
-            allocationInfo[aid].allocationAdmins.push(newAllocationAdmins[i]);
+            allocationInfo[aid].allocationAdmins[newAllocationAdmins[i]] = true;
         }
 
         emit AdminsAdded(aid, newAllocationAdmins);
@@ -148,14 +152,16 @@ contract BananaAllocator is Ownable {
         address[] memory allocationAdminsToRemove
     ) external onlyOwner {
         for(uint256 i = 0; i < allocationAdminsToRemove.length; i++) {
-            // TODO: contruct logic to remove here
+            allocationInfo[aid].allocationAdmins[allocationAdminsToRemove[i]] = false;
         }
 
         emit AdminsRemoved(aid, allocationAdminsToRemove);
     }
 
-    // TODO: Determine intended use of this function
-    function transferDevToOwner() external {}
+    // Update dev address by the previous dev.
+    function transferDevToOwner(address _dev) external onlyOwner {
+        dev = _dev;
+    }
 
     /// @notice A public function to sweep accidental ERC20 transfers to this contract. 
     ///   Tokens are sent to owner
@@ -164,17 +170,5 @@ contract BananaAllocator is Ownable {
         uint256 balance = token.balanceOf(address(this));
         token.transfer(msg.sender, balance);
         emit TokenSweep(msg.sender, token, balance);
-    }
-
-    /* 
-        Helper Functions
-    */ 
-
-    // Move the last element to the deleted spot.
-    // Delete the last element, then correct the length.
-    function removeFromArray(uint index, uint256[] storage array) internal {
-        require(index < array.length, "Incorrect index");
-        array[index] = array[array.length-1];
-        array.pop();
     }
 }
