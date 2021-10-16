@@ -15,6 +15,7 @@ interface IBananaAllocator {
     function withdrawAllocation(uint256 aid, uint256 amount) external; // onlyAllocationAdmin or Owner
     function withdrawAllocationTo(uint256 aid, uint256 amount, address to) external; // onlyAllocationAdmin or Owner
     function syncAllocations() external; // only after delay?
+    function setSyncDelay(uint256 syncDelay) external; // onlyOwner
     function addAllocation(string memory name, uint256 allocation, address[] memory allocationAdmins) external; // onlyOwner
     function setAllocation(uint256 aid, uint256 allocation) external; // onlyOwner
     function addAdminsToAllocation(uint256 aid, address[] memory newAllocationAdmins) external; // onlyOwner
