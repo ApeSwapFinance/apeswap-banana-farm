@@ -1,10 +1,15 @@
 const { accounts, contract } = require('@openzeppelin/test-environment');
+const { time } = require('@openzeppelin/test-helpers');
 const { BN, expectRevert } = require('@openzeppelin/test-helpers');
 const { farm, dex } = require('@apeswapfinance/test-helpers');
 const { expect, assert } = require('chai');
 
 const BananaAllocator = contract.fromArtifact('BananaAllocator'); // Loads a compiled contract
 const PriceGetter = contract.fromArtifact('PriceGetter'); // Loads a compiled contract
+
+function timeout(ms) {
+  return new Promise(resolve => setTimeout(resolve, ms));
+}
 
 describe('BananaAllocator', function () {
   const [owner, dev, alice, bob, carol] = accounts;
@@ -53,7 +58,6 @@ describe('BananaAllocator', function () {
       // Syncs the allocation
       await this.bananaAllocator.withdrawAllocation(0, 0, { from: dev });
       const timestamp = await this.bananaAllocator.lastSyncTimestamp();
-      console.log('timestamp', timestamp.toString());
       assert.isAbove(timestamp.toNumber(), 0, 'Timestamp not captured.');
     });
 
@@ -75,16 +79,21 @@ describe('BananaAllocator', function () {
 
     it('Sync Allocations 2', async () => {
       await this.bananaToken.mint(this.bananaAllocator.address, 10000, { from: owner });
+      const timestampBefore = await this.bananaAllocator.lastSyncTimestamp();
+      await time.advanceBlockTo('20');
+      await timeout(1000);
       await this.bananaAllocator.withdrawAllocation(0, 0, { from: dev });
+      const timestampAfter = await this.bananaAllocator.lastSyncTimestamp();
+      assert.isAbove(timestampAfter.toNumber(), timestampBefore.toNumber(), 'Timestamp not captured.');
     });
   });
 
-  describe('Adjusting Allocation Admins', async () => {
+  describe('Adjusting Allocation Admins & Withdraw To', async () => {
     it('Add admin to existing allocation', async () => {
       await this.bananaAllocator.addAdminsToAllocation(0, [carol], { from: owner });
-      await this.bananaAllocator.withdrawAllocation(0, '100', { from: carol });
+      await this.bananaAllocator.withdrawAllocationTo(0, '100', bob, { from: carol });
       assert.equal(await this.bananaToken.balanceOf(this.bananaAllocator.address), '19800', 'Wrong amount of tokens');
-      assert.equal(await this.bananaToken.balanceOf(carol), '100', 'Wrong amount of tokens');
+      assert.equal(await this.bananaToken.balanceOf(bob), '100', 'Wrong amount of tokens');
     });
     it('Remove admin from existing allocation', async () => {
       await this.bananaAllocator.removeAdminsFromAllocation(0, [carol], { from: owner });
@@ -94,4 +103,17 @@ describe('BananaAllocator', function () {
     });
   });
 
+  describe('Transfer Dev to Owner', async () => {
+    it('Transfer MasterApe Ownership to BananaAllocator', async () => {
+      await expectRevert(this.bananaAllocator.transferDevToOwner({ from: owner }),
+      'dev: wut?'
+      );
+      await this.masterApe.dev(this.bananaAllocator.address, { from: dev });
+      assert.equal(await this.masterApe.devaddr(), this.bananaAllocator.address, 'Wrong owner.');
+    });
+    it('Transfer MasterApe Ownership to Owner', async () => {
+      await this.bananaAllocator.transferDevToOwner({ from: owner });
+      assert.equal(await this.masterApe.devaddr(), owner, 'Wrong owner.');
+    });
+  });
 });
