@@ -20,7 +20,7 @@ interface IBananaAllocator {
     function setAllocation(uint256 aid, uint256 allocation) external; // onlyOwner
     function addAdminsToAllocation(uint256 aid, address[] memory newAllocationAdmins) external; // onlyOwner
     function removeAdminsFromAllocation(uint256 aid, address[] memory allocationAdminsToRemove) external; // onlyOwner
-    /// @dev Transfers the MasterApe dev address to the owner of this contract
-    function transferDevToOwner() external; // onlyOwner
+    function setPendingMasterApeDev(address _pendingMasterApeDev) external; // onlyOwner
+    function acceptMasterApeDev() external;
     function sweepTokens(address[] memory _tokens, address _to) external; //onlyOwner
 }

@@ -26,6 +26,7 @@ describe('BananaAllocator', function () {
         this.bananaToken.address, 
         this.priceGetter.address, 
         this.masterApe.address,
+        0,
         { from: owner }
       );
       await this.bananaToken.mint(this.bananaAllocator.address, 10000, { from: owner });
@@ -73,7 +74,7 @@ describe('BananaAllocator', function () {
 
     it('Negative case: Fail to get tokens', async () => {
       await expectRevert(this.bananaAllocator.withdrawAllocation(0, '100', { from: carol }),
-      'Not an admin ser. -- Reason given: Not an admin ser.'
+      'Not an admin of aid provided ser. -- Reason given: Not an admin of aid provided ser.'
       );
     });
 
@@ -98,22 +99,26 @@ describe('BananaAllocator', function () {
     it('Remove admin from existing allocation', async () => {
       await this.bananaAllocator.removeAdminsFromAllocation(0, [carol], { from: owner });
       await expectRevert(this.bananaAllocator.withdrawAllocation(0, '100', { from: carol }),
-      'Not an admin ser. -- Reason given: Not an admin ser.'
+      'Not an admin of aid provided ser. -- Reason given: Not an admin of aid provided ser.'
       );
     });
   });
 
   describe('Transfer Dev to Owner', async () => {
-    it('Transfer MasterApe Ownership to BananaAllocator', async () => {
-      await expectRevert(this.bananaAllocator.transferDevToOwner({ from: owner }),
-      'dev: wut?'
+    it('Transfer MasterApe Dev to BananaAllocator', async () => {
+      await expectRevert(this.bananaAllocator.setPendingMasterApeDev(owner, { from: dev }),
+      'Ownable: caller is not the owner -- Reason given: Ownable: caller is not the owner.'
       );
       await this.masterApe.dev(this.bananaAllocator.address, { from: dev });
       assert.equal(await this.masterApe.devaddr(), this.bananaAllocator.address, 'Wrong owner.');
     });
-    it('Transfer MasterApe Ownership to Owner', async () => {
-      await this.bananaAllocator.transferDevToOwner({ from: owner });
-      assert.equal(await this.masterApe.devaddr(), owner, 'Wrong owner.');
+    it('Transfer MasterApe Dev to Dev', async () => {
+      await this.bananaAllocator.setPendingMasterApeDev(dev, { from: owner });
+      await expectRevert(this.bananaAllocator.acceptMasterApeDev({ from: owner }),
+      'bad dev. Not for you.'
+      );
+      await this.bananaAllocator.acceptMasterApeDev({ from: dev });
+      assert.equal(await this.masterApe.devaddr(), dev, 'Wrong owner.');
     });
   });
 });

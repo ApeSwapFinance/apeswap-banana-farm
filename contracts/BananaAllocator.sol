@@ -12,7 +12,7 @@ pragma solidity 0.6.12;
 
 import "@openzeppelin/contracts/math/SafeMath.sol";
 import "@openzeppelin/contracts/access/Ownable.sol";
-import "@openzeppelin/contracts/token/ERC20/IERC20.sol";
+import "@openzeppelin/contracts/token/ERC20/SafeERC20.sol";
 
 // Stubbed import to get price for allocation token
 import "./PriceGetter.sol";
@@ -22,6 +22,7 @@ import "./interfaces/IMasterApe.sol";
 
 contract BananaAllocator is Ownable {
     using SafeMath for uint256;
+    using SafeERC20 for IERC20;
 
     IERC20 public allocationToken; // BANANA token
     PriceGetter public priceGetter; // Stubbed way to grab price
@@ -32,38 +33,44 @@ contract BananaAllocator is Ownable {
         string allocationName; // For recordkeeping purposes
         uint256 allocationAmount; // Amount (intended to be percentages, but can be treated similarly to farm multipliers)
         uint256 tokensAvailable; // The current amount of tokens available to a specific allocation
-        mapping(address => bool) allocationAdmins; // People approved to extract tokens allocated to a specific allocation
+        mapping(address => bool) isAllocationAdmin; // People approved to extract tokens allocated to a specific allocation
     }
 
     AllocationInfo[] public allocationInfo;
     uint256 public totalAllocations;
+    uint256 public totalTokensAllocated;
+    uint256 public totalTokensPaid;
     uint256 public syncDelay;
     uint256 public lastSyncTimestamp;
+    address public pendingMasterApeDev;
 
     event AllocationAdded(string name, uint256 allocationAmount, address[] allocationAdmins);
     event AllocationWithdrawn(uint256 aid, uint256 allocationAmount, uint256 usdAmount, address to);
-    event AllocationsSynced();
+    event AllocationSynced(uint aid, uint256 tokensAllocated);
     event AllocationSet(uint256 aid, uint256 allocationAmount);
     event AdminsAdded(uint256 aid, address[] newAllocationAdmins);
     event AdminsRemoved(uint256 aid, address[] removedAllocationAdmins);
     event SweepWithdraw(address indexed to, IERC20 indexed token, uint256 amount);
-    event SyncDelaySet(uint256 syncDelay);
+    event SyncDelaySet(uint256 previousSyncDelay, uint256 newSyncDelay);
     event MasterApeDevTransferred();
+    event SetPendingMasterApeDev(address pendingMasterApeDev);
 
     constructor(
         IERC20 _allocationToken,
         PriceGetter _priceGetter,
-        IMasterApe _masterApe
+        IMasterApe _masterApe,
+        uint256 _syncDelay
     ) public {
         allocationToken = _allocationToken;
         priceGetter = _priceGetter;
         masterApe = _masterApe;
-        syncDelay = 0;
+        syncDelay = _syncDelay;
         lastSyncTimestamp = 0;
+        pendingMasterApeDev = address(0);
     }
 
     modifier onlyAllocationAdmin(uint256 aid, address adminAddress) {
-        require(allocationInfo[aid].allocationAdmins[adminAddress], "Not an admin ser.");
+        require(allocationInfo[aid].isAllocationAdmin[adminAddress] || adminAddress == address(this), "Not an admin of aid provided ser.");
         _;
     }
 
@@ -74,19 +81,7 @@ contract BananaAllocator is Ownable {
         uint256 aid, 
         uint256 amount
     ) external onlyAllocationAdmin(aid, msg.sender) {
-        if(amount > 0 && amount <= allocationInfo[aid].tokensAvailable) {
-            allocationInfo[aid].tokensAvailable = allocationInfo[aid].tokensAvailable.sub(amount);
-            allocationToken.transfer(msg.sender, amount);
-
-            uint256 allocationTokenUsdValue = priceGetter.getTokenUsdPrice(address(allocationToken));
-            uint256 usdAmount = allocationTokenUsdValue.mul(amount).div(1e18);
-
-            emit AllocationWithdrawn(aid, amount, usdAmount, msg.sender);
-        }
-
-        if (lastSyncTimestamp + syncDelay < block.timestamp) {
-            syncAllocations();
-        }
+        this.withdrawAllocationTo(aid, amount, msg.sender);
     }
 
     /// @notice A function to withdraw from an allocation to another address
@@ -100,12 +95,14 @@ contract BananaAllocator is Ownable {
     ) external onlyAllocationAdmin(aid, msg.sender) {
         if(amount > 0 && amount <= allocationInfo[aid].tokensAvailable) {
             allocationInfo[aid].tokensAvailable = allocationInfo[aid].tokensAvailable.sub(amount);
-            allocationToken.transfer(to, amount);
+            allocationToken.safeTransfer(to, amount);
 
             uint256 allocationTokenUsdValue = priceGetter.getTokenUsdPrice(address(allocationToken));
             uint256 usdAmount = allocationTokenUsdValue.mul(amount).div(1e18);
 
-            emit AllocationWithdrawn(aid, amount, usdAmount, msg.sender);
+            totalTokensPaid = totalTokensPaid.add(amount);
+
+            emit AllocationWithdrawn(aid, amount, usdAmount, to);
         }
 
         if (lastSyncTimestamp + syncDelay < block.timestamp) {
@@ -115,32 +112,27 @@ contract BananaAllocator is Ownable {
 
     /// @notice An internal function to sync all the allocation amounts
     function syncAllocations() internal {
-        uint256 length = allocationInfo.length;
-        uint256 totalTokensOwed = 0;
+        uint256 allocatedTokens = 0;
         uint256 tokensInContract = allocationToken.balanceOf(address(this));
+        uint256 tokensToAllocate = tokensInContract.add(totalTokensPaid).sub(totalTokensAllocated);
 
-        for (uint256 aid = 0; aid < length; aid++) {
-            totalTokensOwed = totalTokensOwed.add(allocationInfo[aid].tokensAvailable);
+        for (uint256 i = 0; i < allocationInfo.length; i++) {
+            uint256 newAllocationTokens = allocationInfo[i].allocationAmount.mul(tokensToAllocate).div(totalAllocations);
+            allocationInfo[i].tokensAvailable = allocationInfo[i].tokensAvailable.add(newAllocationTokens);
+            emit AllocationSynced(i, newAllocationTokens);
+            allocatedTokens = allocatedTokens.add(newAllocationTokens);
         }
 
-        uint256 tokensToAllocate = tokensInContract.sub(totalTokensOwed);
-        
-        for (uint256 i = 0; i < length; i++) {
-            allocationInfo[i].tokensAvailable += allocationInfo[i].allocationAmount.mul(tokensToAllocate).div(totalAllocations);
-        }
-
+        totalTokensAllocated = totalTokensAllocated.add(allocatedTokens);
         lastSyncTimestamp = block.timestamp;
-        
-        emit AllocationsSynced();
     }
 
     /// @notice A function to adjust the sync delay
     /// @param _syncDelay number to adjust the sync delay to
     ///     in milliseconds
     function setSyncDelay(uint256 _syncDelay) external onlyOwner {
+        emit SyncDelaySet(syncDelay, _syncDelay);
         syncDelay = _syncDelay;
-
-        emit SyncDelaySet(_syncDelay);
     }
 
     /// @notice A function to add a new allocation
@@ -163,7 +155,7 @@ contract BananaAllocator is Ownable {
         uint256 _aid = allocationInfo.length - 1;
 
         for(uint256 i = 0; i < newAllocationAdmins.length; i++) {
-            allocationInfo[_aid].allocationAdmins[newAllocationAdmins[i]] = true;
+            allocationInfo[_aid].isAllocationAdmin[newAllocationAdmins[i]] = true;
         }
     
         emit AllocationAdded(allocationName, allocationAmount, newAllocationAdmins);
@@ -180,7 +172,7 @@ contract BananaAllocator is Ownable {
 
         allocationInfo[aid].allocationAmount = allocationAmount;
         if (prevAllocationAmount != allocationAmount) {
-            totalAllocations = totalAllocations.sub(prevAllocationAmount).add(allocationAmount);
+            totalAllocations = totalAllocations.add(allocationAmount).sub(prevAllocationAmount);
         }
 
         emit AllocationSet(aid, allocationAmount);
@@ -194,7 +186,7 @@ contract BananaAllocator is Ownable {
         address[] memory newAllocationAdmins
     ) external onlyOwner {
         for(uint256 i = 0; i < newAllocationAdmins.length; i++) {
-            allocationInfo[aid].allocationAdmins[newAllocationAdmins[i]] = true;
+            allocationInfo[aid].isAllocationAdmin[newAllocationAdmins[i]] = true;
         }
 
         emit AdminsAdded(aid, newAllocationAdmins);
@@ -208,15 +200,26 @@ contract BananaAllocator is Ownable {
         address[] memory allocationAdminsToRemove
     ) external onlyOwner {
         for(uint256 i = 0; i < allocationAdminsToRemove.length; i++) {
-            allocationInfo[aid].allocationAdmins[allocationAdminsToRemove[i]] = false;
+            require(allocationInfo[aid].isAllocationAdmin[allocationAdminsToRemove[i]], "address is not an admin of aid");
+            allocationInfo[aid].isAllocationAdmin[allocationAdminsToRemove[i]] = false;
         }
 
         emit AdminsRemoved(aid, allocationAdminsToRemove);
     }
 
-    /// @notice An enternal function to transfer dev role of the MasterApe contract
-    function transferDevToOwner() external onlyOwner {
-        masterApe.dev(msg.sender);
+    /// @notice Set an address as the pending dev of the MasterApe. The address must accept afterward to take ownership.
+    /// @param _pendingMasterApeDev Address to set as the pending dev of the MasterApe.
+    function setPendingMasterApeDev(address _pendingMasterApeDev) external onlyOwner {
+        pendingMasterApeDev = _pendingMasterApeDev;
+        emit SetPendingMasterApeDev(pendingMasterApeDev);
+    }
+
+    /// @notice The pendingMasterApeDev takes ownership through this call.
+    /// @dev Transferring MasterApe dev away from this contract renders means no tokens for this contract.
+    function acceptMasterApeDev() external {
+        require(msg.sender == pendingMasterApeDev, "bad dev. Not for you.");
+        masterApe.dev(pendingMasterApeDev);
+        pendingMasterApeDev = address(0);
         emit MasterApeDevTransferred();
     }
 
