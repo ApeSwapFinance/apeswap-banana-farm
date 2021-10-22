@@ -30,7 +30,7 @@ contract BananaAllocator is Ownable {
 
     // Information for each allocation
     struct AllocationInfo {
-        string allocationName; // For recordkeeping purposes
+        string allocationName; // For record keeping purposes
         uint256 allocationAmount; // Amount (intended to be percentages, but can be treated similarly to farm multipliers)
         uint256 tokensAvailable; // The current amount of tokens available to a specific allocation
         mapping(address => bool) isAllocationAdmin; // People approved to extract tokens allocated to a specific allocation
@@ -137,7 +137,7 @@ contract BananaAllocator is Ownable {
 
     /// @notice A function to add a new allocation
     /// @param allocationName string referencing the name of an allocation
-    /// @param allocationAmount amount for allocation to recieve
+    /// @param allocationAmount amount for allocation to receive
     /// @param newAllocationAdmins array of addresses to be admins in this specific allocation
     function addAllocation(
         string memory allocationName, 
