@@ -33,7 +33,7 @@ export const writeArrayToCSV = async (
 	fileName: string,
 	data: any[][]
 ): Promise<void> => {
-	// Construct the comma seperated string
+	// Construct the comma separated string
 	// If a column values contains a comma then surround the column value by double quotes
 	const csv = data
 		.map((row) =>
