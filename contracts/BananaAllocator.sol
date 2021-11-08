@@ -1,9 +1,9 @@
 pragma solidity 0.6.12;
 
 /*
- * ApeSwapFinance
+ * ApeSwap Finance
  * App:             https://apeswap.finance
- * Medium:          https://medium.com/@ape_swap
+ * Medium:          https://ape-swap.medium.com
  * Twitter:         https://twitter.com/ape_swap
  * Telegram:        https://t.me/ape_swap
  * Announcements:   https://t.me/ape_swap_news
