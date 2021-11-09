@@ -34,7 +34,7 @@ contract MasterApeAdmin is Ownable {
     /// @notice Farm admin can manage master ape farms and fixed percent farms
     address public farmAdmin;
     /// @notice MasterApe Address
-    IMasterApe public masterApe;
+    IMasterApe immutable public masterApe;
     /// @notice Address which is eligible to accept ownership of the MasterApe. Set by the current owner.
     address public pendingMasterApeOwner = address(0);
     /// @notice Array of MasterApe pids that are active fixed percent farms
