@@ -52,6 +52,8 @@ contract MasterApeAdmin is Ownable {
     uint256 constant public MAX_FIXED_FARM_PERCENTAGE = PERCENTAGE_PRECISION - BASE_PERCENTAGE - MAX_FIXED_FARM_PERCENTAGE_BUFFER;
     /// @notice Total allocation percentage for fixed percent farms
     uint256 public totalFixedPercentFarmPercentage = 0;
+    /// @notice Max multiplier which is possible to be set on the MasterApe
+    uint256 constant public MAX_BONUS_MULTIPLIER = 4;
 
     event SetPendingMasterApeOwner(address pendingMasterApeOwner);
     event AddFarm(IERC20 indexed lpToken, uint256 allocation);
@@ -96,6 +98,7 @@ contract MasterApeAdmin is Ownable {
     /// @notice Update the rewardPerBlock multiplier on the MasterApe contract
     /// @param _newMultiplier Multiplier to change to
     function updateMasterApeMultiplier(uint256 _newMultiplier) external onlyOwner {
+        require(_newMultiplier <= MAX_BONUS_MULTIPLIER, 'multiplier greater than max');
         masterApe.updateMultiplier(_newMultiplier);
     }
 
