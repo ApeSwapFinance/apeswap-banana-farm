@@ -164,6 +164,7 @@ contract MasterApeAdmin is Ownable {
 
     /// @notice Update pool allocations based on fixed percentage farm percentages
     function syncFixedPercentFarms() external onlyFarmAdmin {
+        require(getNumberOfFixedPercentFarms() > 0, 'no fixed farms added');
         _syncFixedPercentFarms();
     }
 
@@ -323,28 +324,31 @@ contract MasterApeAdmin is Ownable {
     /** Internal Functions  */
 
     /// @notice Run through fixed percentage farm allocations and set MasterApe allocations to match the percentage.
-    /// @dev The MasterApe contract manages the BANANA pool percentage on its own which is accounted for in the calculations below.
+    /// @dev The MasterApe contract manages the BANANA pool percentage on its own which is accounted for in the calculations below. 
     function _syncFixedPercentFarms() internal {
-        if(getNumberOfFixedPercentFarms() == 0) {
+        uint256 numberOfFixedPercentFarms = getNumberOfFixedPercentFarms();
+        if(numberOfFixedPercentFarms == 0) {
             return; 
         }
         uint256 masterApeTotalAllocation = masterApe.totalAllocPoint();
         ( ,uint256 poolAllocation,,) = masterApe.getPoolInfo(0);
         uint256 currentTotalFixedPercentFarmAllocation = 0;
+        // Define local vars that are used multiple times
+        uint256 totalAllocationPercent = getTotalAllocationPercent();
         // Calculate the total allocation points of the fixed percent farms
-        for (uint256 index = 0; index < fixedPercentFarmPids.length; index++) {
+        for (uint256 index = 0; index < numberOfFixedPercentFarms; index++) {
             ( ,uint256 fixedPercentFarmAllocation,,) = masterApe.getPoolInfo(fixedPercentFarmPids[index]);
             currentTotalFixedPercentFarmAllocation = currentTotalFixedPercentFarmAllocation.add(fixedPercentFarmAllocation);
         }
         // Calculate alloted allocations
         uint256 nonPercentageBasedAllocation = masterApeTotalAllocation.sub(poolAllocation).sub(currentTotalFixedPercentFarmAllocation);
-        uint256 percentageIncrease = (PERCENTAGE_PRECISION * PERCENTAGE_PRECISION) / (PERCENTAGE_PRECISION.sub(getTotalAllocationPercent()));
+        uint256 percentageIncrease = (PERCENTAGE_PRECISION * PERCENTAGE_PRECISION) / (PERCENTAGE_PRECISION.sub(totalAllocationPercent));
         uint256 finalAllocation = nonPercentageBasedAllocation.mul(percentageIncrease).div(PERCENTAGE_PRECISION);
         uint256 allotedFixedPercentFarmAllocation = finalAllocation.sub(nonPercentageBasedAllocation);
         // Update fixed percentage farm allocations
-        for (uint256 index = 0; index < fixedPercentFarmPids.length; index++) {
+        for (uint256 index = 0; index < numberOfFixedPercentFarms; index++) {
             FixedPercentFarmInfo memory fixedPercentFarm = getFixedPercentFarmFromPid[fixedPercentFarmPids[index]];
-            uint256 newFixedPercentFarmAllocation = allotedFixedPercentFarmAllocation.mul(fixedPercentFarm.allocationPercent).div(getTotalAllocationPercent());
+            uint256 newFixedPercentFarmAllocation = allotedFixedPercentFarmAllocation.mul(fixedPercentFarm.allocationPercent).div(totalAllocationPercent);
             masterApe.set(fixedPercentFarm.pid, newFixedPercentFarmAllocation, false);
             emit SyncFixedPercentFarm(fixedPercentFarm.pid, newFixedPercentFarmAllocation);
         }
