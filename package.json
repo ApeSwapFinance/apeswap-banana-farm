@@ -9,6 +9,7 @@
     "compile": "truffle compile --network bscTestnet",
     "flatten": "truffle-flattener ./contracts/MasterApe.sol > ./contracts-flattened/MasterApe.sol && truffle-flattener ./contracts/SupportApe.sol > ./contracts-flattened/SupportApe.sol && truffle-flattener ./contracts/BananaToken.sol > ./contracts-flattened/BananaToken.sol && truffle-flattener ./contracts/BananaSplitBar.sol > ./contracts-flattened/BananaSplitBar.sol && truffle-flattener ./contracts/Timelock.sol > ./contracts-flattened/Timelock.sol && truffle-flattener ./contracts/BNBRewardApe.sol > ./contracts-flattened/BNBRewardApe.sol",
     "flatten:pool": "truffle-flattener ./contracts/BEP20RewardApeV2.sol > ./BEP20RewardApeV2_flat.sol",
+    "verify:bsc:master-ape-admin": "truffle run verify MasterApeAdmin --network bsc",
     "verify:bsc:bep20rewardape": "truffle run verify BEP20RewardApeV2 --network bsc",
     "verify:testnet:bep20rewardape": "truffle run verify BEP20RewardApeV2 --network testnet",
     "verify:migrations": "truffle run verify Migrations --network bsc",
@@ -16,12 +17,15 @@
     "verify:testnet": "truffle run verify MasterApe --network testnet && truffle run verify SupportApe --network testnet && truffle run verify BananaToken --network testnet && truffle run verify Timelock --network testnet && truffle run verify BananaSplitBar --network testnet",
     "encode": "clear && ts-node ./scripts/encode.ts",
     "encode-timelock-delay": "clear && ts-node ./scripts/encode-timelock-delay.ts",
-    "test": "npx builder test",
+    "test:fast": "yarn mocha --exit --timeout 10000",
+    "test": "yarn run compile && yarn mocha --exit --timeout 10000",
+    "test:builder": "npx builder test",
     "coverage": "npx builder coverage"
   },
   "dependencies": {
     "@ethersproject/bignumber": "^5.0.14",
     "@ethersproject/contracts": "^5.0.11",
+    "@openzeppelin/contracts": "3.3.0",
     "@openzeppelin/test-helpers": "^0.5.6",
     "@pancakeswap/pancake-swap-lib": "^0.0.1",
     "dotenv": "^8.2.0",
@@ -32,11 +36,13 @@
     "typescript": "^4.1.5"
   },
   "devDependencies": {
+    "@apeswapfinance/test-helpers": "^0.0.1",
     "@nomiclabs/buidler": "^1.4.7",
     "@nomiclabs/buidler-ethers": "^2.0.0",
     "@nomiclabs/buidler-truffle5": "^1.3.4",
     "@nomiclabs/buidler-waffle": "^2.0.0",
     "@nomiclabs/buidler-web3": "^1.3.4",
+    "@openzeppelin/test-environment": "^0.1.9",
     "chai": "^4.2.0",
     "ethereum-waffle": "^3.0.0",
     "ethers": "^5.0.14",
