@@ -217,9 +217,16 @@ describe('MasterApeAdmin', async function () {
     describe('negative test cases', async () => {
 
       it('should NOT adjust the MasterApe bonus multiplier from wrong address', async () => {
-        const NEW_MULTIPLIER = 50;
+        const NEW_MULTIPLIER = 4;
         await expectRevert(this.masterApeAdmin.updateMasterApeMultiplier(NEW_MULTIPLIER, { from: alice }),
           'Ownable: caller is not the owner'
+        );
+      });
+
+      it('should NOT adjust the MasterApe bonus multiplier if over MAX', async () => {
+        const NEW_MULTIPLIER = 100;
+        await expectRevert(this.masterApeAdmin.updateMasterApeMultiplier(NEW_MULTIPLIER, { from: owner }),
+          'multiplier greater than max'
         );
       });
 
@@ -234,7 +241,7 @@ describe('MasterApeAdmin', async function () {
     describe('positive test cases', async () => {
 
       it('should set adjust the MasterApe bonus multiplier', async () => {
-        const NEW_MULTIPLIER = 50;
+        const NEW_MULTIPLIER = 4;
         await this.masterApeAdmin.updateMasterApeMultiplier(NEW_MULTIPLIER, { from: owner });
         const bonusMultiplier = await this.masterApe.BONUS_MULTIPLIER();
         assert.equal(bonusMultiplier, NEW_MULTIPLIER, `Multiplier update inaccurate`)
