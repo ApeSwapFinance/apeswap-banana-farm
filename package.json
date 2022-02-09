@@ -17,6 +17,7 @@
     "verify:testnet": "truffle run verify MasterApe --network testnet && truffle run verify SupportApe --network testnet && truffle run verify BananaToken --network testnet && truffle run verify Timelock --network testnet && truffle run verify BananaSplitBar --network testnet",
     "encode": "clear && ts-node ./scripts/encode.ts",
     "encode-timelock-delay": "clear && ts-node ./scripts/encode-timelock-delay.ts",
+    "encode-transfer-ownership": "clear && ts-node ./scripts/encode-transfer-ownership.ts",
     "test:fast": "yarn mocha --exit --timeout 10000",
     "test": "yarn run compile && yarn mocha --exit --timeout 10000",
     "test:builder": "npx builder test",
