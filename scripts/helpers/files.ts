@@ -1,5 +1,6 @@
 import fs from 'fs';
 import path from 'path';
+import { parse } from 'csv-parse';
 
 export const getCurrentDirectoryBase = (): string => {
 	return path.basename(process.cwd());
@@ -15,6 +16,29 @@ export const readJSONFile = async (filePath: string): Promise<Buffer> => {
 		return JSON.parse(buffer);
 	} catch (e) {
 		throw new Error(`Error reading ${filePath}: ${e}`);
+	}
+};
+
+export const readCSVFile = async <T>(filePath: string, headers: string[]): Promise<T | void> => {
+	try {
+		const csvFilePath = path.resolve(filePath);
+
+		const fileContent = await fs.promises.readFile(csvFilePath, { encoding: 'utf-8' });
+
+		return new Promise((resolve, reject) => {
+			parse(fileContent, {
+				delimiter: ',',
+				columns: headers,
+			}, (error, result: T) => {
+				if (error) {
+					reject(error);
+				}
+				resolve(result);
+			});
+		})
+
+	} catch (e) {
+		throw new Error(`Error reading csv ${filePath}: ${e}`);
 	}
 };
 
